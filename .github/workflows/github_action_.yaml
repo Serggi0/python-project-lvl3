@@ -1,0 +1,40 @@
+# имя, чтобы отображалось в интерфейсе
+name: 'lint & test GitHub action'
+
+# тут список событий, на который экшен должен запускаться
+on: # пусть гоняется на любой пуш
+  push:
+    branches:
+      - main
+
+# список того, что нужно делать. каждый job будет выводиться отдельным элементом слева UI
+jobs:
+  # Ключ задания. Клавиша отображается в виде имени задания  
+  flake8_and_pytest: 
+    runs-on: ubuntu-latest # на какой машине гонять
+    # Взято из шаблона GitHub Python package
+    strategy:
+      matrix:
+        python-version: [3.8]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+            python-version: ${{ matrix.python-version }}
+      - name: Install poetry
+        run: |
+          pip install poetry
+          make install
+      - name: Test flake8 from Makefile
+        run: |
+          make lint
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        # Взято из GitHub paambati Code Climate Coverage Action
+        env:
+          CC_TEST_REPORTER_ID: 6f75372822a31f3fb8928dd66487e23f6b2f09e633bab4be324f446ec51330c5
+          #Reportep ID взят в CodeClimate Test Coverage
+        with:
+          coverageCommand: make test
+          debug: true
