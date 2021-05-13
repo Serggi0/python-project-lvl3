@@ -1,7 +1,7 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/Serggi0/python-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/Serggi0/python-project-lvl3/actions)  *Hexlet tests and linter status*
 
-[![lint GitHub action](https://github.com/Serggi0/python-project-lvl3/workflows/lint%20GitHub%20action/badge.svg)](https://github.com/Serggi0/python-project-lvl3/actions)  *GitHub action badge*
+[![lint & test GitHub action](https://github.com/Serggi0/python-project-lvl3/actions/workflows/github_action_.yaml/badge.svg)](https://github.com/Serggi0/python-project-lvl3/actions/workflows/github_action_.yaml)  *GitHub action badge*
 
 <!-- [! [Статус действий YourActionName] (https://github.com/ { userName } / { repoName } / workflows / { workflowName } /badge.svg)] (https://github.com/ { userName } / { repoName } / action) -->
 
