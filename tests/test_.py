@@ -5,11 +5,10 @@ from page_loader.loader import download
 
 
 @pytest.mark.parametrize(
-    'url, file_path',
-    [('https://httpbin.org',
-        'page_loader/var/temp/httpbin-org.html')]
+    'url',
+    [('https://httpbin.org')]
 )
-def test_page_loader(url, file_path):
+def test_page_loader(url):
     my_string = download(url)
     response = requests.get(url)
     response.raise_for_status()
