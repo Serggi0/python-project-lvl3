@@ -2,7 +2,7 @@ install:
 	poetry install
 
 page-loader:
-	poetry run page_loader
+	poetry run page-loader
 
 build:
 	poetry build
@@ -15,6 +15,6 @@ lint:
 	poetry run flake8 tests
 
 test:
-	poetry run pytest -vv --cov=page_loader tests/ --cov-report xml
+	poetry run pytest -v --cov=page_loader tests/ --cov-report xml
 
-.PHONY: install build package-install lint page_loader test
+.PHONY: install build package-install lint page-loader test

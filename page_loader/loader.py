@@ -17,5 +17,7 @@ def download(url, path='page_loader/var/temp'):
     file_path = os.path.join(path, filename)
     with open(file_path, 'wb') as file:
         file.write(response.content)
+    with open(file_path, 'rb') as file:
+        my_string = file.read()
     print(file_path)
-    return file_path
+    return my_string
