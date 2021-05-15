@@ -1,7 +1,7 @@
 import pytest
 import tempfile
 import requests
-from page_loader.loader import download
+from page_loader import loader
 
 
 @pytest.mark.parametrize(
@@ -9,7 +9,7 @@ from page_loader.loader import download
     [('https://httpbin.org')]
 )
 def test_page_loader(url):
-    my_string = download(url)
+    my_string = loader.download(url)
     response = requests.get(url)
     response.raise_for_status()
     with tempfile.TemporaryFile() as file_temp:
