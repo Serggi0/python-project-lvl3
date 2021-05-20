@@ -6,3 +6,5 @@ dist/
 .vscode/
 *.xml
 .coverage
+steps/
+tmp/
