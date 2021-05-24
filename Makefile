@@ -2,7 +2,8 @@ install:
 	poetry install
 
 page-loader:
-	poetry run page-loader --output page_loader/data https://ru.hexlet.io/courses
+	poetry run page-loader --output page_loader/data https://linzi-vsem.ru/karnavalnye/linzy-sharingan/
+# https://ru.hexlet.io/courses
 # https://httpbin.org
 
 build:
