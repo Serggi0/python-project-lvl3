@@ -5,11 +5,14 @@ from page_loader import loader
 
 
 @pytest.mark.parametrize(
-    'url',
-    [('https://httpbin.org')]
+    'path', 'url',
+    [
+        ('page_loader/data',
+            'https://linzi-vsem.ru/karnavalnye/linzy-sharingan/')
+    ]
 )
-def test_page_loader(url):
-    my_string = loader.download(url)
+def test_page_loader(path, url):
+    my_string = loader.download(path, url)
     response = requests.get(url)
     response.raise_for_status()
     with tempfile.TemporaryFile() as file_temp:

@@ -5,6 +5,7 @@ import re
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 from pathlib import Path
+import tempfile
 
 
 # ! Проверка url-адресов, является ли переданный URL-адрес действительным:
@@ -16,6 +17,7 @@ def is_valid(url):
 def url_convert(url):
     if not is_valid(url):
         print('Not a valid URL')
+        return
     _, urls = re.split('://', url)
     try:
         pos = urls.index('?')
@@ -67,7 +69,8 @@ def create_dir(path, url):
     return dir_path
 
 
-def download_web_page(url, ext='html', path='page_loader/tmp'):
+
+def get_web_page(url, ext='html', path='page_loader/tmp'):
     response = requests.get(url)
     response.raise_for_status()
     # ! response.raise_for_status() нужна для того, чтобы проверить,
@@ -78,11 +81,28 @@ def download_web_page(url, ext='html', path='page_loader/tmp'):
     # ! которой нет.
     page_name = add_extension(url, ext)
     file_path = os.path.join(path, page_name)
+    domain_name = urlparse(url).scheme +"://" + urlparse(url).netloc
     with open(file_path, 'wb') as file:
         # ! Список режимов доступа к файлу, контекстный менеджер
         # ! http://pythonicway.com/python-fileio
         file.write(response.content)
-    return file_path
+    return file_path, domain_name
+
+
+def change_src(file_path, domain_name):
+    html = open(file_path, 'r')
+    soup = BeautifulSoup(html, "html.parser")
+    html.close
+    tags_img = soup.find_all('img', src=True)
+    for tag in tags_img:
+        src = tag.get('src')
+        if not src.startswith('http'):
+            src = urljoin(domain_name, src)
+        tag['src'] = src
+    new_html = soup.prettify(formatter='html5')
+    with open(file_path, 'w') as file:
+        file.write(new_html)
+    return new_html
 
 
 def download_web_link(path, url):
@@ -101,9 +121,8 @@ def download(path, url):
     # path = os.path.abspath(path)
     # ! path.abspath выдает абсолютный путь
     dir_for_img = create_dir(path, url)
-    web_page_path = download_web_page(url, ext, path)
-    for element in get_images(url):
-        download_web_link(dir_for_img, element)
+    web_page_path, domain_name = get_web_page(url, ext, path)
+    change_src(web_page_path, domain_name)
     print(web_page_path)
     return dir_for_img
 # >> возвращает путь: page_loader/data/ru-hexlet-io-courses_files
