@@ -2,7 +2,9 @@ install:
 	poetry install
 
 page-loader:
-	poetry run page-loader --output page_loader/data http://oldmuzzle.ru/flora/taraxacum-officinale.html
+	poetry run page-loader --output page_loader/data https://animaljournal.ru/article/koshka_ocelot
+	
+# http://oldmuzzle.ru/flora/taraxacum-officinale.html
 	
 # https://animaljournal.ru/article/koshka_ocelot
 # https://linzi-vsem.ru/karnavalnye/linzy-sharingan/

@@ -98,10 +98,15 @@ def change_src(dir_path, file_path, domain_name):
     for tag in tags_img:
         src = tag.get('src')
         if not src.startswith('http'):
-            src = urljoin(domain_name, src)
-        tag['src'] = src
-        if domain_name in src:
-            tag['src'] = download_web_link(dir_path, src)
+            tag['src'] = urljoin(domain_name, src)
+        else:
+            continue
+        src_new = tag['src']
+        # print(tag['src'])
+        #     tag['src'] = download_web_link(dir_path, src)
+        # # tag['src'] = src
+        # if domain_name in src:
+        tag['src'] = download_web_link(dir_path, src_new)
     new_html = soup.prettify(formatter='html5')
     with open(file_path, 'w') as file:
         file.write(new_html)
@@ -121,7 +126,7 @@ def download_web_link(path, url):
 
 def download(path, url):
     ext = 'html'
-    path = os.path.abspath(path)
+    # path = os.path.abspath(path)
     # ! path.abspath выдает абсолютный путь
     dir_for_img = create_dir(path, url)
     web_page_path, domain_name = get_web_page(url, ext, path)
