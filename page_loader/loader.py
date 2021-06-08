@@ -4,7 +4,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
-from pathlib import Path
+from pathlib import PurePosixPath
 import tempfile
 
 
@@ -41,8 +41,9 @@ def url_convert(url):
 # >> ru-hexlet-io-courses
 
 
-def is_extension(url):
-    return bool(Path(url).suffix)
+def is_extension(file):
+    suff = PurePosixPath(file).suffix
+    return bool(suff)
 
 
 def add_extension(url, ext):
@@ -50,7 +51,7 @@ def add_extension(url, ext):
         file_name = url_convert(url)
     else:
         file_name = url_convert(url) + '.' + ext
-        return file_name
+    return file_name
 # >> ru-hexlet-io-courses.html
 
 
@@ -89,7 +90,7 @@ def get_web_page(url, ext='html', path='page_loader/tmp'):
     return file_path, domain_name
 
 
-def change_src(file_path, domain_name):
+def change_src(dir_path, file_path, domain_name):
     html = open(file_path, 'r')
     soup = BeautifulSoup(html, "html.parser")
     html.close
@@ -99,6 +100,8 @@ def change_src(file_path, domain_name):
         if not src.startswith('http'):
             src = urljoin(domain_name, src)
         tag['src'] = src
+        if domain_name in src:
+            tag['src'] = download_web_link(dir_path, src)
     new_html = soup.prettify(formatter='html5')
     with open(file_path, 'w') as file:
         file.write(new_html)
@@ -118,11 +121,11 @@ def download_web_link(path, url):
 
 def download(path, url):
     ext = 'html'
-    # path = os.path.abspath(path)
+    path = os.path.abspath(path)
     # ! path.abspath выдает абсолютный путь
     dir_for_img = create_dir(path, url)
     web_page_path, domain_name = get_web_page(url, ext, path)
-    change_src(web_page_path, domain_name)
+    change_src(dir_for_img, web_page_path, domain_name)
     print(web_page_path)
     return dir_for_img
 # >> возвращает путь: page_loader/data/ru-hexlet-io-courses_files
