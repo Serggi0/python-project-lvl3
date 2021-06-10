@@ -4,8 +4,8 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
-from pathlib import PurePosixPath
-import tempfile
+from page_loader.utils import get_project_root
+
 
 
 # ! Проверка url-адресов, является ли переданный URL-адрес действительным:
@@ -14,7 +14,7 @@ def is_valid(url):
     return bool(parsed.netloc) and bool(parsed.scheme)
 
 
-def url_convert(url):
+def convert_url_to_name(url):
     if not is_valid(url):
         print('Not a valid URL')
         return
@@ -27,36 +27,33 @@ def url_convert(url):
     except ValueError:
         pass
     # ! убирает из url-адреса символы после ? (например, "/image.png?c=3.2.5")
-    part, ext = os.path.splitext(urls)
+    part, _ = os.path.splitext(urls)
     # ! разбивает путь на пару (root, ext), где ext начинается с точки
     # ! и содержит не более одной точки
     # >>  ru.hexlet.io/courses.html
     # >> ru.hexlet.io/courses
-    result2 = re.sub(r'[\W_]', '-', part) + ext
+    name = re.sub(r'[\W_]', '-', part)
     # ! re.sub возвращает новую строку, полученную в результате замены
     # ! по шаблону. Использовал регулярные выражения,
     # ! https://proglib.io/p/regex-for-beginners/
-    return result2
-# >> ru-hexlet-io-courses.html
+    return name
+# >> ru-hexlet-io-courses
 # >> ru-hexlet-io-courses
 
 
-def is_extension(file):
-    suff = PurePosixPath(file).suffix
-    return bool(suff)
+# def is_extension(file):
+#     suff = PurePosixPath(file).suffix
+#     return bool(suff)
 
 
 def add_extension(url, ext):
-    if is_extension(url):
-        file_name = url_convert(url)
-    else:
-        file_name = url_convert(url) + '.' + ext
+    file_name = convert_url_to_name(url) + '.' + ext
     return file_name
 # >> ru-hexlet-io-courses.html
 
 
 def get_dir_name(url):
-    dir_name = url_convert(url) + '_files'
+    dir_name = convert_url_to_name(url) + '_files'
     return dir_name
 
 
@@ -108,7 +105,9 @@ def change_src(dir_path, file_path, domain_name):
         # if domain_name in src:
         tag['src'] = download_web_link(dir_path, src_new)
     new_html = soup.prettify(formatter='html5')
-    with open(file_path, 'w') as file:
+    name = os.path.basename(file_path)
+    file_path_new_html = os.path.join(dir_path, name)
+    with open(file_path_new_html, 'w') as file:
         file.write(new_html)
     return new_html
 
@@ -117,7 +116,7 @@ def download_web_link(path, url):
     response = requests.get(url, stream=True)
     # !  # download the body of response by chunk, not immediately
     response.raise_for_status()
-    file_name = url_convert(url)
+    file_name = convert_url_to_name(url)
     file_path = os.path.join(path, file_name)
     with open(file_path, 'wb') as file:
         file.write(response.content)
@@ -129,7 +128,7 @@ def download(path, url):
     # path = os.path.abspath(path)
     # ! path.abspath выдает абсолютный путь
     dir_for_img = create_dir(path, url)
-    web_page_path, domain_name = get_web_page(url, ext, path)
+    web_page_path, domain_name = get_web_page(url, ext, 'page_loader/tmp')
     change_src(dir_for_img, web_page_path, domain_name)
     print(web_page_path)
     return dir_for_img
@@ -140,20 +139,3 @@ def download(path, url):
 # todo Тестирование:
 # todo 1) все ли ссылки скачались
 # todo 2) картинка сайта и скаченного сайта совпадает?
-
-
-def get_images(url):
-    domain_name = urlparse(url).netloc
-    tags_src = []
-    soup = BeautifulSoup(requests.get(url).content, "html.parser")
-    tags_img = soup.find_all('img', src=True)
-    for tag in tags_img:
-        src = tag['src']
-        if not src:
-            continue
-        src = urljoin(url, src)
-        parsed_src = urlparse(src)
-        src = parsed_src.scheme + "://" + parsed_src.netloc + parsed_src.path
-        if domain_name in src:
-            tags_src.append(src)
-    return tags_src
