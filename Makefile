@@ -2,8 +2,12 @@ install:
 	poetry install
 
 page-loader:
-	poetry run page-loader --output page_loader/data http://oldmuzzle.ru/flora/taraxacum-officinale.html
+	poetry run page-loader --output page_loader http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html
 	
+# https://zakupator.com/sad/chubushnik.html
+
+
+# https://en.wikipedia.org/wiki/Correction_fluid
 # https://www.google.ru 
 # http://oldmuzzle.ru/flora/taraxacum-officinale.html
 	

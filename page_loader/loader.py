@@ -2,11 +2,15 @@ import os
 import os.path
 import requests
 import re
+from pathlib import PurePosixPath
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 from page_loader.utils import get_project_root
 
-
+# ! чтобы сайт не идентифицировал как бота
+HEADERS = {
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'
+}
 
 # ! Проверка url-адресов, является ли переданный URL-адрес действительным:
 def is_valid(url):
@@ -14,10 +18,27 @@ def is_valid(url):
     return bool(parsed.netloc) and bool(parsed.scheme)
 
 
-def convert_url_to_name(url):
-    if not is_valid(url):
-        print('Not a valid URL')
-        return
+def is_extension(file):
+    suff = PurePosixPath(file).suffix
+    return bool(suff)
+
+
+def convert_url_to_file_name(url):
+    _, urls = re.split('://', url)
+    part, ext = os.path.splitext(urls)
+    # ! разбивает путь на пару (root, ext), где ext начинается с точки
+    # ! и содержит не более одной точки
+    # >>  ru.hexlet.io/courses.html
+    # >> ru.hexlet.io/courses
+    name = re.sub(r'[\W_]', '-', part) + ext
+    # ! re.sub возвращает новую строку, полученную в результате замены
+    # ! по шаблону. Использовал регулярные выражения,
+    # ! https://proglib.io/p/regex-for-beginners/
+    return name
+# >> ru-hexlet-io-courses or ru-hexlet-io-courses.html
+
+
+def get_dir_name(url):
     _, urls = re.split('://', url)
     try:
         pos = urls.index('?')
@@ -27,34 +48,30 @@ def convert_url_to_name(url):
     except ValueError:
         pass
     # ! убирает из url-адреса символы после ? (например, "/image.png?c=3.2.5")
-    part, _ = os.path.splitext(urls)
+    if is_extension(urls):
+        part, _ = os.path.splitext(urls)
+    else:
+        part = urls
     # ! разбивает путь на пару (root, ext), где ext начинается с точки
     # ! и содержит не более одной точки
     # >>  ru.hexlet.io/courses.html
     # >> ru.hexlet.io/courses
-    name = re.sub(r'[\W_]', '-', part)
+    dir_name = re.sub(r'[\W_]', '-', part)  + '_files'
     # ! re.sub возвращает новую строку, полученную в результате замены
     # ! по шаблону. Использовал регулярные выражения,
     # ! https://proglib.io/p/regex-for-beginners/
-    return name
+    return dir_name
 # >> ru-hexlet-io-courses
-# >> ru-hexlet-io-courses
-
-
-# def is_extension(file):
-#     suff = PurePosixPath(file).suffix
-#     return bool(suff)
 
 
 def add_extension(url, ext):
-    file_name = convert_url_to_name(url) + '.' + ext
+    file_name = convert_url_to_file_name(url)
+    if not is_extension(file_name):
+        file_name = file_name + '.' + ext
+    else:
+        print('extention is exit!')
     return file_name
 # >> ru-hexlet-io-courses.html
-
-
-def get_dir_name(url):
-    dir_name = convert_url_to_name(url) + '_files'
-    return dir_name
 
 
 def create_dir(path, url):
@@ -69,7 +86,7 @@ def create_dir(path, url):
 
 
 def get_web_page(url, ext='html', path='page_loader/tmp'):
-    response = requests.get(url)
+    response = requests.get(url, headers=HEADERS)
     response.raise_for_status()
     # ! response.raise_for_status() нужна для того, чтобы проверить,
     # ! понял вас сервер или нет. Если сервер вернёт 404 «Ресурс не найден»,
@@ -80,24 +97,25 @@ def get_web_page(url, ext='html', path='page_loader/tmp'):
     page_name = add_extension(url, ext)
     file_path = os.path.join(path, page_name)
     domain_name = urlparse(url).scheme +"://" + urlparse(url).netloc
-    with open(file_path, 'wb') as file:
+    with open(file_path, 'w') as file:
         # ! Список режимов доступа к файлу, контекстный менеджер
         # ! http://pythonicway.com/python-fileio
-        file.write(response.content)
+        file.write(response.text)
     return file_path, domain_name
 
 
 def change_src(dir_path, file_path, domain_name):
-    html = open(file_path, 'r')
+    file = open(file_path, 'r')
+    html = file.read()
     soup = BeautifulSoup(html, "html.parser")
-    html.close
+    file.close
     tags_img = soup.find_all('img', src=True)
     for tag in tags_img:
         src = tag.get('src')
-        if not src.startswith('http'):
-            tag['src'] = urljoin(domain_name, src)
-        else:
+        if src.startswith('http'):
             continue
+        else:
+            tag['src'] = urljoin(domain_name, src)
         src_new = tag['src']
         # print(tag['src'])
         #     tag['src'] = download_web_link(dir_path, src)
@@ -113,10 +131,10 @@ def change_src(dir_path, file_path, domain_name):
 
 
 def download_web_link(path, url):
-    response = requests.get(url, stream=True)
+    response = requests.get(url, headers=HEADERS)
     # !  # download the body of response by chunk, not immediately
     response.raise_for_status()
-    file_name = convert_url_to_name(url)
+    file_name = convert_url_to_file_name(url)
     file_path = os.path.join(path, file_name)
     with open(file_path, 'wb') as file:
         file.write(response.content)
@@ -125,10 +143,13 @@ def download_web_link(path, url):
 
 def download(path, url):
     ext = 'html'
+    if not is_valid(url):
+        print('Not a valid URL')
+        return
     # path = os.path.abspath(path)
     # ! path.abspath выдает абсолютный путь
     dir_for_img = create_dir(path, url)
-    web_page_path, domain_name = get_web_page(url, ext, 'page_loader/tmp')
+    web_page_path, domain_name = get_web_page(url, ext, dir_for_img)
     change_src(dir_for_img, web_page_path, domain_name)
     print(web_page_path)
     return dir_for_img
