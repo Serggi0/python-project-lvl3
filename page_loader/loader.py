@@ -5,11 +5,11 @@ import re
 from pathlib import PurePosixPath
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
-from page_loader.utils import get_project_root
+# from page_loader.utils import get_project_root
 
 # ! чтобы сайт не идентифицировал как бота
 HEADERS = {
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36'
 }
 
 # ! Проверка url-адресов, является ли переданный URL-адрес действительным:
@@ -69,7 +69,7 @@ def add_extension(url, ext):
     if not is_extension(file_name):
         file_name = file_name + '.' + ext
     else:
-        print('extention is exit!')
+        print(f'extention {ext} is exit!')
     return file_name
 # >> ru-hexlet-io-courses.html
 
@@ -123,9 +123,9 @@ def change_src(dir_path, file_path, domain_name):
         # if domain_name in src:
         tag['src'] = download_web_link(dir_path, src_new)
     new_html = soup.prettify(formatter='html5')
-    name = os.path.basename(file_path)
-    file_path_new_html = os.path.join(dir_path, name)
-    with open(file_path_new_html, 'w') as file:
+    # name = os.path.basename(file_path)
+    # file_path_new_html = os.path.join(dir_path, name)
+    with open(file_path, 'w') as file:
         file.write(new_html)
     return new_html
 
@@ -138,14 +138,13 @@ def download_web_link(path, url):
     file_path = os.path.join(path, file_name)
     with open(file_path, 'wb') as file:
         file.write(response.content)
-    return file_path
+    return file_name
 
 
 def download(path, url):
     ext = 'html'
     if not is_valid(url):
-        print('Not a valid URL')
-        return
+        print('Not a valid URL')  
     # path = os.path.abspath(path)
     # ! path.abspath выдает абсолютный путь
     dir_for_img = create_dir(path, url)

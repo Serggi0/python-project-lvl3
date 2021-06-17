@@ -2,7 +2,9 @@ install:
 	poetry install
 
 page-loader:
-	poetry run page-loader --output page_loader http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html
+	poetry run page-loader --output page_loader/data https://zakupator.com/sad/chubushnik.html
+	
+# http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html
 	
 # https://zakupator.com/sad/chubushnik.html
 
