@@ -71,12 +71,12 @@ def test_add_extension(url, ext):
     assert result == 'ru-hexlet-io-courses.html'
 
 
-# @pytest.mark.parametrize(
-#     'url', 'ext', 'path'
-#     [
-#         ('https://ru.hexlet.io/courses', 'html', 'page_loader/data'),
-#     ]
-# )
-# def test_get_web_page(url, ext, path):
-#     result = loader.get_web_page(url, ext, path)
-#     assert result == 'page_loader/data/ru-hexlet-io-courses_files/ru-hexlet-io-courses.html'
+@pytest.mark.parametrize(
+    'url, ext, path',
+    [
+        ('https://ru.hexlet.io/courses', 'html', 'page_loader/data')
+    ]
+)
+def test_get_web_page(url, ext, path):
+    result = loader.get_web_page(url, ext, path)
+    assert result == ('page_loader/data/ru-hexlet-io-courses.html', 'https://ru.hexlet.io')
