@@ -5,17 +5,21 @@ import re
 from pathlib import PurePosixPath
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
-# from page_loader.utils import get_project_root
+
 
 # ! чтобы сайт не идентифицировал как бота
 HEADERS = {
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36'
+    'user-agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+        'AppleWebKit/537.36 (KHTML, like Gecko)'
+        'Chrome/91.0.4472.101 Safari/537.36'
 }
 
-# ! Проверка url-адресов, является ли переданный URL-адрес действительным:
+
 def is_valid(url):
     parsed = urlparse(url)
     return bool(parsed.netloc) and bool(parsed.scheme)
+# ! Проверка url-адресов, является ли переданный URL-адрес действительным
 
 
 def is_extension(file):
@@ -56,7 +60,7 @@ def get_dir_name(url):
     # ! и содержит не более одной точки
     # >>  ru.hexlet.io/courses.html
     # >> ru.hexlet.io/courses
-    dir_name = re.sub(r'[\W_]', '-', part)  + '_files'
+    dir_name = re.sub(r'[\W_]', '-', part) + '_files'
     # ! re.sub возвращает новую строку, полученную в результате замены
     # ! по шаблону. Использовал регулярные выражения,
     # ! https://proglib.io/p/regex-for-beginners/
@@ -84,7 +88,6 @@ def create_dir(path, url):
     return dir_path
 
 
-
 def get_web_page(url, ext='html', path='page_loader/tmp'):
     response = requests.get(url, headers=HEADERS)
     response.raise_for_status()
@@ -96,7 +99,7 @@ def get_web_page(url, ext='html', path='page_loader/tmp'):
     # ! которой нет.
     page_name = add_extension(url, ext)
     file_path = os.path.join(path, page_name)
-    domain_name = urlparse(url).scheme +"://" + urlparse(url).netloc
+    domain_name = urlparse(url).scheme + "://" + urlparse(url).netloc
     with open(file_path, 'w') as file:
         # ! Список режимов доступа к файлу, контекстный менеджер
         # ! http://pythonicway.com/python-fileio
@@ -104,7 +107,21 @@ def get_web_page(url, ext='html', path='page_loader/tmp'):
     return file_path, domain_name
 
 
+def get_img_src(path):
+    tags_src = []
+    with open(path) as my_string:
+        soup = BeautifulSoup(my_string, "html.parser")
+        tags_img = soup.find_all('img', src=True)
+        for tag in tags_img:
+            src = tag.get('src')
+            if is_extension(src):
+                tags_src.append(src)
+    return tags_src
+
+
 def change_src(dir_path, file_path, domain_name):
+    list_tags_src = []
+    list_tags_new_src = []
     file = open(file_path, 'r')
     html = file.read()
     soup = BeautifulSoup(html, "html.parser")
@@ -112,22 +129,20 @@ def change_src(dir_path, file_path, domain_name):
     tags_img = soup.find_all('img', src=True)
     for tag in tags_img:
         src = tag.get('src')
-        if src.startswith('http'):
-            continue
-        else:
-            tag['src'] = urljoin(domain_name, src)
-        src_new = tag['src']
-        # print(tag['src'])
-        #     tag['src'] = download_web_link(dir_path, src)
-        # # tag['src'] = src
-        # if domain_name in src:
-        tag['src'] = download_web_link(dir_path, src_new)
+        if is_extension(src):
+            if src.startswith(domain_name):
+                continue
+            else:
+                tag['src'] = urljoin(domain_name, src)
+            src_new = tag['src']
+            list_tags_src.append(src_new)
+
+            tag['src'] = download_web_link(dir_path, src_new)
+            list_tags_new_src.append(tag['src'])
     new_html = soup.prettify(formatter='html5')
-    # name = os.path.basename(file_path)
-    # file_path_new_html = os.path.join(dir_path, name)
     with open(file_path, 'w') as file:
         file.write(new_html)
-    return new_html
+    return list_tags_src, list_tags_new_src
 
 
 def download_web_link(path, url):
@@ -144,7 +159,7 @@ def download_web_link(path, url):
 def download(path, url):
     ext = 'html'
     if not is_valid(url):
-        print('Not a valid URL')  
+        print('Not a valid URL')
     # path = os.path.abspath(path)
     # ! path.abspath выдает абсолютный путь
     dir_for_img = create_dir(path, url)
@@ -153,9 +168,3 @@ def download(path, url):
     print(web_page_path)
     return dir_for_img
 # >> возвращает путь: page_loader/data/ru-hexlet-io-courses_files
-
-# todo Нужно: 1) заменять ссылки URL на ссылки на файлы из dir_for_img
-
-# todo Тестирование:
-# todo 1) все ли ссылки скачались
-# todo 2) картинка сайта и скаченного сайта совпадает?

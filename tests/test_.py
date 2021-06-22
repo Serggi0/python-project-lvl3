@@ -1,26 +1,8 @@
 import pytest
-import tempfile
-import requests
+from bs4 import BeautifulSoup # noqa
+from PIL import Image, ImageChops
 from page_loader import loader
-import page_loader
-
-
-# @pytest.mark.parametrize(
-#     'path', 'url',
-#     [
-#         ('page_loader/data',
-#             'https://linzi-vsem.ru/karnavalnye/linzy-sharingan/')
-#     ]
-# )
-# def test_page_loader(path, url):
-#     my_string = loader.download(path, url)
-#     response = requests.get(url)
-#     response.raise_for_status()
-#     with tempfile.TemporaryFile() as file_temp:
-#         file_temp.write(response.content)
-#         file_temp.seek(0)
-#         test_string = file_temp.read()
-#     assert test_string == my_string
+from page_loader.loader import change_src, get_web_page, get_img_src
 
 
 @pytest.mark.parametrize(
@@ -79,4 +61,48 @@ def test_add_extension(url, ext):
 )
 def test_get_web_page(url, ext, path):
     result = loader.get_web_page(url, ext, path)
-    assert result == ('page_loader/data/ru-hexlet-io-courses.html', 'https://ru.hexlet.io')
+    assert result == ('page_loader/data/ru-hexlet-io-courses.html',
+                      'https://ru.hexlet.io')
+
+
+@pytest.mark.parametrize(
+    'path_web_page, path_page_loader',
+    [
+        ('tests/fixtures/web_page.html',
+         'page_loader/data/vospitatel-com-ua-zaniatia-rastenia-lopuh_files/'
+         'vospitatel-com-ua-zaniatia-rastenia-lopuh.html')
+    ]
+)
+def test_get_img_src(path_web_page, path_page_loader):
+    quantity_from_web_page = len(get_img_src(path_web_page))
+    quantity_from_page_load = len(get_img_src(path_page_loader))
+    assert quantity_from_web_page == quantity_from_page_load
+
+
+@pytest.mark.parametrize(
+    'dir_path, url',
+    [
+        ('page_loader/data/vospitatel-com-ua-zaniatia-rastenia-lopuh_files',
+         'http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html')
+    ]
+)
+def test_change_src(dir_path, url):
+    file_path, domain_name = get_web_page(url, ext='html', path=dir_path)
+    list_tags_src, list_tags_new_src = change_src(dir_path,
+                                                  file_path, domain_name)
+    assert len(list_tags_src) == len(list_tags_new_src)
+
+
+@pytest.mark.parametrize(
+    'img_from_web, img_local',
+    [
+        ('tests/fixtures/img_web.jpg',
+         'page_loader/data/vospitatel-com-ua-zaniatia-rastenia-lopuh_files/'
+         'vospitatel-com-ua-images-l-lopuh.jpg')
+    ]
+)
+def test_diff_img(img_from_web, img_local):
+    img1 = Image.open(img_from_web)
+    img2 = Image.open(img_local)
+    differences = ImageChops.difference(img1, img2)
+    assert differences.getbbox() is None
