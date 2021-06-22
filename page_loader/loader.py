@@ -165,6 +165,6 @@ def download(path, url):
     dir_for_img = create_dir(path, url)
     web_page_path, domain_name = get_web_page(url, ext, dir_for_img)
     change_src(dir_for_img, web_page_path, domain_name)
-    print(web_page_path)
+    print('Page was successfully downloaded into -> ', web_page_path)
     return dir_for_img
 # >> возвращает путь: page_loader/data/ru-hexlet-io-courses_files
