@@ -29,7 +29,6 @@ lint:
 	poetry run flake8 tests
 
 test:
-	poetry run pytest -v -s  --cov=page_loader tests/ 
-# --cov-report xml
+	poetry run pytest -v -s  --cov=page_loader tests/ --cov-report xml
 
 .PHONY: install build package-install lint page-loader test
