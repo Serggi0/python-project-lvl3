@@ -1,14 +1,17 @@
-from os import path
 import pytest
 import requests
 from pathlib import Path
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
 from page_loader import loader
-from page_loader.loader import download, change_src, convert_url_to_file_name, get_web_page, get_img_src, HEADERS
+from page_loader.loader import (download, change_src, convert_url_to_file_name,
+                                get_web_page, get_img_src, HEADERS)
+
+# ! ПРОВЕРКА МОДУЛЯ:
+# ! 1) создание директории для скаченного контента
 
 
-def test_page_loader_(requests_mock, tmp_path):
+def test_page_loader_is_dir(requests_mock, tmp_path):
     url = 'http://test.com'
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
@@ -17,6 +20,27 @@ def test_page_loader_(requests_mock, tmp_path):
     dir_name = 'test_files'
     download(dir_temp, url)
     assert (Path(dir_temp) / dir_name).is_dir()
+
+# ! 2) идентичность скаченного текста:
+
+
+@pytest.mark.parametrize(
+    'url',
+    [
+        ('https://animaljournal.ru/article/koshka_ocelot')
+    ]
+)
+def test_page_loader_text(tmp_path, url):
+    d = tmp_path / 'sub'
+    d.mkdir()
+    file_temp = d / 'tmp.html'
+    content_text = requests.get(url, headers=HEADERS).text
+    file_temp.write_text(content_text)
+    soup1 = BeautifulSoup(file_temp.read_text(), 'html.parser')
+    soup2 = BeautifulSoup(content_text, 'html.parser')
+    assert soup1 == soup2
+
+# ! ПРОВЕРКА ФУНКЦИЙ:
 
 
 @pytest.mark.parametrize(
@@ -61,15 +85,25 @@ def test_add_extension(url, ext):
 
 
 @pytest.mark.parametrize(
-    'url, ext, path',
+    'url',
     [
-        ('https://ru.hexlet.io/courses', 'html', 'page_loader/data')
+        ('http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html')
     ]
 )
-def test_result_get_web_page(url, ext, path):
-    result = loader.get_web_page(url, ext, path)
-    assert result == ('page_loader/data/ru-hexlet-io-courses.html',
-                      'https://ru.hexlet.io')
+def test_get_web_page(tmp_path, url):
+    dir_temp = tmp_path / 'sub'
+    dir_temp.mkdir()
+    ext = 'html'
+    path_file1_temp, _ = get_web_page(url, ext, dir_temp)
+    file_temp2 = dir_temp / 'tmp.html'
+    content_text = requests.get(url, headers=HEADERS).text
+    file_temp2.write_text(content_text)
+    soup1 = BeautifulSoup(file_temp2.read_text(), 'html.parser')
+    with open(path_file1_temp) as fp:
+        soup2 = BeautifulSoup(fp, 'html.parser')
+    assert soup1 == soup2
+
+# ! Проверка по количеству скаченных тегов img_src
 
 
 @pytest.mark.parametrize(
@@ -84,6 +118,9 @@ def test_get_img_src(path_web_page, path_page_loader):
     quantity_from_web_page = len(get_img_src(path_web_page))
     quantity_from_page_load = len(get_img_src(path_page_loader))
     assert quantity_from_web_page == quantity_from_page_load
+
+# ! Проверка по кол-ву изменненных тегов img_src
+# ! проверка списка и кол-ва тегов картинок и файлов
 
 
 @pytest.mark.parametrize(
@@ -103,7 +140,8 @@ def test_change_src(dir_path, url):
         list_for_test.append(element)
     assert list_for_test == list_tags_new_src
     assert len(list_tags_src) == len(list_tags_new_src)
-# ! проверка список и кол-ва тегов картинок и файлов
+
+# ! Проверка идентичности скаченных картинок по-пиксельно
 
 
 @pytest.mark.parametrize(
@@ -119,40 +157,3 @@ def test_diff_img(img_from_web, img_local):
     img2 = Image.open(img_local)
     differences = ImageChops.difference(img1, img2)
     assert differences.getbbox() is None
-
-
-@pytest.mark.parametrize(
-    'url',
-    [
-        ('https://animaljournal.ru/article/koshka_ocelot')
-    ]
-)
-def test_page_loader(tmp_path, url):
-    d = tmp_path / 'sub'
-    d.mkdir()
-    file_temp = d / 'tmp.html'
-    content_text = requests.get(url, headers=HEADERS).text
-    file_temp.write_text(content_text)
-    soup1 = BeautifulSoup(file_temp.read_text(), 'html.parser')
-    soup2 = BeautifulSoup(content_text, 'html.parser')
-    assert soup1 == soup2
-
-
-@pytest.mark.parametrize(
-    'url',
-    [
-        ('http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html')
-    ]
-)
-def test_get_web_page(tmp_path, url):
-    dir_temp = tmp_path / 'sub'
-    dir_temp.mkdir()
-    ext = 'html'
-    path_file1_temp, _ = get_web_page(url, ext, dir_temp)
-    file_temp2 = dir_temp / 'tmp.html'
-    content_text = requests.get(url, headers=HEADERS).text
-    file_temp2.write_text(content_text)
-    soup1 = BeautifulSoup(file_temp2.read_text(), 'html.parser')
-    with open(path_file1_temp) as fp:
-        soup2 = BeautifulSoup(fp, 'html.parser')
-    assert soup1 == soup2

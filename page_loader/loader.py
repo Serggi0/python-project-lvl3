@@ -72,8 +72,6 @@ def add_extension(url, ext):
     file_name = convert_url_to_file_name(url)
     if not is_extension(file_name):
         file_name = file_name + '.' + ext
-    else:
-        print(f'extention {ext} is exit!')
     return file_name
 # >> ru-hexlet-io-courses.html
 
