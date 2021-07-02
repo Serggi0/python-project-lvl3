@@ -2,7 +2,7 @@ install:
 	poetry install
 
 page-loader:
-	poetry run page-loader --output page_loader/data http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html
+	poetry run page-loader --output page_loader/data https://en.wikipedia.org/wiki/Correction_fluid
 	
 # http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html
 	

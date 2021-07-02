@@ -4,8 +4,8 @@ from pathlib import Path
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
 from page_loader import loader
-from page_loader.loader import (download, change_src, convert_url_to_file_name,
-                                get_web_page, get_img_src, HEADERS)
+from page_loader.loader import (download, change_src, convert_path_name,
+                                get_web_text, get_img_src, HEADERS)
 
 # ! ПРОВЕРКА МОДУЛЯ:
 # ! 1) создание директории для скаченного контента
@@ -57,7 +57,7 @@ def test_page_loader_text(tmp_path, url):
     ]
 )
 def test_convert_url_to_file_name(url, correct_value):
-    assert loader.convert_url_to_file_name(url) == correct_value
+    assert loader.convert_path_name(url) == correct_value
 
 
 @pytest.mark.parametrize(
@@ -94,7 +94,7 @@ def test_get_web_page(tmp_path, url):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
     ext = 'html'
-    path_file1_temp, _ = get_web_page(url, ext, dir_temp)
+    path_file1_temp, _ = get_web_text(url, ext, dir_temp)
     file_temp2 = dir_temp / 'tmp.html'
     content_text = requests.get(url, headers=HEADERS).text
     file_temp2.write_text(content_text)
@@ -132,11 +132,11 @@ def test_get_img_src(path_web_page, path_page_loader):
 )
 def test_change_src(dir_path, url):
     list_for_test = []
-    file_path, domain_name = get_web_page(url, ext='html', path=dir_path)
+    file_path, domain_name = get_web_text(url, ext='html', path=dir_path)
     list_tags_src, list_tags_new_src = change_src(dir_path,
                                                   file_path, domain_name)
     for element in list_tags_src:
-        element = convert_url_to_file_name(element)
+        element = convert_path_name(element)
         list_for_test.append(element)
     assert list_for_test == list_tags_new_src
     assert len(list_tags_src) == len(list_tags_new_src)
