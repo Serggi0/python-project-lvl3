@@ -2,12 +2,11 @@ install:
 	poetry install
 
 page-loader:
-	poetry run page-loader --output page_loader/data https://en.wikipedia.org/wiki/Correction_fluid
-	
-# http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html
-	
-# https://zakupator.com/sad/chubushnik.html
+	poetry run page-loader --output page_loader/data http://vospitatel.com.ua/zaniatia/rastenia/vinograd.html
 
+# http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html
+
+# http://vospitatel.com.ua/zaniatia/rastenia/vinograd.html
 
 # https://en.wikipedia.org/wiki/Correction_fluid
 # https://www.google.ru 
