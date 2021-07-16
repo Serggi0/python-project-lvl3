@@ -1,46 +1,28 @@
 import pytest
 import requests
+import requests_mock
 from pathlib import Path
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
 from page_loader import loader
-from page_loader.loader import (download, change_src, convert_path_name,
-                                get_web_text, get_img_src, HEADERS)
+from page_loader.loader import (download, convert_path_name,
+                                convert_relativ_link, get_dir_name, download_web_link,
+                                get_web_content, change_tags, HEADERS)
 
-# ! ПРОВЕРКА МОДУЛЯ:
-# ! 1) создание директории для скаченного контента
+# ! Проверка создания директории для скаченного контента:
 
 
 def test_page_loader_is_dir(requests_mock, tmp_path):
     url = 'http://test.com'
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
+
     requests_mock.get('http://test.com', text='<!DOCTYPE html>')
-
-    dir_name = 'test_files'
+    # https://requests-mock.readthedocs.io/en/latest/mocker.html#methods
     download(dir_temp, url)
-    assert (Path(dir_temp) / dir_name).is_dir()
+    assert Path(dir_temp).is_dir()
 
-# ! 2) идентичность скаченного текста:
-
-
-@pytest.mark.parametrize(
-    'url',
-    [
-        ('https://animaljournal.ru/article/koshka_ocelot')
-    ]
-)
-def test_page_loader_text(tmp_path, url):
-    d = tmp_path / 'sub'
-    d.mkdir()
-    file_temp = d / 'tmp.html'
-    content_text = requests.get(url, headers=HEADERS).text
-    file_temp.write_text(content_text)
-    soup1 = BeautifulSoup(file_temp.read_text(), 'html.parser')
-    soup2 = BeautifulSoup(content_text, 'html.parser')
-    assert soup1 == soup2
-
-# ! ПРОВЕРКА ФУНКЦИЙ:
+# ! Проверка конверттации URL по заданному шаблону:
 
 
 @pytest.mark.parametrize(
@@ -51,105 +33,99 @@ def test_page_loader_text(tmp_path, url):
         ('http://ru.hexlet.io/courses',
          'ru-hexlet-io-courses'),
         ('https://ru.hexlet.io/courses/page.html',
-         'ru-hexlet-io-courses-page.html'),
+         'ru-hexlet-io-courses-page-html'),
         ('http://ru.hexlet.io/courses.page.html',
-         'ru-hexlet-io-courses-page.html'),
+         'ru-hexlet-io-courses-page-html'),
+         ('//ru.hexlet.io/courses',
+          '--ru-hexlet-io-courses'),
     ]
 )
-def test_convert_url_to_file_name(url, correct_value):
-    assert loader.convert_path_name(url) == correct_value
+def test_convert_path_name(url, correct_value):
+    assert convert_path_name(url) == correct_value
 
 
 @pytest.mark.parametrize(
     'url',
     [
-        ('https://ru.hexlet.io/courses'),
         ('https://ru.hexlet.io/courses.html')
     ]
 )
 def test_get_dir_name(url):
-    result = loader.get_dir_name(url)
-    assert result == 'ru-hexlet-io-courses_files'
+    result = get_dir_name(url)
+    assert result == 'ru-hexlet-io-courses-html_files'
+
+# ! Проверка изменения относительной ссылки на локальные ресурсы в абсолютную:
 
 
 @pytest.mark.parametrize(
-    'url, ext',
+    'link, domain_name, correct_value',
     [
-        ('https://ru.hexlet.io/courses', 'html'),
-        ('https://ru.hexlet.io/courses.html', 'html'),
+        ('https://ru.hexlet.io/courses',
+         'https://ru.hexlet.io',
+         'https://ru.hexlet.io/courses'),
+        ('/courses',
+         'https://ru.hexlet.io',
+         'https://ru.hexlet.io/courses'),
+         ('./courses',
+         'https://ru.hexlet.io',
+         'https://ru.hexlet.io/courses'),
+         ('//ru.hexlet.io/courses',
+         'https://ru.hexlet.io',
+          '//ru.hexlet.io/courses'),
     ]
 )
-def test_add_extension(url, ext):
-    result = loader.add_extension(url, ext)
-    assert result == 'ru-hexlet-io-courses.html'
+def test_convert_relativ_link(link, domain_name, correct_value):
+    assert convert_relativ_link(link, domain_name) == correct_value
+
+# ! Проверка идентичности скаченного контента:
 
 
 @pytest.mark.parametrize(
-    'url',
+    'url, ext, file_with_content',
     [
-        ('http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html')
+        ('http://test.com', 'html', 
+         'tests/fixtures/web_page.html')
     ]
 )
-def test_get_web_page(tmp_path, url):
+def test_get_web_content(requests_mock, file_with_content, url, ext, tmp_path):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
-    ext = 'html'
-    path_file1_temp, _ = get_web_text(url, ext, dir_temp)
-    file_temp2 = dir_temp / 'tmp.html'
-    content_text = requests.get(url, headers=HEADERS).text
-    file_temp2.write_text(content_text)
-    soup1 = BeautifulSoup(file_temp2.read_text(), 'html.parser')
-    with open(path_file1_temp) as fp:
-        soup2 = BeautifulSoup(fp, 'html.parser')
-    assert soup1 == soup2
+    with open(file_with_content) as f1:
+        data1 = f1.read()
+    requests_mock.get('http://test.com', text=data1)
+    testing_file = get_web_content(url, ext, dir_temp)
+    with open(testing_file) as f2:
+        data2 = f2.read()
+    assert data2 == requests.get('http://test.com').text
 
-# ! Проверка по количеству скаченных тегов img_src
+# ! Проверка скачивания ссылки в документе:
 
 
 @pytest.mark.parametrize(
-    'path_web_page, path_page_loader',
+    'url, ext, domain_name',
     [
-        ('tests/fixtures/web_page.html',
-         'page_loader/data/vospitatel-com-ua-zaniatia-rastenia-lopuh_files/'
-         'vospitatel-com-ua-zaniatia-rastenia-lopuh.html')
+        ('http://test.com/page', 'html', 
+          'http://test.com')
     ]
 )
-def test_get_img_src(path_web_page, path_page_loader):
-    quantity_from_web_page = len(get_img_src(path_web_page))
-    quantity_from_page_load = len(get_img_src(path_page_loader))
-    assert quantity_from_web_page == quantity_from_page_load
+def test_download_web_link(requests_mock, tmp_path, url, ext, domain_name):
+    dir_temp = tmp_path / 'sub'
+    dir_temp.mkdir()
+    requests_mock.get('http://test.com/page', text='<!DOCTYPE html>')
+    testing_file = download_web_link(dir_temp, url, domain_name, ext)
+    with open(testing_file) as f:
+        data = f.read()
+    assert data == requests.get('http://test.com/page').text
 
-# ! Проверка по кол-ву изменненных тегов img_src
-# ! проверка списка и кол-ва тегов картинок и файлов
 
-
-@pytest.mark.parametrize(
-    'dir_path, url',
-    [
-        ('page_loader/data/vospitatel-com-ua-zaniatia-rastenia-lopuh_files',
-         'http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html')
-    ]
-)
-def test_change_src(dir_path, url):
-    list_for_test = []
-    file_path, domain_name = get_web_text(url, ext='html', path=dir_path)
-    list_tags_src, list_tags_new_src = change_src(dir_path,
-                                                  file_path, domain_name)
-    for element in list_tags_src:
-        element = convert_path_name(element)
-        list_for_test.append(element)
-    assert list_for_test == list_tags_new_src
-    assert len(list_tags_src) == len(list_tags_new_src)
-
-# ! Проверка идентичности скаченных картинок по-пиксельно
+# ! Проверка идентичности скаченных картинок по-пиксельно:
 
 
 @pytest.mark.parametrize(
     'img_from_web, img_local',
     [
         ('tests/fixtures/img_web.jpg',
-         'page_loader/data/vospitatel-com-ua-zaniatia-rastenia-lopuh_files/'
-         'vospitatel-com-ua-images-l-lopuh.jpg')
+         'page_loader/data/vospitatel-com-ua-zaniatia-rastenia-lopuh-html_files/vospitatel-com-ua-images-l-lopuh.jpg')
     ]
 )
 def test_diff_img(img_from_web, img_local):
@@ -157,3 +133,24 @@ def test_diff_img(img_from_web, img_local):
     img2 = Image.open(img_local)
     differences = ImageChops.difference(img1, img2)
     assert differences.getbbox() is None
+
+# ! Проверка по тестовой странице:
+
+
+@pytest.mark.parametrize(
+    'file_result, file_with_content, domain_name',
+    [
+        ('tests/fixtures/web_page_result.html',
+         'tests/fixtures/web_page_link.html',
+         'https://ru.hexlet.io')
+    ]
+)
+def test_change_tags(tmp_path, file_result, file_with_content, domain_name):
+    tmp_dir = tmp_path / 'sub'
+    tmp_dir.mkdir()
+    testing_file = change_tags(tmp_dir, file_with_content, domain_name)
+    with open(file_result) as f1:
+        data1 = f1.read()
+    with open(testing_file) as f2:
+        data2 = f2.read()
+    assert data1 == data2

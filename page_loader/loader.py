@@ -2,7 +2,7 @@ import os
 import os.path
 import requests
 import re
-from pathlib import PurePosixPath
+from pathlib import PurePosixPath, Path
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 
@@ -29,22 +29,14 @@ def is_extension(file):
     return bool(suff)
 
 
-def convert_path_name(path):
-    if path.startswith('http'):
-        _, path = re.split('://', path)
-    return re.sub(r'[\W_]', '-', path)
-# ! re.sub возвращает новую строку, полученную в результате замены
-# ! по шаблону. Использовал регулярные выражения,
-# ! https://proglib.io/p/regex-for-beginners/
-# >> ru-hexlet-io-courses
 
 
-def convert_url_with_domain_name(url, domain_name):
-    if url.startswith(domain_name):
-        _, url = re.split('://', url)
-        return re.sub(r'[\W_]', '-', url)
-    else:
-        return url
+# def convert_url_with_domain_name(url, domain_name):
+#     if url.startswith(domain_name):
+#         _, url = re.split('://', url)
+#         return re.sub(r'[\W_]', '-', url)
+#     else:
+#         return url
 
 
 def convert_relativ_link(link, domain_name):
@@ -56,25 +48,53 @@ def convert_relativ_link(link, domain_name):
 # converts a relative reference to local resources to an absolute one
 
 
-def add_extension(path, ext):
-    name = convert_path_name(path) + '.' + ext
-    return name
-# >> ru-hexlet-io-courses.html
+# def add_extension(path, ext):
+#     name = convert_path_name(path) + '.' + ext
+#     return name
+# # >> ru-hexlet-io-courses.html
+
+
+def convert_path_name(path):
+    if path.startswith('http'):
+        _, path = re.split('://', path)
+    return re.sub(r'[\W_]', '-', path)
+# ! re.sub возвращает новую строку, полученную в результате замены
+# ! по шаблону. Использовал регулярные выражения,
+# ! https://proglib.io/p/regex-for-beginners/
+# >> ru-hexlet-io-courses
 
 
 def get_dir_name(path):
-    return convert_path_name(path) + '_files'
+    res = convert_path_name(path) + '_files'
+    print('get_dir_name(path) -> ', res)
+    print()
+    return res
 # >> ru-hexlet-io-courses_files
 
 
-def get_file_name(path, ext='html'):
+def get_web_page_name(path, ext):
+    if is_extension(path):
+        part, suff = os.path.splitext(path)
+        if suff == 'html':
+            name = convert_path_name(part) + suff
+        else:
+            name = convert_path_name(path) + '.html'
+    else:
+        name = convert_path_name(path) + '.' + ext
+    print('get_file_name(path, ext="html") ->', name)
+    print()
+    return name
+
+
+def get_file_name(path, ext):
     if is_extension(path):
         part, suff = os.path.splitext(path)
         name = convert_path_name(part) + suff
     else:
         name = convert_path_name(path) + '.' + ext
+    print('get_file_name(path, ext="html") ->', name)
+    print()
     return name
-
 
 def create_dir_from_web(path, url):
     dir_path = os.path.join(path, get_dir_name(url))
@@ -83,20 +103,25 @@ def create_dir_from_web(path, url):
         # ! exist_ok=True - чтобы не возникало ошибок, если каталог существует
     except OSError:
         print(f'Failed to create a directory {dir_path}')
+    print('create_dir_from_web(path, url) -> ', dir_path)
+    print()
     return dir_path
 
 
-def get_web_text(url, ext='html', path='page_loader/tmp'):
-    # use response.text
+def get_web_content(url, ext='html', path='page_loader/tmp'):
+    # use response.content
     response = requests.get(url, headers=HEADERS)
     response.raise_for_status()
-    page_name = get_file_name(url, ext)
+    # dir_path = create_dir_from_web(path, url)
+    page_name = get_web_page_name(url, 'html')
+
     file_path = os.path.join(path, page_name)
     # domain_name = urlparse(url).scheme + "://" + urlparse(url).netloc
-    with open(file_path, 'w') as file:
-        file.write(response.text)
+    with open(file_path, 'wb') as file:
+        file.write(response.content)
+    print('get_web_content(url, ext="html", path) -> ', file_path)
+    print()
     return file_path
-
     # ! response.raise_for_status() нужна для того, чтобы проверить,
     # ! понял вас сервер или нет. Если сервер вернёт 404 «Ресурс не найден»,
     # ! то в response не будет странички сайта, а будет только “Ошибка 404”.
@@ -106,17 +131,6 @@ def get_web_text(url, ext='html', path='page_loader/tmp'):
     # ! Список режимов доступа к файлу, контекстный менеджер
     # ! http://pythonicway.com/python-fileio
 
-
-def get_web_content(url, ext='html', path='page_loader/tmp'):
-    # use response.content
-    response = requests.get(url, headers=HEADERS)
-    response.raise_for_status()
-    page_name = get_file_name(url, ext)
-    file_path = os.path.join(path, page_name)
-    # domain_name = urlparse(url).scheme + "://" + urlparse(url).netloc
-    with open(file_path, 'wb') as file:
-        file.write(response.content)
-    return file_path
 
 
 def get_img_src(path):
@@ -131,71 +145,20 @@ def get_img_src(path):
     return tags_src
 
 
-# def change_src(dir_path, file_path, domain_name):
-#     file = open(file_path, 'r')
-#     html = file.read()
-#     soup = BeautifulSoup(html, "html.parser")
-#     file.close
-#     list_tags_img_src = []
-#     list_tags_new_img_src = []
-#     tags_img = soup.find_all('img', src=True)
-#     for tag in tags_img:
-#         img_src = tag.get('src')
-#         suff = PurePosixPath(file).suffix
-#         if suff in EXTENSION_IMG:
-#             if domain_name in img_src:
-#                 tag['src'] = img_src
-#             elif urlparse(domain_name).netloc in img_src:
-#                 tag['src'] = urljoin(domain_name, img_src)
-#             img_src_new = tag['src']
-#             list_tags_img_src.append(img_src_new)
-#             tag['src'] = download_web_link(dir_path, img_src_new)
-#             list_tags_new_img_src.append(tag['src'])
-
-#     list_tags_href = []
-#     list_tags_new_href = []
-#     tags_link = soup.find_all('link', href=True)
-#     for tag in tags_link:
-#         href = tag.get('href')
-#         # if is_extension(href):
-#         if href.startswith(domain_name):
-#             continue
-#         else:
-#             tag['href'] = urljoin(domain_name, href)
-#         href_new = tag['href']
-#         list_tags_href.append(href_new)
-#         tag['href'] = download_web_link(dir_path, href_new)
-#         list_tags_new_href.append(tag['href'])
-
-#     list_tags_script_src = []
-#     list_tags_new_script_src = []
-#     tags_script = soup.find_all('script', src=True)
-#     for tag in tags_script:
-#         script_src = tag.get('src')
-#         # if is_extension(script_src):
-#         if script_src.startswith(domain_name):
-#             continue
-#         else:
-#             tag['src'] = urljoin(domain_name, script_src)
-#         script_src_new = tag['src']
-#         list_tags_script_src.append(script_src_new)
-#         tag['src'] = download_web_link(dir_path, script_src_new)
-#         list_tags_new_script_src.append(tag['src'])
-
-#     new_html = soup.prettify(formatter='html5')
-#     with open(file_path, 'w') as file:
-#         file.write(new_html)
-#     return (list_tags_img_src, list_tags_new_img_src,
-#             list_tags_script_src, list_tags_new_script_src,
-#             list_tags_href, list_tags_new_href)
+def get_soup(file_path):
+    with open(file_path) as f:
+        data = f.read()
+        soup = BeautifulSoup(data, "html.parser")
+    return soup
 
 
 def change_tags(dir_to_download, file_path, domain_name):
     dict_tags = {}
     list_tags = []
-    with open(file_path) as f:
-        data = f.read()
-        soup = BeautifulSoup(data, "html.parser")
+    # with open(file_path) as f:
+    #     data = f.read()
+    #     soup = BeautifulSoup(data, "html.parser")
+    soup = get_soup(file_path)
 
     tags_img = soup.find_all('img', src=True)
     tags_script = soup.find_all('script', src=True)
@@ -236,16 +199,18 @@ def change_tags(dir_to_download, file_path, domain_name):
     return file_path
 
 
-def download_web_link(dir_to_download, url, domain_name):
+def download_web_link(dir_to_download, url, domain_name, ext='html'):
     if url.startswith(domain_name):
         response = requests.get(url, headers=HEADERS)
         # !  # download the body of response by chunk, not immediately
         response.raise_for_status()
-        file_name = get_file_name(url, ext='html')
+        file_name = get_file_name(url, ext)
         file_path = os.path.join(dir_to_download, file_name)
         with open(file_path, 'wb') as file:
             file.write(response.content)
-    return file_name
+    print('download_web_link(dir_to_download, url, domain_name, ext="html") -> ', file_path)
+    print()
+    return file_path
 
 
 def download(path, url):
@@ -260,6 +225,9 @@ def download(path, url):
     dir_to_download = create_dir_from_web(path, url)
     web_page_path = get_web_content(url, ext, dir_to_download)
     change_tags(dir_to_download, web_page_path, domain_name)
+    print('-----------------------')
+    print()
+    print('get_web_content:')
     print('Page was successfully downloaded into -> ', web_page_path)
     # TODO поменять web_page_path
     return dir_to_download
