@@ -1,13 +1,11 @@
 import pytest
 import requests
-import requests_mock
 from pathlib import Path
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
-from page_loader import loader
 from page_loader.loader import (download, convert_path_name,
-                                convert_relativ_link, get_dir_name, download_web_link,
-                                get_web_content, change_tags, HEADERS)
+                                convert_relativ_link, get_dir_name,
+                                download_web_link, get_web_content)
 
 # ! Проверка создания директории для скаченного контента:
 
@@ -36,8 +34,8 @@ def test_page_loader_is_dir(requests_mock, tmp_path):
          'ru-hexlet-io-courses-page-html'),
         ('http://ru.hexlet.io/courses.page.html',
          'ru-hexlet-io-courses-page-html'),
-         ('//ru.hexlet.io/courses',
-          '--ru-hexlet-io-courses'),
+        ('//ru.hexlet.io/courses',
+         '--ru-hexlet-io-courses'),
     ]
 )
 def test_convert_path_name(url, correct_value):
@@ -66,12 +64,12 @@ def test_get_dir_name(url):
         ('/courses',
          'https://ru.hexlet.io',
          'https://ru.hexlet.io/courses'),
-         ('./courses',
+        ('./courses',
          'https://ru.hexlet.io',
          'https://ru.hexlet.io/courses'),
-         ('//ru.hexlet.io/courses',
+        ('//ru.hexlet.io/courses',
          'https://ru.hexlet.io',
-          '//ru.hexlet.io/courses'),
+         '//ru.hexlet.io/courses'),
     ]
 )
 def test_convert_relativ_link(link, domain_name, correct_value):
@@ -83,7 +81,7 @@ def test_convert_relativ_link(link, domain_name, correct_value):
 @pytest.mark.parametrize(
     'url, ext, file_with_content',
     [
-        ('http://test.com', 'html', 
+        ('http://test.com', 'html',
          'tests/fixtures/web_page.html')
     ]
 )
@@ -104,15 +102,15 @@ def test_get_web_content(requests_mock, file_with_content, url, ext, tmp_path):
 @pytest.mark.parametrize(
     'url, ext, domain_name',
     [
-        ('http://test.com/page', 'html', 
-          'http://test.com')
+        ('http://test.com/page', 'html',
+         'http://test.com')
     ]
 )
 def test_download_web_link(requests_mock, tmp_path, url, ext, domain_name):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
     requests_mock.get('http://test.com/page', text='<!DOCTYPE html>')
-    testing_file = download_web_link(dir_temp, url, domain_name, ext)
+    _, testing_file = download_web_link(dir_temp, url, domain_name, ext)
     with open(testing_file) as f:
         data = f.read()
     assert data == requests.get('http://test.com/page').text
@@ -125,7 +123,7 @@ def test_download_web_link(requests_mock, tmp_path, url, ext, domain_name):
     'img_from_web, img_local',
     [
         ('tests/fixtures/img_web.jpg',
-         'page_loader/data/vospitatel-com-ua-zaniatia-rastenia-lopuh-html_files/vospitatel-com-ua-images-l-lopuh.jpg')
+         'tests/fixtures/img_from_page_loader.jpg')
     ]
 )
 def test_diff_img(img_from_web, img_local):
@@ -137,20 +135,20 @@ def test_diff_img(img_from_web, img_local):
 # ! Проверка по тестовой странице:
 
 
-@pytest.mark.parametrize(
-    'file_result, file_with_content, domain_name',
-    [
-        ('tests/fixtures/web_page_result.html',
-         'tests/fixtures/web_page_link.html',
-         'https://ru.hexlet.io')
-    ]
-)
-def test_change_tags(tmp_path, file_result, file_with_content, domain_name):
-    tmp_dir = tmp_path / 'sub'
-    tmp_dir.mkdir()
-    testing_file = change_tags(tmp_dir, file_with_content, domain_name)
-    with open(file_result) as f1:
-        data1 = f1.read()
-    with open(testing_file) as f2:
-        data2 = f2.read()
-    assert data1 == data2
+# @pytest.mark.parametrize(
+#     'file_result, file_with_content, domain_name',
+#     [
+#         ('tests/fixtures/web_page_result.html',
+#          'tests/fixtures/web_page_link.html',
+#          'https://ru.hexlet.io')
+#     ]
+# )
+# def test_change_tags(tmp_path, file_result, file_with_content, domain_name):
+#     tmp_dir = tmp_path / 'sub'
+#     tmp_dir.mkdir()
+#     testing_file = change_tags(tmp_dir, file_with_content, domain_name)
+#     with open(file_result) as f1:
+#         data1 = f1.read()
+#     with open(testing_file) as f2:
+#         data2 = f2.read()
+#     assert data1 == data2

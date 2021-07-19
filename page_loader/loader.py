@@ -2,7 +2,7 @@ import os
 import os.path
 import requests
 import re
-from pathlib import PurePosixPath, Path
+from pathlib import PurePosixPath
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 
@@ -27,16 +27,6 @@ def is_valid(url):
 def is_extension(file):
     suff = PurePosixPath(file).suffix
     return bool(suff)
-
-
-
-
-# def convert_url_with_domain_name(url, domain_name):
-#     if url.startswith(domain_name):
-#         _, url = re.split('://', url)
-#         return re.sub(r'[\W_]', '-', url)
-#     else:
-#         return url
 
 
 def convert_relativ_link(link, domain_name):
@@ -66,23 +56,19 @@ def convert_path_name(path):
 
 def get_dir_name(path):
     res = convert_path_name(path) + '_files'
-    print('get_dir_name(path) -> ', res)
-    print()
     return res
 # >> ru-hexlet-io-courses_files
 
 
-def get_web_page_name(path, ext):
-    if is_extension(path):
-        part, suff = os.path.splitext(path)
+def get_web_page_name(url, ext):
+    if is_extension(url):
+        part, suff = os.path.splitext(url)
         if suff == 'html':
             name = convert_path_name(part) + suff
         else:
-            name = convert_path_name(path) + '.html'
+            name = convert_path_name(url) + '.html'
     else:
-        name = convert_path_name(path) + '.' + ext
-    print('get_file_name(path, ext="html") ->', name)
-    print()
+        name = convert_path_name(url) + '.' + ext
     return name
 
 
@@ -92,9 +78,8 @@ def get_file_name(path, ext):
         name = convert_path_name(part) + suff
     else:
         name = convert_path_name(path) + '.' + ext
-    print('get_file_name(path, ext="html") ->', name)
-    print()
     return name
+
 
 def create_dir_from_web(path, url):
     dir_path = os.path.join(path, get_dir_name(url))
@@ -103,8 +88,6 @@ def create_dir_from_web(path, url):
         # ! exist_ok=True - чтобы не возникало ошибок, если каталог существует
     except OSError:
         print(f'Failed to create a directory {dir_path}')
-    print('create_dir_from_web(path, url) -> ', dir_path)
-    print()
     return dir_path
 
 
@@ -119,8 +102,6 @@ def get_web_content(url, ext='html', path='page_loader/tmp'):
     # domain_name = urlparse(url).scheme + "://" + urlparse(url).netloc
     with open(file_path, 'wb') as file:
         file.write(response.content)
-    print('get_web_content(url, ext="html", path) -> ', file_path)
-    print()
     return file_path
     # ! response.raise_for_status() нужна для того, чтобы проверить,
     # ! понял вас сервер или нет. Если сервер вернёт 404 «Ресурс не найден»,
@@ -130,7 +111,6 @@ def get_web_content(url, ext='html', path='page_loader/tmp'):
     # ! которой нет.
     # ! Список режимов доступа к файлу, контекстный менеджер
     # ! http://pythonicway.com/python-fileio
-
 
 
 def get_img_src(path):
@@ -152,13 +132,13 @@ def get_soup(file_path):
     return soup
 
 
-def change_tags(dir_to_download, file_path, domain_name):
+def change_tags(dir_to_download, file_with_content, domain_name):
     dict_tags = {}
     list_tags = []
     # with open(file_path) as f:
     #     data = f.read()
     #     soup = BeautifulSoup(data, "html.parser")
-    soup = get_soup(file_path)
+    soup = get_soup(file_with_content)
 
     tags_img = soup.find_all('img', src=True)
     tags_script = soup.find_all('script', src=True)
@@ -194,9 +174,9 @@ def change_tags(dir_to_download, file_path, domain_name):
             tag['href'] = dict_tags[tag['href']]
 
     new_html = soup.prettify(formatter='html5')
-    with open(file_path, 'w') as file:
+    with open(file_with_content, 'w') as file:
         file.write(new_html)
-    return file_path
+    return file_with_content
 
 
 def download_web_link(dir_to_download, url, domain_name, ext='html'):
@@ -208,9 +188,7 @@ def download_web_link(dir_to_download, url, domain_name, ext='html'):
         file_path = os.path.join(dir_to_download, file_name)
         with open(file_path, 'wb') as file:
             file.write(response.content)
-    print('download_web_link(dir_to_download, url, domain_name, ext="html") -> ', file_path)
-    print()
-    return file_path
+    return file_name, file_path
 
 
 def download(path, url):
@@ -225,10 +203,6 @@ def download(path, url):
     dir_to_download = create_dir_from_web(path, url)
     web_page_path = get_web_content(url, ext, dir_to_download)
     change_tags(dir_to_download, web_page_path, domain_name)
-    print('-----------------------')
-    print()
-    print('get_web_content:')
     print('Page was successfully downloaded into -> ', web_page_path)
-    # TODO поменять web_page_path
     return dir_to_download
 # >> возвращает путь: page_loader/data/ru-hexlet-io-courses_files

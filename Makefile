@@ -2,7 +2,7 @@ install:
 	poetry install
 
 page-loader:
-	poetry run page-loader --output page_loader/data https://httpbin.org
+	poetry run page-loader --output page_loader/data http://vospitatel.com.ua/zaniatia/rastenia/vinograd.html
 
 # http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html
 
@@ -16,6 +16,7 @@ page-loader:
 # https://linzi-vsem.ru/karnavalnye/linzy-sharingan/
 # https://ru.hexlet.io/courses
 # https://httpbin.org
+# https://m.nkj.ru/news/31331/
 
 build:
 	poetry build
@@ -28,7 +29,6 @@ lint:
 	poetry run flake8 tests
 
 test:
-	poetry run pytest -vv -s test_change_tags --cov=page_loader tests/
-# --cov-report xml
+	poetry run pytest -v --cov=page_loader tests/ --cov-report xml
 
 .PHONY: install build package-install lint page-loader test
