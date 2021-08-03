@@ -26,3 +26,6 @@ Page-loader is a command-line utility that downloads pages from the Internet and
 
 #### Asciinema step4:
 [![asciicast](https://asciinema.org/a/mGcD16tlA3LBYh8D82OlO8B14.svg)](https://asciinema.org/a/mGcD16tlA3LBYh8D82OlO8B14)
+
+#### Asciinema step5:
+[![asciicast](https://asciinema.org/a/bV12dNP1YviNbKM0AAYmXf3i4.svg)](https://asciinema.org/a/bV12dNP1YviNbKM0AAYmXf3i4)

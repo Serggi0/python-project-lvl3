@@ -1,24 +1,12 @@
 import pytest
 import requests
-from pathlib import Path
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
-from page_loader.loader import (download, convert_path_name,
+from page_loader.loader import (convert_path_name,
                                 convert_relativ_link, get_dir_name,
-                                download_web_link, get_web_content)
+                                download_web_link, get_web_content,
+                                get_response_server)
 
-# ! Проверка создания директории для скаченного контента:
-
-
-def test_page_loader_is_dir(requests_mock, tmp_path):
-    url = 'http://test.com'
-    dir_temp = tmp_path / 'sub'
-    dir_temp.mkdir()
-
-    requests_mock.get('http://test.com', text='<!DOCTYPE html>')
-    # https://requests-mock.readthedocs.io/en/latest/mocker.html#methods
-    download(dir_temp, url)
-    assert Path(dir_temp).is_dir()
 
 # ! Проверка конверттации URL по заданному шаблону:
 
@@ -100,17 +88,16 @@ def test_get_web_content(requests_mock, file_with_content, url, ext, tmp_path):
 
 
 @pytest.mark.parametrize(
-    'url, ext, domain_name',
+    'url, ext',
     [
-        ('http://test.com/page', 'html',
-         'http://test.com')
+        ('http://test.com/page', 'html')
     ]
 )
-def test_download_web_link(requests_mock, tmp_path, url, ext, domain_name):
+def test_download_web_link(requests_mock, tmp_path, url, ext):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
     requests_mock.get('http://test.com/page', text='<!DOCTYPE html>')
-    _, testing_file = download_web_link(dir_temp, url, domain_name, ext)
+    _, testing_file = download_web_link(dir_temp, url, ext)
     with open(testing_file) as f:
         data = f.read()
     assert data == requests.get('http://test.com/page').text
@@ -135,20 +122,31 @@ def test_diff_img(img_from_web, img_local):
 # ! Проверка по тестовой странице:
 
 
-# @pytest.mark.parametrize(
-#     'file_result, file_with_content, domain_name',
-#     [
-#         ('tests/fixtures/web_page_result.html',
-#          'tests/fixtures/web_page_link.html',
-#          'https://ru.hexlet.io')
-#     ]
-# )
-# def test_change_tags(tmp_path, file_result, file_with_content, domain_name):
-#     tmp_dir = tmp_path / 'sub'
-#     tmp_dir.mkdir()
-#     testing_file = change_tags(tmp_dir, file_with_content, domain_name)
-#     with open(file_result) as f1:
-#         data1 = f1.read()
-#     with open(testing_file) as f2:
-#         data2 = f2.read()
-#     assert data1 == data2
+@pytest.mark.parametrize(
+    'file_result, file_with_content, domain_name',
+    [
+        ('tests/fixtures/web_page.html',
+         'page_loader/data/vospitatel-com-ua-zaniatia-rastenia-'
+         'lopuh-html_files/vospitatel-com-ua-zaniatia-rastenia-'
+         'lopuh-html.html',
+         'http://vospitatel.com.ua')
+    ]
+)
+def diff(file_result, file_with_content, domain_name):
+    with open(file_result) as f1:
+        data1 = f1.read()
+    with open(file_with_content) as f2:
+        data2 = f2.read()
+    assert data1 == data2
+
+
+@pytest.mark.parametrize(
+    'url, text',
+    [
+        ('https://httpbin.org/status/404',
+         'Not Found. The server cannot find the requested resource.'),
+        ('https://httpbin.org/status/504', 'Gateway Timeout')
+    ]
+)
+def test_get_response_server(url, text):
+    assert get_response_server(url) == text

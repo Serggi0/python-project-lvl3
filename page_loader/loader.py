@@ -1,3 +1,4 @@
+import sys
 import os
 import os.path
 import requests
@@ -7,6 +8,7 @@ from pathlib import PurePosixPath
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 from page_loader.settings_logging import logger_config
+from page_loader.response_status_codes import response_codes
 
 
 # ! чтобы сайт не идентифицировал как бота
@@ -20,6 +22,7 @@ HEADERS = {
 
 logging.config.dictConfig(logger_config)  # загрузка словаря
 logger = logging.getLogger('app_logger')  # получение логгера
+logger_for_console = logging.getLogger('logger_for_console')
 
 
 def is_valid(url):
@@ -33,19 +36,36 @@ def is_extension(file):
     return bool(suff)
 
 
+def get_response_server(url):
+    try:
+        response = requests.get(url, headers=HEADERS)
+        # response.raise_for_status()
+        code = response.status_code
+        for k, v in response_codes.items():
+            if code == k:
+                print(f'{url}: ', v)
+                logger.debug((code, v, url))
+                if k >= 400:
+                    return v
+        return response
+    except AttributeError:
+        logger.exception('AttributeError')
+        sys.exit('Unable to get content')
+    except requests.exceptions.ConnectionError:
+        logger.exception('Connection error occurred')
+        sys.exit('Connection error occurred')
+    except requests.exceptions.HTTPError:
+        logger.exception('HTTP Error occured')
+        sys.exit('HTTP Error occured')
+
+
 def convert_relativ_link(link, domain_name):
     if link.startswith('//', 0, 2):
         return link
     else:
         return urljoin(domain_name, link)
-# конвертирует относительную ссылку на локальные ресурсы в абсолютную
+# конвертирует относительную ссылку на локальные ресурсы сайта в абсолютную
 # converts a relative reference to local resources to an absolute one
-
-
-# def add_extension(path, ext):
-#     name = convert_path_name(path) + '.' + ext
-#     return name
-# # >> ru-hexlet-io-courses.html
 
 
 def convert_path_name(path):
@@ -96,49 +116,41 @@ def create_dir_from_web(path, url):
     try:
         os.makedirs(dir_path, exist_ok=True)
         # ! exist_ok=True - чтобы не возникало ошибок, если каталог существует
+        logger.debug(
+            f'Function create_dir_from_web(path, url) return {dir_path}'
+            )
+        return dir_path
     except OSError:
-        logger.exception(f'Failed to create a directory {dir_path}')
+        logger_for_console.exception(
+            f'Failed to create a directory {dir_path}'
+            )
         # ! logger.exception или logger.debug(exc_info=True)
         # ! добавляет в лог Traceback - полное сообщение об ошибке
         # ! .exception автоматически включает уровень ERROR
-    logger.debug(f'Function create_dir_from_web(path, url) return {dir_path}')
-    return dir_path
 
 
 def get_web_content(url, ext='html', path='page_loader/tmp'):
-    # use response.content
-    response = requests.get(url, headers=HEADERS)
-    response.raise_for_status()
-    # dir_path = create_dir_from_web(path, url)
+    response = get_response_server(url)
+    # response.raise_for_status()
     page_name = get_web_page_name(url, 'html')
-
     file_path = os.path.join(path, page_name)
     logger.debug(f'Function create {file_path}')
-    # domain_name = urlparse(url).scheme + "://" + urlparse(url).netloc
-    with open(file_path, 'wb') as file:
-        file.write(response.content)
-    logger.debug(f'Function added content in {file_path}')
-    return file_path
+    try:
+        with open(file_path, 'wb') as file:
+            file.write(response.content)
+        logger.debug(f'Function added content in {file_path}')
+        return file_path
+    except OSError:
+        logger.exception(f'Failed to write content in {page_name}')
+        sys.exit(f'Failed to write content in {page_name}')
     # ! response.raise_for_status() нужна для того, чтобы проверить,
     # ! понял вас сервер или нет. Если сервер вернёт 404 «Ресурс не найден»,
     # ! то в response не будет странички сайта, а будет только “Ошибка 404”.
     # ! Если не вызвать raise_for_status, программа подумает, что всё в
     # !  порядке,что вы так и хотели: отправить запрос на страницу,
-    # ! которой нет.
+    # ! которой нет. https://devman.org/encyclopedia/modules/requests/
     # ! Список режимов доступа к файлу, контекстный менеджер
     # ! http://pythonicway.com/python-fileio
-
-
-def get_img_src(path):
-    tags_src = []
-    with open(path) as my_string:
-        soup = BeautifulSoup(my_string, "html.parser")
-        tags_img = soup.find_all('img', src=True)
-        for tag in tags_img:
-            src = tag.get('src')
-            if is_extension(src):
-                tags_src.append(src)
-    return tags_src
 
 
 def get_soup(file_path):
@@ -149,67 +161,54 @@ def get_soup(file_path):
     return soup
 
 
-def download_web_link(dir_to_download, url, domain_name, ext='html'):
-    if url.startswith(domain_name):
-        response = requests.get(url, headers=HEADERS)
-        # !  # download the body of response by chunk, not immediately
-        response.raise_for_status()
-        file_name = get_file_name(url, ext)
-        file_path = os.path.join(dir_to_download, file_name)
+def download_web_link(dir_to_download, url, ext='html'):
+    response = get_response_server(url)
+    file_name = get_file_name(url, ext)
+    file_path = os.path.join(dir_to_download, file_name)
+    try:
         with open(file_path, 'wb') as file:
             file.write(response.content)
+    except OSError:
+        logger.exception(f'Failed to write content in {file_name}')
+        sys.exit(f'Failed to write content in {file_name}')
     logger.debug(f'Function return {file_name} and {file_path}')
     return file_name, file_path
 
 
 def change_tags(dir_to_download, file_with_content, domain_name):
-    dict_tags = {}
-    list_tags = []
+    cnt = 0
     soup = get_soup(file_with_content)
+    tags = soup.find_all(['img', 'script', 'link'])
 
-    tags_img = soup.find_all('img', src=True)
-    tags_script = soup.find_all('script', src=True)
-    tags_link = soup.find_all('link', href=True)
+    for tag in tags:
+        if 'src' in tag.attrs:
+            link_src = convert_relativ_link(tag['src'], domain_name)
+            if link_src.startswith(domain_name):
+                tag['src'] = link_src
+                web_link_src, _ = download_web_link(dir_to_download, link_src)
+                # >> web_link_src - относительный путь из папки dir_to_download
+                tag['src'] = web_link_src
+                cnt += 1
+                logger.debug('Download ')
+            else:
+                logger.debug(f'{link_src} not in domain_name')
 
-    for tag in tags_img:
-        img_src = tag['src']
-        list_tags.append(img_src)
-        logger.debug(f'{img_src} added to list "list_tags"')
-    for tag in tags_script:
-        script_src = tag['src']
-        list_tags.append(script_src)
-        logger.debug(f'{script_src} added to list "list_tags"')
-    for tag in tags_link:
-        link_href = tag['href']
-        list_tags.append(link_href)
-        logger.debug(f'{link_href} added to list "list_tags"')
-    cnt = len(list_tags)
-    logger.debug(f'Total tags added: {cnt}')
-    for i in list_tags:
-        dict_tags[i] = convert_relativ_link(i, domain_name)
-        logger.debug('Converted relativ link')
+        if 'href' in tag.attrs:
+            link_href = convert_relativ_link(tag['href'], domain_name)
+            if link_href.startswith(domain_name):
+                tag['href'] = link_href
+                web_link_href, _ = download_web_link(dir_to_download,
+                                                     link_href)
+                tag['href'] = web_link_href
+                cnt += 1
+                logger.debug('Download ')
+            else:
+                logger.debug(f'{link_href} not in domain_name')
 
-    for k, v in dict_tags.items():
-        if v.startswith(domain_name):
-            dict_tags[k] = download_web_link(dir_to_download, v, domain_name)
-            logger.debug('Download ')
-        else:
-            logger.debug(f'{v} not in domain_name')
+    logger.debug(f'Total tags changed: {cnt}')
 
-    for tag in tags_img:
-        if tag['src'] in dict_tags.keys():
-            tag['src'] = dict_tags[tag['src']]
-            logger.debug('Change tag img_src')
-
-    for tag in tags_script:
-        if tag['src'] in dict_tags.keys():
-            tag['src'] = dict_tags[tag['src']]
-            logger.debug('Change tag script_src')
-
-    for tag in tags_link:
-        if tag['href'] in dict_tags.keys():
-            tag['href'] = dict_tags[tag['href']]
-            logger.debug('Change tag link_href')
+    if cnt == 0:
+        sys.exit(f'Tags not found in {file_with_content}')
 
     new_html = soup.prettify(formatter='html5')
     with open(file_with_content, 'w') as file:
@@ -221,12 +220,9 @@ def change_tags(dir_to_download, file_with_content, domain_name):
 def download(path, url):
     ext = 'html'
     domain_name = urlparse(url).scheme + "://" + urlparse(url).netloc
-    # domain_name = urlparse(url).netloc
     if not is_valid(url):
         print('Not a valid URL')
-
-    # path = os.path.abspath(path)
-    # ! path.abspath выдает абсолютный путь
+        sys.exit('Not a valid URL')
     dir_to_download = create_dir_from_web(path, url)
     web_page_path = get_web_content(url, ext, dir_to_download)
     change_tags(dir_to_download, web_page_path, domain_name)

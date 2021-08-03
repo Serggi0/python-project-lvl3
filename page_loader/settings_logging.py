@@ -16,6 +16,11 @@ logger_config = {
             # 'style': '{' ->
             # указывается из-за отличия стиля
             # форматирования от дефолтного
+        },
+        'console_format': {
+            'format':
+                '{message}',
+                'style': '{'
         }
     },
     # обработчики:
@@ -24,7 +29,7 @@ logger_config = {
             'class': 'logging.StreamHandler',
             # путь до конкретного класса в модуле logging
             'level': 'DEBUG',
-            'formatter': 'std_format'
+            'formatter': 'console_format'
         },
         'to_file': {
             'class': 'logging.FileHandler',
@@ -40,6 +45,10 @@ logger_config = {
             'level': 'DEBUG',
             'handlers': ['to_file']
             # 'propagate': False по умолчанию True
+        },
+        'logger_for_console': {
+            'level': 'DEBUG',
+            'handlers': ['console']
         }
     },
 

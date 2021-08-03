@@ -1,15 +1,9 @@
-2021-07-21 19:19:22,430 - DEBUG - app_logger - loader:create_dir_from_web:104  - Function create_dir_from_web(path, url) return /tmp/pytest-of-serggi0/pytest-164/test_page_loader_is_dir0/sub/test-com_files
-2021-07-21 19:19:22,438 - DEBUG - app_logger - loader:get_web_page_name:74  - Extension is available
-2021-07-21 19:19:22,438 - DEBUG - app_logger - loader:get_web_page_name:78  - Function return test-com.html
-2021-07-21 19:19:22,438 - DEBUG - app_logger - loader:get_web_content:116  - Function create /tmp/pytest-of-serggi0/pytest-164/test_page_loader_is_dir0/sub/test-com_files/test-com.html
-2021-07-21 19:19:22,438 - DEBUG - app_logger - loader:get_web_content:120  - Function added content in /tmp/pytest-of-serggi0/pytest-164/test_page_loader_is_dir0/sub/test-com_files/test-com.html
-2021-07-21 19:19:22,439 - DEBUG - app_logger - loader:get_soup:148  - From /tmp/pytest-of-serggi0/pytest-164/test_page_loader_is_dir0/sub/test-com_files/test-com.html create object BeautifulSoup
-2021-07-21 19:19:22,439 - DEBUG - app_logger - loader:change_tags:187  - Total tags added: 0
-2021-07-21 19:19:22,440 - DEBUG - app_logger - loader:change_tags:217  - New tags are written to the file, change_tags finished
-2021-07-21 19:19:22,544 - DEBUG - app_logger - loader:get_web_page_name:74  - Extension is available
-2021-07-21 19:19:22,545 - DEBUG - app_logger - loader:get_web_page_name:78  - Function return test-com.html
-2021-07-21 19:19:22,546 - DEBUG - app_logger - loader:get_web_content:116  - Function create /tmp/pytest-of-serggi0/pytest-164/test_get_web_content_http___te0/sub/test-com.html
-2021-07-21 19:19:22,546 - DEBUG - app_logger - loader:get_web_content:120  - Function added content in /tmp/pytest-of-serggi0/pytest-164/test_get_web_content_http___te0/sub/test-com.html
-2021-07-21 19:19:22,559 - DEBUG - app_logger - loader:get_file_name:89  - Added extension
-2021-07-21 19:19:22,560 - DEBUG - app_logger - loader:get_file_name:90  - Function return test-com-page.html
-2021-07-21 19:19:22,561 - DEBUG - app_logger - loader:download_web_link:161  - Function return test-com-page.html and /tmp/pytest-of-serggi0/pytest-164/test_download_web_link_http___0/sub/test-com-page.html
+2021-08-03 20:13:30,806 - DEBUG - app_logger - loader:get_web_page_name:94  - Extension is available
+2021-08-03 20:13:30,807 - DEBUG - app_logger - loader:get_web_page_name:98  - Function return test-com.html
+2021-08-03 20:13:30,808 - DEBUG - app_logger - loader:get_web_content:137  - Function create /tmp/pytest-of-serggi0/pytest-176/test_get_web_content_http___te0/sub/test-com.html
+2021-08-03 20:13:30,808 - DEBUG - app_logger - loader:get_web_content:141  - Function added content in /tmp/pytest-of-serggi0/pytest-176/test_get_web_content_http___te0/sub/test-com.html
+2021-08-03 20:13:30,825 - DEBUG - app_logger - loader:get_file_name:109  - Added extension
+2021-08-03 20:13:30,826 - DEBUG - app_logger - loader:get_file_name:110  - Function return test-com-page.html
+2021-08-03 20:13:30,826 - DEBUG - app_logger - loader:download_web_link:174  - Function return test-com-page.html and /tmp/pytest-of-serggi0/pytest-176/test_download_web_link_http___0/sub/test-com-page.html
+2021-08-03 20:13:31,519 - DEBUG - app_logger - loader:get_response_server:47  - (404, 'Not Found. The server cannot find the requested resource.', 'https://httpbin.org/status/404')
+2021-08-03 20:13:32,187 - DEBUG - app_logger - loader:get_response_server:47  - (504, 'Gateway Timeout', 'https://httpbin.org/status/504')

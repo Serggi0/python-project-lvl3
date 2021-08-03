@@ -2,7 +2,7 @@ install:
 	poetry install
 
 page-loader:
-	poetry run page-loader --output page_loader/data https://httpbin.org
+	poetry run page-loader --output page_loader/data https://ru.hexlet.io/courses
 
 # http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html
 
