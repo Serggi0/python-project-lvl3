@@ -15,7 +15,6 @@ from page_loader.settings_logging import logger_config
 from page_loader.response_status_codes import response_codes
 
 
-# ! чтобы сайт не идентифицировал как бота
 HEADERS = {
     'user-agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
@@ -24,15 +23,14 @@ HEADERS = {
 }
 
 
-logging.config.dictConfig(logger_config)  # загрузка словаря
-logger = logging.getLogger('app_logger')  # получение логгера
+logging.config.dictConfig(logger_config)
+logger = logging.getLogger('app_logger')
 logger_for_console = logging.getLogger('logger_for_console')
 
 
 def is_valid(url):
     parsed = urlparse(url)
     return bool(parsed.netloc) and bool(parsed.scheme)
-# ! Проверка url-адресов, является ли переданный URL-адрес действительным
 
 
 def is_extension(file):
@@ -43,10 +41,6 @@ def is_extension(file):
 def get_response_server(url):
     try:
         response = requests.get(url, headers=HEADERS, stream=True)
-        # bar = IncrementalBar(f'Downloading {url}',
-        # suffix='%(percent).1f%%', color='green')
-        # file_size = int(response.headers.get("Content-Length", 0))
-        # response.raise_for_status()
         code = response.status_code
         for k, v in response_codes.items():
             if code == k:
@@ -54,21 +48,7 @@ def get_response_server(url):
                 logger.debug((code, v, url))
                 if k >= 400:
                     return v
-        # with IncrementalBar(f'Downloading {url}', max=file_size,
-        # suffix='%(percent).1f%%', color='green') as bar:
-        #     for i in range(file_size):
-        #         bar.next()
-        #         sleep(0.00000001)
-        #     bar.finish()
-        # for i in trange(file_size):
-        #     sleep(0.001)
         return response
-        # progress = tqdm(response.iter_content(1024),
-        # f"Downloading {url}", total=file_size,
-        # unit_scale=True, unit_divisor=1024)
-        # for data in progress.iterable:
-        #     sleep(0.001)
-        #     progress.update(len(data))
     except AttributeError:
         logger.exception('AttributeError')
         sys.exit('Unable to get content')
@@ -85,24 +65,17 @@ def convert_relativ_link(link, domain_name):
         return link
     else:
         return urljoin(domain_name, link)
-# конвертирует относительную ссылку на локальные ресурсы сайта в абсолютную
-# converts a relative reference to local resources to an absolute one
 
 
 def convert_path_name(path):
     if path.startswith('http'):
         _, path = re.split('://', path)
     return re.sub(r'[\W_]', '-', path)
-# ! re.sub возвращает новую строку, полученную в результате замены
-# ! по шаблону. Использовал регулярные выражения,
-# ! https://proglib.io/p/regex-for-beginners/
-# >> ru-hexlet-io-courses
 
 
 def get_dir_name(path):
     res = convert_path_name(path) + '_files'
     return res
-# >> ru-hexlet-io-courses_files
 
 
 def get_web_page_name(url, ext):
@@ -136,7 +109,6 @@ def create_dir_from_web(path, url):
     dir_path = os.path.join(path, get_dir_name(url))
     try:
         os.makedirs(dir_path, exist_ok=True)
-        # ! exist_ok=True - чтобы не возникало ошибок, если каталог существует
         logger.debug(
             f'Function create_dir_from_web(path, url) return {dir_path}'
             )
@@ -145,14 +117,10 @@ def create_dir_from_web(path, url):
         logger_for_console.exception(
             f'Failed to create a directory {dir_path}'
             )
-        # ! logger.exception или logger.debug(exc_info=True)
-        # ! добавляет в лог Traceback - полное сообщение об ошибке
-        # ! .exception автоматически включает уровень ERROR
 
 
 def get_web_content(url, ext='html', path='page_loader/tmp'):
     response = get_response_server(url)
-    # response.raise_for_status()
     page_name = get_web_page_name(url, 'html')
     file_path = os.path.join(path, page_name)
     try:
@@ -168,14 +136,6 @@ def get_web_content(url, ext='html', path='page_loader/tmp'):
     except OSError:
         logger.exception(f'Failed to write content in {page_name}')
         sys.exit(f'Failed to write content in {page_name}')
-    # ! response.raise_for_status() нужна для того, чтобы проверить,
-    # ! понял вас сервер или нет. Если сервер вернёт 404 «Ресурс не найден»,
-    # ! то в response не будет странички сайта, а будет только “Ошибка 404”.
-    # ! Если не вызвать raise_for_status, программа подумает, что всё в
-    # !  порядке,что вы так и хотели: отправить запрос на страницу,
-    # ! которой нет. https://devman.org/encyclopedia/modules/requests/
-    # ! Список режимов доступа к файлу, контекстный менеджер
-    # ! http://pythonicway.com/python-fileio
 
 
 def get_soup(file_path):
@@ -197,10 +157,6 @@ def download_web_link(dir_to_download, url, ext='html'):
             for data in bar.iter(response.iter_content(1024)):
                 bar.next
                 sleep(0.0001)
-            # bar.finish()
-    # bar = Bar(f'Downloading {url}',
-    # max=file_size, suffix='%(percent).1f%%', color='yellow')
-
         logger.debug(f'Function return {file_name} and {file_path}')
         return file_name, file_path
     except OSError:
@@ -249,14 +205,6 @@ def change_tags(dir_to_download, file_with_content, domain_name):
             file.write(new_html)
             for i in tqdm(new_html, 'File write... '):
                 sleep(0.00001)
-            # for data in new_html:
-            #     # sleep(0.0000001)
-                # progress.update(len(data))
-            # with MoonSpinner('Processing…') as bar:
-            #     for data in bar.iter(new_html):
-            #         bar.next
-                #     sleep(0.0000001)
-                # bar.finish()
         logger.debug('New tags are written to the file, change_tags finished')
         print()
         return file_with_content

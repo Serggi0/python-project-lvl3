@@ -8,9 +8,6 @@ from page_loader.loader import (convert_path_name,
                                 get_response_server)
 
 
-# ! Проверка конверттации URL по заданному шаблону:
-
-
 @pytest.mark.parametrize(
     'url, correct_value',
     [
@@ -40,8 +37,6 @@ def test_get_dir_name(url):
     result = get_dir_name(url)
     assert result == 'ru-hexlet-io-courses-html_files'
 
-# ! Проверка изменения относительной ссылки на локальные ресурсы в абсолютную:
-
 
 @pytest.mark.parametrize(
     'link, domain_name, correct_value',
@@ -63,8 +58,6 @@ def test_get_dir_name(url):
 def test_convert_relativ_link(link, domain_name, correct_value):
     assert convert_relativ_link(link, domain_name) == correct_value
 
-# ! Проверка идентичности скаченного контента:
-
 
 @pytest.mark.parametrize(
     'url, ext, file_with_content',
@@ -84,8 +77,6 @@ def test_get_web_content(requests_mock, file_with_content, url, ext, tmp_path):
         data2 = f2.read()
     assert data2 == requests.get('http://test.com').text
 
-# ! Проверка скачивания ссылки в документе:
-
 
 @pytest.mark.parametrize(
     'url, ext',
@@ -103,9 +94,6 @@ def test_download_web_link(requests_mock, tmp_path, url, ext):
     assert data == requests.get('http://test.com/page').text
 
 
-# ! Проверка идентичности скаченных картинок по-пиксельно:
-
-
 @pytest.mark.parametrize(
     'img_from_web, img_local',
     [
@@ -118,8 +106,6 @@ def test_diff_img(img_from_web, img_local):
     img2 = Image.open(img_local)
     differences = ImageChops.difference(img1, img2)
     assert differences.getbbox() is None
-
-# ! Проверка по тестовой странице:
 
 
 @pytest.mark.parametrize(
