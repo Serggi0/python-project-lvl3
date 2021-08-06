@@ -5,9 +5,9 @@
 
 <!-- [! [Статус действий YourActionName] (https://github.com/ { userName } / { repoName } / workflows / { workflowName } /badge.svg)] (https://github.com/ { userName } / { repoName } / action) -->
 
-[![lint & test GitHub action](https://github.com/Serggi0/python-project-lvl3/actions/workflows/github_action_.yaml/badge.svg?branch=develop)](https://github.com/Serggi0/python-project-lvl3/actions/workflows/github_action_.yaml)  *GitHub action badge for **develop** branch*
-
 [![Maintainability](https://api.codeclimate.com/v1/badges/f6ba19bc9e1493dbd1ce/maintainability)](https://codeclimate.com/github/Serggi0/python-project-lvl3/maintainability)  *CodeClimate Maintainability badge*
+
+[![Test Coverage](https://api.codeclimate.com/v1/badges/f6ba19bc9e1493dbd1ce/test_coverage)](https://codeclimate.com/github/Serggi0/python-project-lvl3/test_coverage)  *CodeClimate test coverage badge*
 
 This is third training project on [Hexlet.io](https://ru.hexlet.io) course.
 
