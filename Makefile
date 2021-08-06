@@ -2,7 +2,7 @@ install:
 	poetry install
 
 page-loader:
-	poetry run page-loader --output page_loader/data https://ru.hexlet.io/courses
+	poetry run page-loader --output page_loader/data http://vospitatel.com.ua/zaniatia/rastenia/vinograd.html
 
 # http://vospitatel.com.ua/zaniatia/rastenia/lopuh.html
 
@@ -13,7 +13,6 @@ page-loader:
 # http://oldmuzzle.ru/flora/taraxacum-officinale.html
 	
 # https://animaljournal.ru/article/koshka_ocelot
-# https://linzi-vsem.ru/karnavalnye/linzy-sharingan/
 # https://ru.hexlet.io/courses
 # https://httpbin.org
 # https://m.nkj.ru/news/31331/

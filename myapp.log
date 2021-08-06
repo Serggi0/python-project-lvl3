@@ -1,9 +1,8 @@
-2021-08-03 20:13:30,806 - DEBUG - app_logger - loader:get_web_page_name:94  - Extension is available
-2021-08-03 20:13:30,807 - DEBUG - app_logger - loader:get_web_page_name:98  - Function return test-com.html
-2021-08-03 20:13:30,808 - DEBUG - app_logger - loader:get_web_content:137  - Function create /tmp/pytest-of-serggi0/pytest-176/test_get_web_content_http___te0/sub/test-com.html
-2021-08-03 20:13:30,808 - DEBUG - app_logger - loader:get_web_content:141  - Function added content in /tmp/pytest-of-serggi0/pytest-176/test_get_web_content_http___te0/sub/test-com.html
-2021-08-03 20:13:30,825 - DEBUG - app_logger - loader:get_file_name:109  - Added extension
-2021-08-03 20:13:30,826 - DEBUG - app_logger - loader:get_file_name:110  - Function return test-com-page.html
-2021-08-03 20:13:30,826 - DEBUG - app_logger - loader:download_web_link:174  - Function return test-com-page.html and /tmp/pytest-of-serggi0/pytest-176/test_download_web_link_http___0/sub/test-com-page.html
-2021-08-03 20:13:31,519 - DEBUG - app_logger - loader:get_response_server:47  - (404, 'Not Found. The server cannot find the requested resource.', 'https://httpbin.org/status/404')
-2021-08-03 20:13:32,187 - DEBUG - app_logger - loader:get_response_server:47  - (504, 'Gateway Timeout', 'https://httpbin.org/status/504')
+2021-08-06 19:02:58,643 - DEBUG - app_logger - loader:get_web_page_name:115  - Extension is available
+2021-08-06 19:02:58,643 - DEBUG - app_logger - loader:get_web_page_name:119  - Function return test-com.html
+2021-08-06 19:03:07,905 - DEBUG - app_logger - loader:get_web_content:166  - Function added content in /tmp/pytest-of-serggi0/pytest-177/test_get_web_content_http___te0/sub/test-com.html
+2021-08-06 19:03:07,919 - DEBUG - app_logger - loader:get_file_name:130  - Added extension
+2021-08-06 19:03:07,919 - DEBUG - app_logger - loader:get_file_name:131  - Function return test-com-page.html
+2021-08-06 19:03:07,920 - DEBUG - app_logger - loader:download_web_link:204  - Function return test-com-page.html and /tmp/pytest-of-serggi0/pytest-177/test_download_web_link_http___0/sub/test-com-page.html
+2021-08-06 19:03:08,562 - DEBUG - app_logger - loader:get_response_server:54  - (404, 'Not Found. The server cannot find the requested resource.', 'https://httpbin.org/status/404')
+2021-08-06 19:03:09,118 - DEBUG - app_logger - loader:get_response_server:54  - (504, 'Gateway Timeout', 'https://httpbin.org/status/504')

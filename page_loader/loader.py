@@ -6,6 +6,10 @@ import re
 import logging.config
 from pathlib import PurePosixPath
 from bs4 import BeautifulSoup
+from tqdm import tqdm
+from progress.bar import Bar
+from progress.spinner import MoonSpinner
+from time import sleep
 from urllib.parse import urljoin, urlparse
 from page_loader.settings_logging import logger_config
 from page_loader.response_status_codes import response_codes
@@ -38,7 +42,10 @@ def is_extension(file):
 
 def get_response_server(url):
     try:
-        response = requests.get(url, headers=HEADERS)
+        response = requests.get(url, headers=HEADERS, stream=True)
+        # bar = IncrementalBar(f'Downloading {url}',
+        # suffix='%(percent).1f%%', color='green')
+        # file_size = int(response.headers.get("Content-Length", 0))
         # response.raise_for_status()
         code = response.status_code
         for k, v in response_codes.items():
@@ -47,7 +54,21 @@ def get_response_server(url):
                 logger.debug((code, v, url))
                 if k >= 400:
                     return v
+        # with IncrementalBar(f'Downloading {url}', max=file_size,
+        # suffix='%(percent).1f%%', color='green') as bar:
+        #     for i in range(file_size):
+        #         bar.next()
+        #         sleep(0.00000001)
+        #     bar.finish()
+        # for i in trange(file_size):
+        #     sleep(0.001)
         return response
+        # progress = tqdm(response.iter_content(1024),
+        # f"Downloading {url}", total=file_size,
+        # unit_scale=True, unit_divisor=1024)
+        # for data in progress.iterable:
+        #     sleep(0.001)
+        #     progress.update(len(data))
     except AttributeError:
         logger.exception('AttributeError')
         sys.exit('Unable to get content')
@@ -134,10 +155,14 @@ def get_web_content(url, ext='html', path='page_loader/tmp'):
     # response.raise_for_status()
     page_name = get_web_page_name(url, 'html')
     file_path = os.path.join(path, page_name)
-    logger.debug(f'Function create {file_path}')
     try:
         with open(file_path, 'wb') as file:
             file.write(response.content)
+            with MoonSpinner(f'Load {page_name}  ') as bar:
+                for data in bar.iter(response.iter_content()):
+                    bar.next
+                    sleep(0.0001)
+                bar.finish()
         logger.debug(f'Function added content in {file_path}')
         return file_path
     except OSError:
@@ -165,14 +190,22 @@ def download_web_link(dir_to_download, url, ext='html'):
     response = get_response_server(url)
     file_name = get_file_name(url, ext)
     file_path = os.path.join(dir_to_download, file_name)
+    bar = Bar(f'Write {file_name}', suffix='%(percent)d%%', color='blue')
     try:
         with open(file_path, 'wb') as file:
             file.write(response.content)
+            for data in bar.iter(response.iter_content(1024)):
+                bar.next
+                sleep(0.0001)
+            # bar.finish()
+    # bar = Bar(f'Downloading {url}',
+    # max=file_size, suffix='%(percent).1f%%', color='yellow')
+
+        logger.debug(f'Function return {file_name} and {file_path}')
+        return file_name, file_path
     except OSError:
         logger.exception(f'Failed to write content in {file_name}')
         sys.exit(f'Failed to write content in {file_name}')
-    logger.debug(f'Function return {file_name} and {file_path}')
-    return file_name, file_path
 
 
 def change_tags(dir_to_download, file_with_content, domain_name):
@@ -191,7 +224,7 @@ def change_tags(dir_to_download, file_with_content, domain_name):
                 cnt += 1
                 logger.debug('Download ')
             else:
-                logger.debug(f'{link_src} not in domain_name')
+                logger.debug(f'{link_src} not in domain_name or repeated')
 
         if 'href' in tag.attrs:
             link_href = convert_relativ_link(tag['href'], domain_name)
@@ -203,7 +236,7 @@ def change_tags(dir_to_download, file_with_content, domain_name):
                 cnt += 1
                 logger.debug('Download ')
             else:
-                logger.debug(f'{link_href} not in domain_name')
+                logger.debug(f'{link_href} not in domain_name or repeated')
 
     logger.debug(f'Total tags changed: {cnt}')
 
@@ -211,10 +244,25 @@ def change_tags(dir_to_download, file_with_content, domain_name):
         sys.exit(f'Tags not found in {file_with_content}')
 
     new_html = soup.prettify(formatter='html5')
-    with open(file_with_content, 'w') as file:
-        file.write(new_html)
-    logger.debug('New tags are written to the file, change_tags finished')
-    return file_with_content
+    try:
+        with open(file_with_content, 'w') as file:
+            file.write(new_html)
+            for i in tqdm(new_html, 'File write... '):
+                sleep(0.00001)
+            # for data in new_html:
+            #     # sleep(0.0000001)
+                # progress.update(len(data))
+            # with MoonSpinner('Processing…') as bar:
+            #     for data in bar.iter(new_html):
+            #         bar.next
+                #     sleep(0.0000001)
+                # bar.finish()
+        logger.debug('New tags are written to the file, change_tags finished')
+        print()
+        return file_with_content
+    except OSError:
+        logger.exception(f'Failed to write content in {file_with_content}')
+        sys.exit(f'Failed to write content in {file_with_content}')
 
 
 def download(path, url):
@@ -225,7 +273,5 @@ def download(path, url):
         sys.exit('Not a valid URL')
     dir_to_download = create_dir_from_web(path, url)
     web_page_path = get_web_content(url, ext, dir_to_download)
-    change_tags(dir_to_download, web_page_path, domain_name)
-    print('Page was successfully downloaded into -> ', web_page_path)
-    return dir_to_download
-# >> возвращает путь: page_loader/data/ru-hexlet-io-courses_files
+    result = change_tags(dir_to_download, web_page_path, domain_name)
+    return result
