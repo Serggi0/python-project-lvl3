@@ -15,14 +15,6 @@ from page_loader.settings_logging import logger_config
 from page_loader.response_status_codes import response_codes
 
 
-HEADERS = {
-    'user-agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-        'AppleWebKit/537.36 (KHTML, like Gecko)'
-        'Chrome/91.0.4472.101 Safari/537.36'
-}
-
-
 logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
 logger_for_console = logging.getLogger('logger_for_console')
@@ -40,7 +32,7 @@ def is_extension(file):
 
 def get_response_server(url):
     try:
-        response = requests.get(url, headers=HEADERS, stream=True)
+        response = requests.get(url, stream=True)
         code = response.status_code
         for k, v in response_codes.items():
             if code == k:
@@ -218,7 +210,7 @@ def download(path, url):
     domain_name = urlparse(url).scheme + "://" + urlparse(url).netloc
     if not is_valid(url):
         print('Not a valid URL')
-        sys.exit('Not a valid URL')
+        # sys.exit('Not a valid URL')
     dir_to_download = create_dir_from_web(path, url)
     web_page_path = get_web_content(url, ext, dir_to_download)
     result = change_tags(dir_to_download, web_page_path, domain_name)
