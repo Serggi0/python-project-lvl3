@@ -2,10 +2,10 @@ import pytest
 import requests
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
-from page_loader.loader import (convert_path_name,
-                                convert_relativ_link, get_dir_name,
-                                download_web_link, get_web_content,
-                                get_response_server)
+from page_loader.page_loader import (convert_path_name,
+                                     convert_relativ_link, get_dir_name,
+                                     download_web_link, get_web_content,
+                                     get_response_server)
 
 
 @pytest.mark.parametrize(
