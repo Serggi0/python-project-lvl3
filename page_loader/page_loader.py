@@ -6,6 +6,7 @@ import re
 import logging.config
 from pathlib import PurePosixPath
 from bs4 import BeautifulSoup
+from requests.models import MissingSchema
 from tqdm import tqdm
 from progress.bar import Bar
 from progress.spinner import MoonSpinner
@@ -41,6 +42,9 @@ def get_response_server(url):
                 if k >= 400:
                     return v
         return response
+    except MissingSchema:
+        logger.exception('URL is not complete')
+        sys.exit('Invalid URL')
     except AttributeError:
         logger.exception('AttributeError')
         sys.exit('Unable to get content')
