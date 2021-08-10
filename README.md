@@ -13,6 +13,9 @@ This is third training project on [Hexlet.io](https://ru.hexlet.io) course.
 
 Page-loader is a command-line utility that downloads pages from the Internet and saves them on your computer. Together with the page, it downloads all the resources (images, styles, and js), allowing you to open the page without the Internet.
 
+<details>
+<summary>Examples of working the programm:</summary>
+
 #### Asciinema step1:
 [![asciicast](https://asciinema.org/a/7hYK6eUqGKHmGHrlfnqbkn1Yx.svg)](https://asciinema.org/a/7hYK6eUqGKHmGHrlfnqbkn1Yx)
 
@@ -30,3 +33,4 @@ Page-loader is a command-line utility that downloads pages from the Internet and
 
 #### Asciinema step6:
 [![asciicast](https://asciinema.org/a/gajXHWvoFj7Z6uwUSH9T5T8RL.svg)](https://asciinema.org/a/gajXHWvoFj7Z6uwUSH9T5T8RL)
+</details>
