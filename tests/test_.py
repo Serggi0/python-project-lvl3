@@ -3,9 +3,8 @@ import requests
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
 from page_loader.page_loader import (write_web_content)
-from page_loader.web_requests import (get_response_server)
-from page_loader.pathes import (convert_path_name,
-                                 convert_relativ_link,get_dir_name,)
+from page_loader.pathes import (convert_path_name, convert_relativ_link,
+                                get_dir_name)
 
 
 @pytest.mark.parametrize(
@@ -107,7 +106,7 @@ def test_diff_img(img_from_web, img_local):
     differences = ImageChops.difference(img1, img2)
     assert differences.getbbox() is None
 
-# todo исправить параметры - убрать ссылку на /data/ все д.б. в /fixtures
+
 @pytest.mark.parametrize(
     'file_result, file_with_content',
     [

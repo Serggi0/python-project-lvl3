@@ -4,7 +4,6 @@ import os.path
 import requests
 import logging.config
 from progress.bar import Bar
-from progress.spinner import MoonSpinner
 from time import sleep
 from page_loader.settings_logging import logger_config
 from page_loader.pathes import get_file_name
@@ -26,13 +25,13 @@ def get_response_server(url):
         if response.ok:
             print(f'{url}:  OK')
         response.raise_for_status()
+        return response
     except requests.exceptions.HTTPError as http_error:
         logger.exception('HTTP Error occured')
         print(f'HTTP error occurred: {http_error}')
     except Exception as error:
         logger.exception('Other error occurred')
-        print(f'Other error occurred: {error}') 
-    return response
+        print(f'Other error occurred: {error}')
 
 
 def write_web_content(dir_to_download, url, ext='html'):
@@ -47,9 +46,9 @@ def write_web_content(dir_to_download, url, ext='html'):
                 bar.next
                 sleep(0.0001)
             bar.finish()
-        logger.debug(f'Function added content and return {file_name} and {file_path}')
+        logger.debug(f'Function added content and return'
+                     f' {file_name} and {file_path}')
+        return file_name, file_path
     except OSError:
         logger.exception(f'Failed to write content in {file_name}')
         sys.exit(f'Failed to write content in {file_name}')
-    return file_name, file_path
-

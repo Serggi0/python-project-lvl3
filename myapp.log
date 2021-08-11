@@ -1,60 +1,10 @@
-2021-08-11 15:12:44,040 - DEBUG - app_logger - pathes:create_dir_from_web:69  - Function create_dir_from_web(path, url) return page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files
-2021-08-11 15:12:44,041 - DEBUG - app_logger - web_requests:get_response_server:22  - Request to http://vospitatel.com.ua/zaniatia/rastenia/vinograd.html
-2021-08-11 15:12:44,190 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'http://vospitatel.com.ua/zaniatia/rastenia/vinograd.html')
-2021-08-11 15:12:44,191 - DEBUG - app_logger - pathes:get_file_name:57  - Extension is available
-2021-08-11 15:12:44,191 - DEBUG - app_logger - pathes:get_file_name:61  - Function return vospitatel-com-ua-zaniatia-rastenia-vinograd.html
-2021-08-11 15:12:44,217 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return vospitatel-com-ua-zaniatia-rastenia-vinograd.html and page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files/vospitatel-com-ua-zaniatia-rastenia-vinograd.html
-2021-08-11 15:12:44,250 - DEBUG - app_logger - page_loader:get_soup:26  - From page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files/vospitatel-com-ua-zaniatia-rastenia-vinograd.html create object BeautifulSoup
-2021-08-11 15:12:44,256 - DEBUG - app_logger - web_requests:get_response_server:22  - Request to http://vospitatel.com.ua/skin/css/main.css
-2021-08-11 15:12:44,349 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'http://vospitatel.com.ua/skin/css/main.css')
-2021-08-11 15:12:44,350 - DEBUG - app_logger - pathes:get_file_name:57  - Extension is available
-2021-08-11 15:12:44,350 - DEBUG - app_logger - pathes:get_file_name:61  - Function return vospitatel-com-ua-skin-css-main.css
-2021-08-11 15:12:44,357 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return vospitatel-com-ua-skin-css-main.css and page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files/vospitatel-com-ua-skin-css-main.css
-2021-08-11 15:12:44,358 - DEBUG - app_logger - page_loader:change_tags:56  - Download 
-2021-08-11 15:12:44,362 - DEBUG - app_logger - web_requests:get_response_server:22  - Request to http://vospitatel.com.ua/favicon.ico
-2021-08-11 15:12:44,467 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'http://vospitatel.com.ua/favicon.ico')
-2021-08-11 15:12:44,467 - DEBUG - app_logger - pathes:get_file_name:57  - Extension is available
-2021-08-11 15:12:44,467 - DEBUG - app_logger - pathes:get_file_name:61  - Function return vospitatel-com-ua-favicon.ico
-2021-08-11 15:12:44,471 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return vospitatel-com-ua-favicon.ico and page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files/vospitatel-com-ua-favicon.ico
-2021-08-11 15:12:44,471 - DEBUG - app_logger - page_loader:change_tags:56  - Download 
-2021-08-11 15:12:44,472 - DEBUG - app_logger - page_loader:change_tags:46  - https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js not in domain_name or repeated
-2021-08-11 15:12:44,472 - DEBUG - app_logger - web_requests:get_response_server:22  - Request to http://vospitatel.com.ua/js/main.js
-2021-08-11 15:12:44,627 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'http://vospitatel.com.ua/js/main.js')
-2021-08-11 15:12:44,627 - DEBUG - app_logger - pathes:get_file_name:57  - Extension is available
-2021-08-11 15:12:44,627 - DEBUG - app_logger - pathes:get_file_name:61  - Function return vospitatel-com-ua-js-main.js
-2021-08-11 15:12:44,628 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return vospitatel-com-ua-js-main.js and page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files/vospitatel-com-ua-js-main.js
-2021-08-11 15:12:44,628 - DEBUG - app_logger - page_loader:change_tags:44  - Download 
-2021-08-11 15:12:44,628 - DEBUG - app_logger - web_requests:get_response_server:22  - Request to http://vospitatel.com.ua/manifest.json
-2021-08-11 15:12:44,722 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'http://vospitatel.com.ua/manifest.json')
-2021-08-11 15:12:44,723 - DEBUG - app_logger - pathes:get_file_name:57  - Extension is available
-2021-08-11 15:12:44,723 - DEBUG - app_logger - pathes:get_file_name:61  - Function return vospitatel-com-ua-manifest.json
-2021-08-11 15:12:44,724 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return vospitatel-com-ua-manifest.json and page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files/vospitatel-com-ua-manifest.json
-2021-08-11 15:12:44,724 - DEBUG - app_logger - page_loader:change_tags:56  - Download 
-2021-08-11 15:12:44,725 - DEBUG - app_logger - web_requests:get_response_server:22  - Request to http://vospitatel.com.ua/images/v/vinograd.jpg
-2021-08-11 15:12:44,823 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'http://vospitatel.com.ua/images/v/vinograd.jpg')
-2021-08-11 15:12:44,824 - DEBUG - app_logger - pathes:get_file_name:57  - Extension is available
-2021-08-11 15:12:44,824 - DEBUG - app_logger - pathes:get_file_name:61  - Function return vospitatel-com-ua-images-v-vinograd.jpg
-2021-08-11 15:12:44,942 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return vospitatel-com-ua-images-v-vinograd.jpg and page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files/vospitatel-com-ua-images-v-vinograd.jpg
-2021-08-11 15:12:44,942 - DEBUG - app_logger - page_loader:change_tags:44  - Download 
-2021-08-11 15:12:44,943 - DEBUG - app_logger - web_requests:get_response_server:22  - Request to http://vospitatel.com.ua/images/l/loza.jpg
-2021-08-11 15:12:45,041 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'http://vospitatel.com.ua/images/l/loza.jpg')
-2021-08-11 15:12:45,042 - DEBUG - app_logger - pathes:get_file_name:57  - Extension is available
-2021-08-11 15:12:45,042 - DEBUG - app_logger - pathes:get_file_name:61  - Function return vospitatel-com-ua-images-l-loza.jpg
-2021-08-11 15:12:45,245 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return vospitatel-com-ua-images-l-loza.jpg and page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files/vospitatel-com-ua-images-l-loza.jpg
-2021-08-11 15:12:45,245 - DEBUG - app_logger - page_loader:change_tags:44  - Download 
-2021-08-11 15:12:45,245 - DEBUG - app_logger - web_requests:get_response_server:22  - Request to http://vospitatel.com.ua/images/v/vinogradnik.jpg
-2021-08-11 15:12:45,343 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'http://vospitatel.com.ua/images/v/vinogradnik.jpg')
-2021-08-11 15:12:45,343 - DEBUG - app_logger - pathes:get_file_name:57  - Extension is available
-2021-08-11 15:12:45,343 - DEBUG - app_logger - pathes:get_file_name:61  - Function return vospitatel-com-ua-images-v-vinogradnik.jpg
-2021-08-11 15:12:45,475 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return vospitatel-com-ua-images-v-vinogradnik.jpg and page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files/vospitatel-com-ua-images-v-vinogradnik.jpg
-2021-08-11 15:12:45,477 - DEBUG - app_logger - page_loader:change_tags:44  - Download 
-2021-08-11 15:12:45,477 - DEBUG - app_logger - web_requests:get_response_server:22  - Request to http://vospitatel.com.ua/images/v/vinograd2.jpg
-2021-08-11 15:12:45,580 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'http://vospitatel.com.ua/images/v/vinograd2.jpg')
-2021-08-11 15:12:45,580 - DEBUG - app_logger - pathes:get_file_name:57  - Extension is available
-2021-08-11 15:12:45,581 - DEBUG - app_logger - pathes:get_file_name:61  - Function return vospitatel-com-ua-images-v-vinograd2.jpg
-2021-08-11 15:12:45,707 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return vospitatel-com-ua-images-v-vinograd2.jpg and page_loader/data/vospitatel-com-ua-zaniatia-rastenia-vinograd-html_files/vospitatel-com-ua-images-v-vinograd2.jpg
-2021-08-11 15:12:45,708 - DEBUG - app_logger - page_loader:change_tags:44  - Download 
-2021-08-11 15:12:45,708 - DEBUG - app_logger - page_loader:change_tags:46  - //mc.yandex.ru/watch/29455897 not in domain_name or repeated
-2021-08-11 15:12:45,708 - DEBUG - app_logger - page_loader:change_tags:60  - Total tags changed: 8
-2021-08-11 15:12:48,942 - DEBUG - app_logger - page_loader:change_tags:71  - New tags are written to the file, change_tags finished
-2021-08-11 15:12:48,943 - DEBUG - app_logger - page_loader:main:17  - Finished
+2021-08-11 15:35:20,780 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to http://test.com
+2021-08-11 15:35:20,788 - DEBUG - app_logger - web_requests:get_response_server:24  - (200, 'http://test.com')
+2021-08-11 15:35:20,789 - DEBUG - app_logger - pathes:get_file_name:42  - Extension is available
+2021-08-11 15:35:20,789 - DEBUG - app_logger - pathes:get_file_name:46  - Function return test.com
+2021-08-11 15:35:20,798 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return test.com and /tmp/pytest-of-serggi0/pytest-186/test_get_web_content_http___te0/sub/test.com
+2021-08-11 15:35:20,809 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to http://test.com/page
+2021-08-11 15:35:20,817 - DEBUG - app_logger - web_requests:get_response_server:24  - (200, 'http://test.com/page')
+2021-08-11 15:35:20,818 - DEBUG - app_logger - pathes:get_file_name:45  - Added extension
+2021-08-11 15:35:20,818 - DEBUG - app_logger - pathes:get_file_name:46  - Function return test-com-page.html
+2021-08-11 15:35:20,819 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return test-com-page.html and /tmp/pytest-of-serggi0/pytest-186/test_download_web_link_http___0/sub/test-com-page.html

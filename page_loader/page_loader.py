@@ -3,7 +3,7 @@ import logging.config
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from time import sleep
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 from page_loader.settings_logging import logger_config
 from page_loader.web_requests import write_web_content
 from page_loader.pathes import convert_relativ_link, create_dir_from_web

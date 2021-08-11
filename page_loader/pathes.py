@@ -3,7 +3,7 @@ import os.path
 import re
 import logging.config
 from pathlib import PurePosixPath
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 from page_loader.settings_logging import logger_config
 
 
