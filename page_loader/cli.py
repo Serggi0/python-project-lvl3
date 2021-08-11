@@ -12,5 +12,5 @@ def create_parser():
                             '(by default, in the program launch directory)',
                             default=os.getcwd()
                             )
-    my_parser.add_argument('site', help='Add a download page')
+    my_parser.add_argument('url', help='Add a download page')
     return my_parser

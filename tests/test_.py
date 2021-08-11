@@ -3,8 +3,9 @@ import requests
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
 from page_loader.page_loader import (write_web_content)
-from page_loader.pathes import (convert_path_name, convert_relativ_link,
-                                get_dir_name)
+from page_loader.normalize_data import (convert_path_name,
+                                        convert_relativ_link,
+                                        get_dir_name)
 
 
 @pytest.mark.parametrize(

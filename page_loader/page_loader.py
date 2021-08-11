@@ -6,7 +6,9 @@ from time import sleep
 from urllib.parse import urlparse
 from page_loader.settings_logging import logger_config
 from page_loader.web_requests import write_web_content
-from page_loader.pathes import convert_relativ_link, create_dir_from_web
+from page_loader.normalize_data import (convert_relativ_link,
+                                        create_dir_from_web)
+from page_loader.normalize_data import normalize_url
 
 
 logging.config.dictConfig(logger_config)
@@ -16,7 +18,7 @@ logger_for_console = logging.getLogger('logger_for_console')
 
 def is_valid(url):
     parsed = urlparse(url)
-    return bool(parsed.netloc) and bool(parsed.scheme)
+    return bool(parsed.netloc)
 
 
 def get_soup(file_path):
@@ -77,11 +79,9 @@ def change_tags(dir_to_download, file_with_content, domain_name):
 
 
 def download(path, url):
+    url = normalize_url(url)
     ext = 'html'
     domain_name = urlparse(url).scheme + "://" + urlparse(url).netloc
-    if not is_valid(url):
-        print('Not a valid URL')
-        # sys.exit('Not a valid URL')
     dir_to_download = create_dir_from_web(path, url)
     _, web_page_path = write_web_content(dir_to_download, url, ext)
     result = change_tags(dir_to_download, web_page_path, domain_name)

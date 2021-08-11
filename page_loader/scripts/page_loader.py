@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+
+import sys
 import logging.config
 from page_loader.page_loader import download
 from page_loader.cli import create_parser
@@ -12,10 +14,14 @@ def main():
     logger = logging.getLogger('app_logger')
     my_parser = create_parser()
     args = my_parser.parse_args()
-    result = download(args.output, args.site)
-    print('Page was successfully downloaded into -> ', result, end='\n\n')
-    logger.debug('Finished')
-
+    try:
+        result = download(args.output, args.url)
+        print('Page was successfully downloaded into -> ', result, end='\n\n')
+        logger.debug('Finished')
+        sys.exit(0)
+    except Exception as error:
+        logger.exception(error)
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()

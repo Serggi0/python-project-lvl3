@@ -6,7 +6,7 @@ import logging.config
 from progress.bar import Bar
 from time import sleep
 from page_loader.settings_logging import logger_config
-from page_loader.pathes import get_file_name
+from page_loader.normalize_data import get_file_name
 
 
 logging.config.dictConfig(logger_config)
@@ -21,17 +21,17 @@ def get_response_server(url):
     logger.debug(f'Request to {url}')
     try:
         response = requests.get(url, stream=True)
+        response.raise_for_status()
         logger.debug((response.status_code, url))
         if response.ok:
             print(f'{url}:  OK')
-        response.raise_for_status()
-        return response
     except requests.exceptions.HTTPError as http_error:
         logger.exception('HTTP Error occured')
         print(f'HTTP error occurred: {http_error}')
     except Exception as error:
         logger.exception('Other error occurred')
         print(f'Other error occurred: {error}')
+    return response
 
 
 def write_web_content(dir_to_download, url, ext='html'):

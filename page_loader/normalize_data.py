@@ -1,9 +1,11 @@
+
+import sys
 import os
 import os.path
 import re
 import logging.config
 from pathlib import PurePosixPath
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse, urlunparse
 from page_loader.settings_logging import logger_config
 
 
@@ -19,7 +21,11 @@ def is_extension(file):
 
 def convert_relativ_link(link, domain_name):
     if link.startswith('//', 0, 2):
+        if urlparse(link).netloc == urlparse(domain_name).netloc:
+            return urljoin(domain_name, link)
         return link
+    elif not link:
+        return
     else:
         return urljoin(domain_name, link)
 
@@ -59,3 +65,23 @@ def create_dir_from_web(path, url):
         logger_for_console.exception(
             f'Failed to create a directory {dir_path}'
             )
+
+
+# def is_valid(url):
+#     parsed = urlparse(url)
+#     return bool(parsed.netloc)
+
+def normalize_url(url):
+    parsed = urlparse(url)
+    url_parts = list(parsed)
+    if parsed.scheme:
+        return url
+    else:
+        if parsed.netloc:
+            url_parts = list(parsed._replace(scheme='http'))
+            url = urlunparse(url_parts)
+            return url
+        else:
+            print('Not a valid URL')
+            sys.exit('Not a valid URL')
+
