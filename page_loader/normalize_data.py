@@ -84,4 +84,3 @@ def normalize_url(url):
         else:
             print('Not a valid URL')
             sys.exit('Not a valid URL')
-
