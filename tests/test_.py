@@ -2,10 +2,10 @@ import pytest
 import requests
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
-from page_loader.page_loader import (convert_path_name,
-                                     convert_relativ_link, get_dir_name,
-                                     download_web_link, get_web_content,
-                                     get_response_server)
+from page_loader.page_loader import (write_web_content)
+from page_loader.web_requests import (get_response_server)
+from page_loader.pathes import (convert_path_name,
+                                 convert_relativ_link,get_dir_name,)
 
 
 @pytest.mark.parametrize(
@@ -72,7 +72,7 @@ def test_get_web_content(requests_mock, file_with_content, url, ext, tmp_path):
     with open(file_with_content) as f1:
         data1 = f1.read()
     requests_mock.get('http://test.com', text=data1)
-    testing_file = get_web_content(url, ext, dir_temp)
+    _, testing_file = write_web_content(dir_temp, url, ext)
     with open(testing_file) as f2:
         data2 = f2.read()
     assert data2 == requests.get('http://test.com').text
@@ -88,7 +88,7 @@ def test_download_web_link(requests_mock, tmp_path, url, ext):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
     requests_mock.get('http://test.com/page', text='<!DOCTYPE html>')
-    _, testing_file = download_web_link(dir_temp, url, ext)
+    _, testing_file = write_web_content(dir_temp, url, ext)
     with open(testing_file) as f:
         data = f.read()
     assert data == requests.get('http://test.com/page').text
@@ -107,18 +107,15 @@ def test_diff_img(img_from_web, img_local):
     differences = ImageChops.difference(img1, img2)
     assert differences.getbbox() is None
 
-
+# todo исправить параметры - убрать ссылку на /data/ все д.б. в /fixtures
 @pytest.mark.parametrize(
-    'file_result, file_with_content, domain_name',
+    'file_result, file_with_content',
     [
-        ('tests/fixtures/web_page.html',
-         'page_loader/data/vospitatel-com-ua-zaniatia-rastenia-'
-         'lopuh-html_files/vospitatel-com-ua-zaniatia-rastenia-'
-         'lopuh-html.html',
-         'http://vospitatel.com.ua')
+        ('tests/fixtures/web_page_after.html',
+         'tests/fixtures/web_page.html')
     ]
 )
-def diff(file_result, file_with_content, domain_name):
+def diff(file_result, file_with_content):
     with open(file_result) as f1:
         data1 = f1.read()
     with open(file_with_content) as f2:
@@ -126,13 +123,13 @@ def diff(file_result, file_with_content, domain_name):
     assert data1 == data2
 
 
-@pytest.mark.parametrize(
-    'url, text',
-    [
-        ('https://httpbin.org/status/404',
-         'Not Found. The server cannot find the requested resource.'),
-        ('https://httpbin.org/status/504', 'Gateway Timeout')
-    ]
-)
-def test_get_response_server(url, text):
-    assert get_response_server(url) == text
+# @pytest.mark.parametrize(
+#     'url, text',
+#     [
+#         ('https://httpbin.org/status/200',
+#          'https://httpbin.org/status/200:  OK'),
+#         ('https://httpbin.org/status/504', 'HTTP error occurred: ')
+#     ]
+# )
+# def test_get_response_server(url, text):
+#     assert get_response_server(url) == text

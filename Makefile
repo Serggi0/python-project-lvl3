@@ -4,6 +4,10 @@ install:
 page-loader:
 	poetry run page-loader --output page_loader/data http://vospitatel.com.ua/zaniatia/rastenia/vinograd.html
 
+# https://httpbin.org
+	
+# http://vospitatel.com.ua/zaniatia/rastenia/vinograd.html
+
 build:
 	poetry build
 
