@@ -25,13 +25,13 @@ def get_response_server(url):
         logger.debug((response.status_code, url))
         if response.ok:
             print(f'{url}:  OK')
+        return response
     except requests.exceptions.HTTPError as http_error:
         logger.exception('HTTP Error occured')
         print(f'HTTP error occurred: {http_error}')
     except Exception as error:
         logger.exception('Other error occurred')
         print(f'Other error occurred: {error}')
-    return response
 
 
 def write_web_content(dir_to_download, url, flag):

@@ -3,7 +3,6 @@ import logging.config
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from time import sleep
-from urllib.parse import urlparse
 from page_loader.settings_logging import logger_config
 from page_loader.web_requests import write_web_content
 from page_loader.normalize_data import (convert_relativ_link,
@@ -14,11 +13,6 @@ from page_loader.normalize_data import (convert_relativ_link,
 logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
 logger_for_console = logging.getLogger('logger_for_console')
-
-
-def is_valid(url):
-    parsed = urlparse(url)
-    return bool(parsed.netloc)
 
 
 def get_soup(file_path):
