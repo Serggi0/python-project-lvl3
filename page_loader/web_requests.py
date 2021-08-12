@@ -43,12 +43,12 @@ def write_web_content(dir_to_download, url, flag):
         if response is not None:
             file.write(response.content)
             for data in bar.iter(response.
-                                    iter_content(chunk_size=CHUNK_SIZE)):
+                                 iter_content(chunk_size=CHUNK_SIZE)):
                 bar.next
                 sleep(0.0001)
             bar.finish()
             logger.debug(f'Function added content and return'
-                            f' {file_name} and {file_path}')
+                         f' {file_name} and {file_path}')
         else:
             logger.debug('response is None')
     return file_name, file_path
