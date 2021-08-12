@@ -1,14 +1,1 @@
-2021-08-12 12:07:57,703 - DEBUG - app_logger - normalize_data:create_dir_from_web:62  - Function create_dir_from_web(path, url) return page_loader/data/httpbin-org-status-504_files
-2021-08-12 12:07:57,703 - DEBUG - app_logger - normalize_data:get_file_name:53  - Added extension HTML
-2021-08-12 12:07:57,703 - DEBUG - app_logger - normalize_data:get_file_name:54  - Function return httpbin-org-status-504.html
-2021-08-12 12:07:57,703 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://httpbin.org/status/504
-2021-08-12 12:07:58,286 - ERROR - app_logger - web_requests:get_response_server:29  - HTTP Error occured
-Traceback (most recent call last):
-  File "/home/serggi0/hex3/python-project-lvl3/page_loader/web_requests.py", line 24, in get_response_server
-    response.raise_for_status()
-  File "/home/serggi0/hex3/python-project-lvl3/.venv/lib/python3.8/site-packages/requests/models.py", line 953, in raise_for_status
-    raise HTTPError(http_error_msg, response=self)
-requests.exceptions.HTTPError: 504 Server Error: GATEWAY TIMEOUT for url: https://httpbin.org/status/504
-2021-08-12 12:07:58,291 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return httpbin-org-status-504.html and page_loader/data/httpbin-org-status-504_files/httpbin-org-status-504.html
-2021-08-12 12:07:58,292 - DEBUG - app_logger - page_loader:get_soup:28  - From page_loader/data/httpbin-org-status-504_files/httpbin-org-status-504.html create object BeautifulSoup
-2021-08-12 12:07:58,293 - DEBUG - app_logger - page_loader:change_tags:63  - Total tags changed: 0
+2021-08-12 12:27:16,655 - DEBUG - app_logger - page_loader:main:26  - URL was typed without netloc

@@ -1,3 +1,4 @@
+import sys
 import os
 import os.path
 import re
@@ -86,4 +87,4 @@ def normalize_url(url):
                 url = urlunparse(url_parts)
                 return url
     print('Not a valid URL')
-    return
+    sys.exit(1)
