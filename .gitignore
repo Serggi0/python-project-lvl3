@@ -9,4 +9,4 @@ dist/
 steps/
 tmp/
 data/
-*.log
+myapp.log

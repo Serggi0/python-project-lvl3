@@ -1,4 +1,3 @@
-import sys
 import os
 import os.path
 import requests
@@ -53,6 +52,6 @@ def write_web_content(dir_to_download, url, flag):
             else:
                 logger.debug('response is None')
         return file_name, file_path
-    except OSError:
+    except OSError as error:
         logger.exception(f'Failed to write content in {file_name}')
-        sys.exit(f'Failed to write content in {file_name}')
+        print(f'Failed to write content in {file_name}: {error}')
