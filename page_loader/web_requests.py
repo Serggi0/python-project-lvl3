@@ -34,10 +34,10 @@ def get_response_server(url):
     return response
 
 
-def write_web_content(dir_to_download, url, ext='html'):
-    response = get_response_server(url)
-    file_name = get_file_name(url, ext)
+def write_web_content(dir_to_download, url, flag):
+    file_name = get_file_name(url, flag)
     file_path = os.path.join(dir_to_download, file_name)
+    response = get_response_server(url)
     bar = Bar(f'Write {file_name}', suffix='%(percent)d%%', color='blue')
     try:
         with open(file_path, 'wb') as file:

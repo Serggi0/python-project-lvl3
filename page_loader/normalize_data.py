@@ -1,5 +1,3 @@
-
-import sys
 import os
 import os.path
 import re
@@ -41,14 +39,18 @@ def get_dir_name(path):
     return res
 
 
-def get_file_name(path, ext):
+def get_file_name(path, flag):
     if is_extension(path):
-        part, suff = os.path.splitext(path)
-        name = convert_path_name(part) + suff
-        logger.debug('Extension is available')
+        if flag == 'link':
+            part, suff = os.path.splitext(path)
+            name = convert_path_name(part) + suff
+            logger.debug('Extension is available')
+        else:
+            name = convert_path_name(path) + '.html'
+            logger.debug('Added extension HTML')
     else:
-        name = convert_path_name(path) + '.' + ext
-        logger.debug('Added extension')
+        name = convert_path_name(path) + '.html'
+        logger.debug('Added extension HTML')
     logger.debug(f'Function return {name}')
     return name
 
@@ -83,4 +85,3 @@ def normalize_url(url):
             return url
         else:
             print('Not a valid URL')
-            sys.exit('Not a valid URL')

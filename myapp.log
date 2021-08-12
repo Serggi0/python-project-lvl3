@@ -1,22 +1,22 @@
-2021-08-11 20:11:06,837 - DEBUG - app_logger - normalize_data:create_dir_from_web:60  - Function create_dir_from_web(path, url) return page_loader/data/www-google-com_files
-2021-08-11 20:11:06,837 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://www.google.com
-2021-08-11 20:11:06,976 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://www.google.com')
-2021-08-11 20:11:06,976 - DEBUG - app_logger - normalize_data:get_file_name:48  - Extension is available
-2021-08-11 20:11:06,977 - DEBUG - app_logger - normalize_data:get_file_name:52  - Function return www-google.com
-2021-08-11 20:11:07,015 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return www-google.com and page_loader/data/www-google-com_files/www-google.com
-2021-08-11 20:11:07,039 - DEBUG - app_logger - page_loader:get_soup:28  - From page_loader/data/www-google-com_files/www-google.com create object BeautifulSoup
-2021-08-11 20:11:07,040 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://www.google.com/images/branding/googlelogo/1x/googlelogo_white_background_color_272x92dp.png
-2021-08-11 20:11:07,108 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_white_background_color_272x92dp.png')
-2021-08-11 20:11:07,109 - DEBUG - app_logger - normalize_data:get_file_name:48  - Extension is available
-2021-08-11 20:11:07,109 - DEBUG - app_logger - normalize_data:get_file_name:52  - Function return www-google-com-images-branding-googlelogo-1x-googlelogo-white-background-color-272x92dp.png
-2021-08-11 20:11:07,114 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return www-google-com-images-branding-googlelogo-1x-googlelogo-white-background-color-272x92dp.png and page_loader/data/www-google-com_files/www-google-com-images-branding-googlelogo-1x-googlelogo-white-background-color-272x92dp.png
-2021-08-11 20:11:07,114 - DEBUG - app_logger - page_loader:change_tags:46  - Download 
-2021-08-11 20:11:07,114 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://www.google.com/textinputassistant/tia.png
-2021-08-11 20:11:07,191 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://www.google.com/textinputassistant/tia.png')
-2021-08-11 20:11:07,191 - DEBUG - app_logger - normalize_data:get_file_name:48  - Extension is available
-2021-08-11 20:11:07,192 - DEBUG - app_logger - normalize_data:get_file_name:52  - Function return www-google-com-textinputassistant-tia.png
-2021-08-11 20:11:07,196 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return www-google-com-textinputassistant-tia.png and page_loader/data/www-google-com_files/www-google-com-textinputassistant-tia.png
-2021-08-11 20:11:07,198 - DEBUG - app_logger - page_loader:change_tags:46  - Download 
-2021-08-11 20:11:07,198 - DEBUG - app_logger - page_loader:change_tags:62  - Total tags changed: 2
-2021-08-11 20:11:08,708 - DEBUG - app_logger - page_loader:change_tags:73  - New tags are written to the file, change_tags finished
-2021-08-11 20:11:08,708 - DEBUG - app_logger - page_loader:main:20  - Finished
+2021-08-12 11:08:14,212 - DEBUG - app_logger - normalize_data:create_dir_from_web:62  - Function create_dir_from_web(path, url) return page_loader/data/www-google-com_files
+2021-08-12 11:08:14,212 - DEBUG - app_logger - normalize_data:get_file_name:50  - Added extension HTML
+2021-08-12 11:08:14,212 - DEBUG - app_logger - normalize_data:get_file_name:54  - Function return www-google-com.html
+2021-08-12 11:08:14,212 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://www.google.com
+2021-08-12 11:08:14,327 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://www.google.com')
+2021-08-12 11:08:14,351 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return www-google-com.html and page_loader/data/www-google-com_files/www-google-com.html
+2021-08-12 11:08:14,381 - DEBUG - app_logger - page_loader:get_soup:28  - From page_loader/data/www-google-com_files/www-google-com.html create object BeautifulSoup
+2021-08-12 11:08:14,384 - DEBUG - app_logger - normalize_data:get_file_name:47  - Extension is available
+2021-08-12 11:08:14,385 - DEBUG - app_logger - normalize_data:get_file_name:54  - Function return www-google-com-images-branding-googlelogo-1x-googlelogo-white-background-color-272x92dp.png
+2021-08-12 11:08:14,385 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://www.google.com/images/branding/googlelogo/1x/googlelogo_white_background_color_272x92dp.png
+2021-08-12 11:08:14,454 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_white_background_color_272x92dp.png')
+2021-08-12 11:08:14,459 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return www-google-com-images-branding-googlelogo-1x-googlelogo-white-background-color-272x92dp.png and page_loader/data/www-google-com_files/www-google-com-images-branding-googlelogo-1x-googlelogo-white-background-color-272x92dp.png
+2021-08-12 11:08:14,459 - DEBUG - app_logger - page_loader:change_tags:47  - Download 
+2021-08-12 11:08:14,459 - DEBUG - app_logger - normalize_data:get_file_name:47  - Extension is available
+2021-08-12 11:08:14,459 - DEBUG - app_logger - normalize_data:get_file_name:54  - Function return www-google-com-textinputassistant-tia.png
+2021-08-12 11:08:14,459 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://www.google.com/textinputassistant/tia.png
+2021-08-12 11:08:14,530 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://www.google.com/textinputassistant/tia.png')
+2021-08-12 11:08:14,532 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return www-google-com-textinputassistant-tia.png and page_loader/data/www-google-com_files/www-google-com-textinputassistant-tia.png
+2021-08-12 11:08:14,532 - DEBUG - app_logger - page_loader:change_tags:47  - Download 
+2021-08-12 11:08:14,533 - DEBUG - app_logger - page_loader:change_tags:63  - Total tags changed: 2
+2021-08-12 11:08:16,057 - DEBUG - app_logger - page_loader:change_tags:74  - New tags are written to the file, change_tags finished
+2021-08-12 11:08:16,057 - DEBUG - app_logger - page_loader:main:20  - Finished

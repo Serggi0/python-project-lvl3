@@ -52,7 +52,10 @@ def test_get_dir_name(url):
          'https://ru.hexlet.io/courses'),
         ('//ru.hexlet.io/courses',
          'https://ru.hexlet.io',
-         '//ru.hexlet.io/courses'),
+         'https://ru.hexlet.io/courses'),
+         ('//test.com/courses',
+         'https://ru.hexlet.io',
+         '//test.com/courses')
     ]
 )
 def test_convert_relativ_link(link, domain_name, correct_value):

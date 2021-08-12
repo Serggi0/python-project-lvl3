@@ -39,7 +39,8 @@ def change_tags(dir_to_download, file_with_content, domain_name):
             link_src = convert_relativ_link(tag['src'], domain_name)
             if link_src.startswith(domain_name):
                 tag['src'] = link_src
-                web_link_src, _ = write_web_content(dir_to_download, link_src)
+                web_link_src, _ = write_web_content(dir_to_download,
+                                                    link_src, flag='link')
                 # >> web_link_src - относительный путь из папки dir_to_download
                 tag['src'] = web_link_src
                 cnt += 1
@@ -52,7 +53,7 @@ def change_tags(dir_to_download, file_with_content, domain_name):
             if link_href.startswith(domain_name):
                 tag['href'] = link_href
                 web_link_href, _ = write_web_content(dir_to_download,
-                                                     link_href)
+                                                     link_href, flag='link')
                 tag['href'] = web_link_href
                 cnt += 1
                 logger.debug('Download ')
@@ -80,9 +81,8 @@ def change_tags(dir_to_download, file_with_content, domain_name):
 
 def download(path, url):
     url = normalize_url(url)
-    ext = 'html'
     domain_name = urlparse(url).scheme + "://" + urlparse(url).netloc
     dir_to_download = create_dir_from_web(path, url)
-    _, web_page_path = write_web_content(dir_to_download, url, ext)
+    _, web_page_path = write_web_content(dir_to_download, url, flag='web_page')
     result = change_tags(dir_to_download, web_page_path, domain_name)
     return result
