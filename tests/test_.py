@@ -53,7 +53,7 @@ def test_get_dir_name(url):
         ('//ru.hexlet.io/courses',
          'https://ru.hexlet.io',
          'https://ru.hexlet.io/courses'),
-         ('//test.com/courses',
+        ('//test.com/courses',
          'https://ru.hexlet.io',
          '//test.com/courses')
     ]

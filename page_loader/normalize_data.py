@@ -69,19 +69,21 @@ def create_dir_from_web(path, url):
             )
 
 
-# def is_valid(url):
-#     parsed = urlparse(url)
-#     return bool(parsed.netloc)
+def is_valid(url):
+    parsed = urlparse(url)
+    return bool(parsed.netloc)
+
 
 def normalize_url(url):
-    parsed = urlparse(url)
-    url_parts = list(parsed)
-    if parsed.scheme:
-        return url
-    else:
-        if parsed.netloc:
-            url_parts = list(parsed._replace(scheme='http'))
-            url = urlunparse(url_parts)
+    if is_valid(url):
+        parsed = urlparse(url)
+        url_parts = list(parsed)
+        if parsed.scheme:
             return url
         else:
-            print('Not a valid URL')
+            if parsed.netloc:
+                url_parts = list(parsed._replace(scheme='http'))
+                url = urlunparse(url_parts)
+                return url
+    print('Not a valid URL')
+    return

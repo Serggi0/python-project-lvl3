@@ -4,6 +4,7 @@ import sys
 import logging.config
 from page_loader.page_loader import download
 from page_loader.cli import create_parser
+from page_loader.normalize_data import is_valid
 from page_loader.settings_logging import logger_config
 
 
@@ -15,10 +16,14 @@ def main():
     my_parser = create_parser()
     args = my_parser.parse_args()
     try:
-        result = download(args.output, args.url)
-        print('Page was successfully downloaded into -> ', result, end='\n\n')
-        logger.debug('Finished')
-        sys.exit(0)
+        if is_valid(args.url):
+            result = download(args.output, args.url)
+            print('Page was successfully downloaded into -> ',
+                  result, end='\n\n')
+            logger.debug('Finished')
+            sys.exit(0)
+        print('Not a valid URL')
+        logger.debug('URL was typed without netloc')
     except Exception as error:
         logger.exception(error)
         sys.exit(1)
