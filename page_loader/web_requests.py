@@ -41,13 +41,17 @@ def write_web_content(dir_to_download, url, flag):
     bar = Bar(f'Write {file_name}', suffix='%(percent)d%%', color='blue')
     try:
         with open(file_path, 'wb') as file:
-            file.write(response.content)
-            for data in bar.iter(response.iter_content(chunk_size=CHUNK_SIZE)):
-                bar.next
-                sleep(0.0001)
-            bar.finish()
-        logger.debug(f'Function added content and return'
-                     f' {file_name} and {file_path}')
+            if response is not None:
+                file.write(response.content)
+                for data in bar.iter(response.
+                                     iter_content(chunk_size=CHUNK_SIZE)):
+                    bar.next
+                    sleep(0.0001)
+                bar.finish()
+                logger.debug(f'Function added content and return'
+                             f' {file_name} and {file_path}')
+            else:
+                logger.debug('response is None')
         return file_name, file_path
     except OSError:
         logger.exception(f'Failed to write content in {file_name}')
