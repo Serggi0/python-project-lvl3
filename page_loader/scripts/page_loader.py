@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import requests
 import logging.config
 from page_loader.page_loader import download
 from page_loader.cli import create_parser
@@ -23,9 +24,22 @@ def main():
             logger.debug('Finished')
             sys.exit(0)
         print(f'Not a valid URL: {args.url}')
-    except Exception as error:
-        logger.exception(error)
+    except AttributeError:
+        logger.exception('AttributeError')
+        sys.exit('Unable to get content')
+    except requests.exceptions.ConnectionError:
+        logger.exception('Connection error occurred')
+        sys.exit('Connection error occurred')
+    except requests.exceptions.HTTPError:
+        logger.exception('HTTP Error occured')
+        sys.exit('HTTP Error occured')
+    except OSError:
+        logger.exeption('OSError')
         sys.exit(1)
+
+    # except Exception as error:
+    #     logger.exception(error)
+    #     sys.exit(1)
 
 
 if __name__ == '__main__':

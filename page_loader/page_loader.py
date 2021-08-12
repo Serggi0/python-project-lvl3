@@ -56,20 +56,20 @@ def change_tags(dir_to_download, file_with_content, domain_name):
     logger.debug(f'Total tags changed: {cnt}')
 
     if cnt == 0:
-        print(f'Tags not found in {file_with_content}')
+        logger.debug(f'Tags not found in {file_with_content}')
 
     new_html = soup.prettify(formatter='html5')
-    try:
-        with open(file_with_content, 'w') as file:
-            file.write(new_html)
-            for i in tqdm(new_html, 'File write... '):
-                sleep(0.00001)
-        logger.debug('New tags are written to the file, change_tags finished')
-        print()
-        return file_with_content
-    except OSError as error:
-        logger.exception(f'Failed to write content in {file_with_content}')
-        print(f'Failed to write content in {file_with_content}: {error}')
+    # try:
+    with open(file_with_content, 'w') as file:
+        file.write(new_html)
+        for i in tqdm(new_html, 'File write... '):
+            sleep(0.00001)
+    logger.debug('New tags are written to the file, change_tags finished')
+    print()
+    return file_with_content
+    # except OSError as error:
+    #     logger.exception(f'Failed to write content in {file_with_content}')
+    #     print(f'Failed to write content in {file_with_content}: {error}')
 
 
 def download(path, url):
