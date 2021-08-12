@@ -22,8 +22,7 @@ def main():
                   result, end='\n\n')
             logger.debug('Finished')
             sys.exit(0)
-        print('Not a valid URL')
-        logger.debug('URL was typed without netloc')
+        print(f'Not a valid URL: {args.url}')
     except Exception as error:
         logger.exception(error)
         sys.exit(1)

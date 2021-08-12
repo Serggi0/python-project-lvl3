@@ -1,10 +1,9 @@
-import sys
 import os
 import os.path
 import re
 import logging.config
 from pathlib import PurePosixPath
-from urllib.parse import urljoin, urlparse, urlunparse
+from urllib.parse import urljoin, urlparse
 from page_loader.settings_logging import logger_config
 
 
@@ -72,19 +71,17 @@ def create_dir_from_web(path, url):
 
 def is_valid(url):
     parsed = urlparse(url)
-    return bool(parsed.netloc)
+    return bool(parsed.scheme) and bool(parsed.netloc)
 
 
-def normalize_url(url):
-    if is_valid(url):
-        parsed = urlparse(url)
-        url_parts = list(parsed)
-        if parsed.scheme:
-            return url
+def get_domain_name(url):
+    parsed = urlparse(url)
+    if parsed.scheme:
+        domain_name = parsed.scheme + '://' + parsed.netloc
+        return domain_name
+    else:
+        if parsed.netloc:
+            domain_name = 'http://' + parsed.netloc
+            return domain_name
         else:
-            if parsed.netloc:
-                url_parts = list(parsed._replace(scheme='http'))
-                url = urlunparse(url_parts)
-                return url
-    print('Not a valid URL')
-    sys.exit(1)
+            return None

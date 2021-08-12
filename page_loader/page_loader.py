@@ -7,8 +7,8 @@ from urllib.parse import urlparse
 from page_loader.settings_logging import logger_config
 from page_loader.web_requests import write_web_content
 from page_loader.normalize_data import (convert_relativ_link,
-                                        create_dir_from_web)
-from page_loader.normalize_data import normalize_url
+                                        create_dir_from_web,
+                                        get_domain_name)
 
 
 logging.config.dictConfig(logger_config)
@@ -37,7 +37,7 @@ def change_tags(dir_to_download, file_with_content, domain_name):
     for tag in tags:
         if 'src' in tag.attrs:
             link_src = convert_relativ_link(tag['src'], domain_name)
-            if link_src.startswith(domain_name):
+            if link_src.startswith(domain_name) and domain_name is not None:
                 tag['src'] = link_src
                 web_link_src, _ = write_web_content(dir_to_download,
                                                     link_src, flag='link')
@@ -50,7 +50,7 @@ def change_tags(dir_to_download, file_with_content, domain_name):
 
         if 'href' in tag.attrs:
             link_href = convert_relativ_link(tag['href'], domain_name)
-            if link_href.startswith(domain_name):
+            if link_href.startswith(domain_name) and domain_name is not None:
                 tag['href'] = link_href
                 web_link_href, _ = write_web_content(dir_to_download,
                                                      link_href, flag='link')
@@ -80,8 +80,7 @@ def change_tags(dir_to_download, file_with_content, domain_name):
 
 
 def download(path, url):
-    url = normalize_url(url)
-    domain_name = urlparse(url).scheme + "://" + urlparse(url).netloc
+    domain_name = get_domain_name(url)
     dir_to_download = create_dir_from_web(path, url)
     _, web_page_path = write_web_content(dir_to_download, url, flag='web_page')
     result = change_tags(dir_to_download, web_page_path, domain_name)

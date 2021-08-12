@@ -1,1 +1,41 @@
-2021-08-12 12:27:16,655 - DEBUG - app_logger - page_loader:main:26  - URL was typed without netloc
+2021-08-12 13:31:12,454 - DEBUG - app_logger - normalize_data:create_dir_from_web:62  - Function create_dir_from_web(path, url) return page_loader/data/httpbin-org_files
+2021-08-12 13:31:12,454 - DEBUG - app_logger - normalize_data:get_file_name:50  - Added extension HTML
+2021-08-12 13:31:12,454 - DEBUG - app_logger - normalize_data:get_file_name:54  - Function return httpbin-org.html
+2021-08-12 13:31:12,454 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://httpbin.org
+2021-08-12 13:31:13,049 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://httpbin.org')
+2021-08-12 13:31:13,064 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return httpbin-org.html and page_loader/data/httpbin-org_files/httpbin-org.html
+2021-08-12 13:31:13,084 - DEBUG - app_logger - page_loader:get_soup:28  - From page_loader/data/httpbin-org_files/httpbin-org.html create object BeautifulSoup
+2021-08-12 13:31:13,092 - DEBUG - app_logger - page_loader:change_tags:61  - https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700 not in domain_name or repeated
+2021-08-12 13:31:13,093 - DEBUG - app_logger - normalize_data:get_file_name:47  - Extension is available
+2021-08-12 13:31:13,093 - DEBUG - app_logger - normalize_data:get_file_name:54  - Function return httpbin-org-flasgger-static-swagger-ui.css
+2021-08-12 13:31:13,093 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://httpbin.org/flasgger_static/swagger-ui.css
+2021-08-12 13:31:13,610 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://httpbin.org/flasgger_static/swagger-ui.css')
+2021-08-12 13:31:14,067 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return httpbin-org-flasgger-static-swagger-ui.css and page_loader/data/httpbin-org_files/httpbin-org-flasgger-static-swagger-ui.css
+2021-08-12 13:31:14,067 - DEBUG - app_logger - page_loader:change_tags:59  - Download 
+2021-08-12 13:31:14,068 - DEBUG - app_logger - normalize_data:get_file_name:47  - Extension is available
+2021-08-12 13:31:14,068 - DEBUG - app_logger - normalize_data:get_file_name:54  - Function return httpbin-org-static-favicon.ico
+2021-08-12 13:31:14,068 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://httpbin.org/static/favicon.ico
+2021-08-12 13:31:14,750 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://httpbin.org/static/favicon.ico')
+2021-08-12 13:31:14,790 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return httpbin-org-static-favicon.ico and page_loader/data/httpbin-org_files/httpbin-org-static-favicon.ico
+2021-08-12 13:31:14,790 - DEBUG - app_logger - page_loader:change_tags:59  - Download 
+2021-08-12 13:31:14,790 - DEBUG - app_logger - normalize_data:get_file_name:47  - Extension is available
+2021-08-12 13:31:14,791 - DEBUG - app_logger - normalize_data:get_file_name:54  - Function return httpbin-org-flasgger-static-swagger-ui-bundle.js
+2021-08-12 13:31:14,791 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://httpbin.org/flasgger_static/swagger-ui-bundle.js
+2021-08-12 13:31:15,308 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://httpbin.org/flasgger_static/swagger-ui-bundle.js')
+2021-08-12 13:31:17,022 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return httpbin-org-flasgger-static-swagger-ui-bundle.js and page_loader/data/httpbin-org_files/httpbin-org-flasgger-static-swagger-ui-bundle.js
+2021-08-12 13:31:17,022 - DEBUG - app_logger - page_loader:change_tags:47  - Download 
+2021-08-12 13:31:17,023 - DEBUG - app_logger - normalize_data:get_file_name:47  - Extension is available
+2021-08-12 13:31:17,023 - DEBUG - app_logger - normalize_data:get_file_name:54  - Function return httpbin-org-flasgger-static-swagger-ui-standalone-preset.js
+2021-08-12 13:31:17,023 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://httpbin.org/flasgger_static/swagger-ui-standalone-preset.js
+2021-08-12 13:31:17,598 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://httpbin.org/flasgger_static/swagger-ui-standalone-preset.js')
+2021-08-12 13:31:18,459 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return httpbin-org-flasgger-static-swagger-ui-standalone-preset.js and page_loader/data/httpbin-org_files/httpbin-org-flasgger-static-swagger-ui-standalone-preset.js
+2021-08-12 13:31:18,459 - DEBUG - app_logger - page_loader:change_tags:47  - Download 
+2021-08-12 13:31:18,459 - DEBUG - app_logger - normalize_data:get_file_name:47  - Extension is available
+2021-08-12 13:31:18,459 - DEBUG - app_logger - normalize_data:get_file_name:54  - Function return httpbin-org-flasgger-static-lib-jquery-min.js
+2021-08-12 13:31:18,459 - DEBUG - app_logger - web_requests:get_response_server:21  - Request to https://httpbin.org/flasgger_static/lib/jquery.min.js
+2021-08-12 13:31:19,091 - DEBUG - app_logger - web_requests:get_response_server:25  - (200, 'https://httpbin.org/flasgger_static/lib/jquery.min.js')
+2021-08-12 13:31:19,392 - DEBUG - app_logger - web_requests:write_web_content:49  - Function added content and return httpbin-org-flasgger-static-lib-jquery-min.js and page_loader/data/httpbin-org_files/httpbin-org-flasgger-static-lib-jquery-min.js
+2021-08-12 13:31:19,392 - DEBUG - app_logger - page_loader:change_tags:47  - Download 
+2021-08-12 13:31:19,392 - DEBUG - app_logger - page_loader:change_tags:63  - Total tags changed: 5
+2021-08-12 13:31:20,182 - DEBUG - app_logger - page_loader:change_tags:74  - New tags are written to the file, change_tags finished
+2021-08-12 13:31:20,182 - DEBUG - app_logger - page_loader:main:23  - Finished
