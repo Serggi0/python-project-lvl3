@@ -23,7 +23,7 @@ def main():
             print('Page was successfully downloaded into -> ',
                   result, end='\n\n')
         else:
-            print(f'Not a valid URL: {args.url}')
+            raise Exception(f'Not a valid URL: {args.url}')
     except AttributeError:
         logger.exception('AttributeError')
         sys.exit('Unable to get content')
@@ -41,6 +41,9 @@ def main():
         sys.exit('File not found')
     except FileExistsError:
         sys.exit('Attempt to create a file or directory that already exists')
+    # except Exception as e:
+    #     logger.exception(e)
+    #     sys.exit(e)
     else:
         logger.debug('Finished')
         sys.exit(0)
