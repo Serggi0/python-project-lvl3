@@ -21,8 +21,6 @@ def main():
             result = download(args.output, args.url)
             print('Page was successfully downloaded into -> ',
                   result, end='\n\n')
-            logger.debug('Finished')
-            sys.exit(0)
         print(f'Not a valid URL: {args.url}')
     except AttributeError:
         logger.exception('AttributeError')
@@ -33,13 +31,20 @@ def main():
     except requests.exceptions.HTTPError:
         logger.exception('HTTP Error occured')
         sys.exit('HTTP Error occured')
-    except OSError:
-        logger.exeption('OSError')
+    except PermissionError:
+        sys.exit('Permission denied')
+    except ConnectionAbortedError:
+        sys.exit('Connection was aborted')
+    except FileNotFoundError:
+        sys.exit('File not found')
+    except FileExistsError:
+        sys.exit('Attempt to create a file or directory that already exists')
+    except Exception as error:
+        logger.exception(error)
         sys.exit(1)
-
-    # except Exception as error:
-    #     logger.exception(error)
-    #     sys.exit(1)
+    else:
+        logger.debug('Finished')
+        sys.exit(0)
 
 
 if __name__ == '__main__':
