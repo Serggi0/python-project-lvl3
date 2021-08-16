@@ -21,7 +21,8 @@ def main():
             result = download(args.output, args.url)
             print('Page was successfully downloaded into -> ',
                   result, end='\n\n')
-        print(f'Not a valid URL: {args.url}')
+        else:
+            print(f'Not a valid URL: {args.url}')
     except AttributeError:
         logger.exception('AttributeError')
         sys.exit('Unable to get content')

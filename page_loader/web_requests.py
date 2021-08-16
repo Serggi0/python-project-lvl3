@@ -1,6 +1,7 @@
 import os
 import os.path
 import requests
+from requests.exceptions import MissingSchema
 import logging.config
 from progress.bar import Bar
 from time import sleep
@@ -17,20 +18,17 @@ CHUNK_SIZE = 1024
 
 
 def get_response_server(url):
-    logger.debug(f'Request to {url}')
-    # try:
-    response = requests.get(url, stream=True)
-    response.raise_for_status()
-    logger.debug((response.status_code, url))
-    if response.ok:
-        print(f'{url}:  OK')
-    return response
-    # except requests.exceptions.HTTPError as http_error:
-    #     logger.exception('HTTP Error occured')
-    #     print(f'HTTP error occurred: {http_error}')
-    # except Exception as error:
-    #     logger.exception('Other error occurred')
-    #     print(f'Other error occurred: {error}')
+    try:
+        logger.debug(f'Request to {url}')
+        # try:
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+        logger.debug((response.status_code, url))
+        if response.ok:
+            print(f'{url}:  OK')
+        return response
+    except MissingSchema:
+        logger.debug('URL is not complete')
 
 
 def write_web_content(dir_to_download, url, flag):
@@ -52,6 +50,3 @@ def write_web_content(dir_to_download, url, flag):
         else:
             logger.debug('response is None')
     return file_name, file_path
-    # except OSError as error:
-    #     logger.exception(f'Failed to write content in {file_name}')
-    #     print(f'Failed to write content in {file_name}: {error}')

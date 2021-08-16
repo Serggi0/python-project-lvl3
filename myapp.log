@@ -1,10 +1,1 @@
-2021-08-16 12:49:02,797 - DEBUG - app_logger - normalize_data:get_file_name:60  - Added extension HTML
-2021-08-16 12:49:02,797 - DEBUG - app_logger - normalize_data:get_file_name:64  - Function return test-com.html
-2021-08-16 12:49:02,797 - DEBUG - app_logger - web_requests:get_response_server:20  - Request to http://test.com
-2021-08-16 12:49:02,816 - DEBUG - app_logger - web_requests:get_response_server:24  - (200, 'http://test.com')
-2021-08-16 12:49:02,826 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return test-com.html and /tmp/pytest-of-serggi0/pytest-193/test_get_web_content_http___te0/sub/test-com.html
-2021-08-16 12:49:02,851 - DEBUG - app_logger - normalize_data:get_file_name:63  - Added extension HTML
-2021-08-16 12:49:02,851 - DEBUG - app_logger - normalize_data:get_file_name:64  - Function return test-com-page.html
-2021-08-16 12:49:02,851 - DEBUG - app_logger - web_requests:get_response_server:20  - Request to http://test.com/page
-2021-08-16 12:49:02,856 - DEBUG - app_logger - web_requests:get_response_server:24  - (200, 'http://test.com/page')
-2021-08-16 12:49:02,857 - DEBUG - app_logger - web_requests:write_web_content:50  - Function added content and return test-com-page.html and /tmp/pytest-of-serggi0/pytest-193/test_download_web_link_http___0/sub/test-com-page.html
+2021-08-16 13:51:17,237 - DEBUG - app_logger - page_loader:main:47  - Finished
