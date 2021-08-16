@@ -10,6 +10,7 @@ from page_loader.settings_logging import logger_config
 
 
 logging.config.dictConfig(logger_config)
+logger = logging.getLogger('app_logger')
 
 
 def main():
@@ -24,13 +25,13 @@ def main():
         else:
             print(f'Not a valid URL: {args.url}')
     except AttributeError:
-        logger.exception('AttributeError')
+        # logger.exception('AttributeError')
         sys.exit('Unable to get content')
     except requests.exceptions.ConnectionError:
-        logger.exception('Connection error occurred')
+        # logger.exception('Connection error occurred')
         sys.exit('Connection error occurred')
     except requests.exceptions.HTTPError:
-        logger.exception('HTTP Error occured')
+        # logger.exception('HTTP Error occured')
         sys.exit('HTTP Error occured')
     except PermissionError:
         sys.exit('Permission denied')
@@ -41,7 +42,7 @@ def main():
     except FileExistsError:
         sys.exit('Attempt to create a file or directory that already exists')
     except Exception as error:
-        logger.exception(error)
+        # logger.exception(error)
         sys.exit(1)
     else:
         logger.debug('Finished')
