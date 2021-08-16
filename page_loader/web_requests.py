@@ -20,7 +20,6 @@ CHUNK_SIZE = 1024
 def get_response_server(url):
     try:
         logger.debug(f'Request to {url}')
-        # try:
         response = requests.get(url, stream=True)
         response.raise_for_status()
         logger.debug((response.status_code, url))
@@ -36,9 +35,8 @@ def write_web_content(dir_to_download, url, flag):
     file_path = os.path.join(dir_to_download, file_name)
     response = get_response_server(url)
     bar = Bar(f'Write {file_name}', suffix='%(percent)d%%', color='blue')
-    # try:
     with open(file_path, 'wb') as file:
-        if response is not None:
+        if response or response is not None:
             file.write(response.content)
             for data in bar.iter(response.
                                  iter_content(chunk_size=CHUNK_SIZE)):
@@ -48,5 +46,5 @@ def write_web_content(dir_to_download, url, flag):
             logger.debug(f'Function added content and return'
                          f' {file_name} and {file_path}')
         else:
-            logger.debug('response is None')
+            logger.debug('No response or is None')
     return file_name, file_path

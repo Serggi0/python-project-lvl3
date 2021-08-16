@@ -32,7 +32,7 @@ def convert_relativ_link(link, domain_name):
         if urlparse(link).netloc == urlparse(domain_name).netloc:
             return urljoin(domain_name, link)
         return link
-    elif not link:
+    elif not link or link is None:
         return
     else:
         return urljoin(domain_name, link)

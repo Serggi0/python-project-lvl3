@@ -17,13 +17,15 @@ def main():
     logger = logging.getLogger('app_logger')
     my_parser = create_parser()
     args = my_parser.parse_args()
+
     try:
-        if is_valid(args.url):
-            result = download(args.output, args.url)
-            print('Page was successfully downloaded into -> ',
-                  result, end='\n\n')
-        else:
-            raise Exception(f'Not a valid URL: {args.url}')
+        is_valid(args.url)
+        requests.get(args.url).ok
+        result = download(args.output, args.url)
+        print('Page was successfully downloaded into -> ',
+                result, end='\n\n')
+        logger.debug('Finished')
+
     except AttributeError:
         logger.exception('AttributeError')
         sys.exit('Unable to get content')
@@ -41,11 +43,10 @@ def main():
         sys.exit('File not found')
     except FileExistsError:
         sys.exit('Attempt to create a file or directory that already exists')
-    # except Exception as e:
-    #     logger.exception(e)
-    #     sys.exit(e)
+    except Exception as error:
+        logger.exception(error)
+        sys.exit(error)
     else:
-        logger.debug('Finished')
         sys.exit(0)
 
 
