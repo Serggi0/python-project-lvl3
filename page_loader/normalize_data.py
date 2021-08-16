@@ -17,7 +17,17 @@ def is_extension(file):
     return bool(suff)
 
 
+def prepare_url_b(url):
+    if isinstance(url, bytes):
+        url = url.decode('utf8')
+    else:
+        url = str(url)
+    return url
+
+
 def convert_relativ_link(link, domain_name):
+    link = prepare_url_b(link)
+
     if link.startswith('//', 0, 2):
         if urlparse(link).netloc == urlparse(domain_name).netloc:
             return urljoin(domain_name, link)
@@ -56,6 +66,7 @@ def get_file_name(path, flag):
 
 
 def create_dir_from_web(path, url):
+    url = prepare_url_b(url)
     dir_path = os.path.join(path, get_dir_name(url))
     # try:
     os.makedirs(dir_path, exist_ok=True)
@@ -75,6 +86,7 @@ def is_valid(url):
 
 
 def get_domain_name(url):
+    url = prepare_url_b(url)
     parsed = urlparse(url)
     if parsed.scheme:
         domain_name = parsed.scheme + '://' + parsed.netloc
