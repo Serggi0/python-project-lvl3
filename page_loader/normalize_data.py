@@ -27,12 +27,16 @@ def prepare_url_b(url):
 
 def convert_relativ_link(link, domain_name):
     link = prepare_url_b(link)
+
     if link == '' or link is None:
         raise TypeError
 
     elif link.startswith('//', 0, 2):
         if urlparse(link).netloc == urlparse(domain_name).netloc:
             return urljoin(domain_name, link)
+        return link
+
+    elif link.startswith(domain_name):
         return link
 
     else:

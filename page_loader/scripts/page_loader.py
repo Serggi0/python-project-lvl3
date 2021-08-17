@@ -22,23 +22,22 @@ def main():
         requests.get(args.url).ok
         res = download(args.output, args.url)
 
+    except(
+           requests.exceptions.ConnectionError,
+           requests.exceptions.HTTPError,
+           requests.exceptions.MissingSchema,
+           requests.exceptions.Timeout,
+           ConnectionAbortedError
+    ) as error:
+        logger.exception(error)
+        sys.exit(f'Error occurred:\n{error}')
+
     except AttributeError:
-        logger.exception('AttributeError')
         sys.exit('Unable to get content')
-    except requests.exceptions.ConnectionError:
-        logger.exception('Connection error occurred')
-        sys.exit('Connection error occurred')
-    except requests.exceptions.HTTPError:
-        logger.exception('HTTP Error occured')
-        sys.exit('HTTP Error occured')
     except PermissionError:
         sys.exit('Permission denied')
-    except ConnectionAbortedError:
-        sys.exit('Connection was aborted')
     except FileNotFoundError:
         sys.exit('File not found')
-    # except FileExistsError:
-    #     sys.exit('Attempt to create a file or directory that already exists')
     except Exception as error:
         logger.exception(error)
         sys.exit(error)
