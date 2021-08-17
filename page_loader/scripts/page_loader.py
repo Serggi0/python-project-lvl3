@@ -20,7 +20,7 @@ def main():
     try:
         is_valid(args.url)
         requests.get(args.url).ok
-        res = download(args.output, args.url)
+        download(args.output, args.url)
 
     except(
            requests.exceptions.ConnectionError,
@@ -43,8 +43,6 @@ def main():
         sys.exit(error)
 
     else:
-        print('Page was successfully downloaded into -> ',
-              res, end='\n\n')
         logger.debug('Finished')
         sys.exit(0)
 

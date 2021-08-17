@@ -1,3 +1,5 @@
+import sys
+import requests
 import logging.config
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -58,32 +60,6 @@ def change_tags(dir_to_download, file_with_content, domain_name):
             else:
                 continue
 
-    # for tag in tags:
-    #     if 'src' in tag.attrs:
-    #         link_src = convert_relativ_link(tag['src'], domain_name)
-    #         if link_src.startswith(domain_name):
-    #             tag['src'] = link_src
-    #             web_link_src, _ = write_web_content(dir_to_download,
-    #                                                 link_src, flag='link')
-    #     # >> web_link_src - относительный путь из папки dir_to_download
-    #             tag['src'] = web_link_src
-    #             cnt += 1
-    #             logger.debug('Download ')
-    #         else:
-    #             logger.debug(f'{link_src} not in domain_name or repeated')
-
-    #     if 'href' in tag.attrs:
-    #         link_href = convert_relativ_link(tag['href'], domain_name)
-    #         if link_href.startswith(domain_name) and domain_name is not None:
-    #             tag['href'] = link_href
-    #             web_link_href, _ = write_web_content(dir_to_download,
-    #                                                  link_href, flag='link')
-    #             tag['href'] = web_link_href
-    #             cnt += 1
-    #             logger.debug('Download ')
-    #         else:
-    #             logger.debug(f'{link_href} not in domain_name or repeated')
-
     logger.debug(f'Total tags changed: {cnt}')
 
     if cnt == 0:
@@ -97,14 +73,15 @@ def change_tags(dir_to_download, file_with_content, domain_name):
     logger.debug('New tags are written to the file, change_tags finished')
     print()
     return file_with_content
-    # except OSError as error:
-    #     logger.exception(f'Failed to write content in {file_with_content}')
-    #     print(f'Failed to write content in {file_with_content}: {error}')
 
 
 def download(path, url):
-    domain_name = get_domain_name(url)
-    dir_to_download = create_dir_from_web(path, url)
-    _, web_page_path = write_web_content(dir_to_download, url, flag='web_page')
-    result = change_tags(dir_to_download, web_page_path, domain_name)
-    return result
+    if is_valid(url) and requests.get(url).ok:
+        domain_name = get_domain_name(url)
+        dir_to_download = create_dir_from_web(path, url)
+        _, web_page_path = write_web_content(dir_to_download, url, flag='web_page')
+        result = change_tags(dir_to_download, web_page_path, domain_name)
+        print('Page was successfully downloaded into -> ',
+              result, end='\n\n')
+    else:
+        sys.exit('Invalid URL')
