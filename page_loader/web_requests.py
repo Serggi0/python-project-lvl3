@@ -1,7 +1,7 @@
+import sys
 import os
 import os.path
 import requests
-from requests.exceptions import MissingSchema
 import logging.config
 from progress.bar import Bar
 from time import sleep
@@ -20,17 +20,30 @@ CHUNK_SIZE = 1024
 def get_response_server(url):
     try:
         logger.debug(f'Request to {url}')
-        response = requests.get(url, stream=True)
+        response = requests.get(url, stream=True, timeout=30)
         response.raise_for_status()
         logger.debug((response.status_code, url))
-        if response.ok:
+        if response.ok and response is not None:
             print(f'{url}:  OK')
+        else:
+            raise TypeError
+    except(
+           requests.exceptions.ConnectionError,
+           requests.exceptions.HTTPError,
+           requests.exceptions.MissingSchema,
+           requests.exceptions.Timeout,
+           ConnectionAbortedError
+    ) as error:
+        logger.exception(error)
+        sys.exit(f'Error occurred:\n{error}')
+
+    else:
         return response
-    except MissingSchema:
-        logger.debug('URL is not complete')
 
 
 def write_web_content(dir_to_download, url, flag):
+    assert type(url) is not None
+    # ! https://www.rupython.com/63038-63038.html
     file_name = get_file_name(url, flag)
     file_path = os.path.join(dir_to_download, file_name)
     response = get_response_server(url)

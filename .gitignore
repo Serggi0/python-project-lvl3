@@ -5,8 +5,8 @@ dist/
 *.pyc
 .vscode/
 *.xml
+*.log
 .coverage
 steps/
 tmp/
 data/
-myapp.log

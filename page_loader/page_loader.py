@@ -59,7 +59,6 @@ def change_tags(dir_to_download, file_with_content, domain_name):
         logger.debug(f'Tags not found in {file_with_content}')
 
     new_html = soup.prettify(formatter='html5')
-    # try:
     with open(file_with_content, 'w') as file:
         file.write(new_html)
         for i in tqdm(new_html, 'File write... '):

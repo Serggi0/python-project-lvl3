@@ -10,7 +10,6 @@ from page_loader.settings_logging import logger_config
 
 
 logging.config.dictConfig(logger_config)
-logger = logging.getLogger('app_logger')
 
 
 def main():
@@ -21,10 +20,7 @@ def main():
     try:
         is_valid(args.url)
         requests.get(args.url).ok
-        result = download(args.output, args.url)
-        print('Page was successfully downloaded into -> ',
-                result, end='\n\n')
-        logger.debug('Finished')
+        res = download(args.output, args.url)
 
     except AttributeError:
         logger.exception('AttributeError')
@@ -41,12 +37,16 @@ def main():
         sys.exit('Connection was aborted')
     except FileNotFoundError:
         sys.exit('File not found')
-    except FileExistsError:
-        sys.exit('Attempt to create a file or directory that already exists')
+    # except FileExistsError:
+    #     sys.exit('Attempt to create a file or directory that already exists')
     except Exception as error:
         logger.exception(error)
         sys.exit(error)
+
     else:
+        print('Page was successfully downloaded into -> ',
+              res, end='\n\n')
+        logger.debug('Finished')
         sys.exit(0)
 
 
