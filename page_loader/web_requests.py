@@ -13,14 +13,19 @@ logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
 logger_for_console = logging.getLogger('logger_for_console')
 
-
+HEADERS = {
+    'user-agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+        'AppleWebKit/537.36 (KHTML, like Gecko)'
+        'Chrome/91.0.4472.101 Safari/537.36'
+}
 CHUNK_SIZE = 1024
 
 
 def get_response_server(url):
     try:
         logger.debug(f'Request to {url}')
-        response = requests.get(url, stream=True, timeout=30)
+        response = requests.get(url, stream=True, timeout=30, headers=HEADERS)
         response.raise_for_status()
         logger.debug((response.status_code, url))
         if response.ok and response is not None:
@@ -42,11 +47,11 @@ def get_response_server(url):
 
 
 def write_web_content(dir_to_download, url, flag):
-    assert type(url) is not None
+    response = get_response_server(url)
+    assert type(response) is not None
     # ! https://www.rupython.com/63038-63038.html
     file_name = get_file_name(url, flag)
     file_path = os.path.join(dir_to_download, file_name)
-    response = get_response_server(url)
     bar = Bar(f'Write {file_name}', suffix='%(percent)d%%', color='blue')
     with open(file_path, 'wb') as file:
         if response or response is not None:

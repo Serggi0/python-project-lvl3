@@ -28,30 +28,61 @@ def change_tags(dir_to_download, file_with_content, domain_name):
     tags = soup.find_all(['img', 'script', 'link'])
 
     for tag in tags:
-        if 'src' in tag.attrs:
-            link_src = convert_relativ_link(tag['src'], domain_name)
-            if link_src.startswith(domain_name) and domain_name is not None:
+        src = tag.attrs.get('src')
+        if src == '' or src is None:
+            continue
+        else:
+            link_src = convert_relativ_link(src, domain_name)
+            if link_src.startswith(domain_name):
                 tag['src'] = link_src
                 web_link_src, _ = write_web_content(dir_to_download,
                                                     link_src, flag='link')
-                # >> web_link_src - относительный путь из папки dir_to_download
                 tag['src'] = web_link_src
                 cnt += 1
-                logger.debug('Download ')
+                logger.debug('Download src')
             else:
                 logger.debug(f'{link_src} not in domain_name or repeated')
 
-        if 'href' in tag.attrs:
-            link_href = convert_relativ_link(tag['href'], domain_name)
-            if link_href.startswith(domain_name) and domain_name is not None:
+        href = tag.attrs.get('href')
+        if href == '' or href is None:
+            continue
+        else:
+            link_href = convert_relativ_link(href, domain_name)
+            if link_href.startswith(domain_name):
                 tag['href'] = link_href
                 web_link_href, _ = write_web_content(dir_to_download,
                                                      link_href, flag='link')
                 tag['href'] = web_link_href
                 cnt += 1
-                logger.debug('Download ')
+                logger.debug('Download href')
             else:
                 logger.debug(f'{link_href} not in domain_name or repeated')
+
+    # for tag in tags:
+    #     if 'src' in tag.attrs:
+    #         link_src = convert_relativ_link(tag['src'], domain_name)
+    #         if link_src.startswith(domain_name):
+    #             tag['src'] = link_src
+    #             web_link_src, _ = write_web_content(dir_to_download,
+    #                                                 link_src, flag='link')
+    #     # >> web_link_src - относительный путь из папки dir_to_download
+    #             tag['src'] = web_link_src
+    #             cnt += 1
+    #             logger.debug('Download ')
+    #         else:
+    #             logger.debug(f'{link_src} not in domain_name or repeated')
+
+    #     if 'href' in tag.attrs:
+    #         link_href = convert_relativ_link(tag['href'], domain_name)
+    #         if link_href.startswith(domain_name) and domain_name is not None:
+    #             tag['href'] = link_href
+    #             web_link_href, _ = write_web_content(dir_to_download,
+    #                                                  link_href, flag='link')
+    #             tag['href'] = web_link_href
+    #             cnt += 1
+    #             logger.debug('Download ')
+    #         else:
+    #             logger.debug(f'{link_href} not in domain_name or repeated')
 
     logger.debug(f'Total tags changed: {cnt}')
 
