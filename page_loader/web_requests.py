@@ -35,12 +35,13 @@ def get_response_server(url):
     except(
            requests.exceptions.ConnectionError,
            requests.exceptions.HTTPError,
-           requests.exceptions.MissingSchema,
            requests.exceptions.Timeout,
            ConnectionAbortedError
     ) as error:
         logger.exception(error)
         sys.exit(f'Error occurred:\n{error}')
+    except requests.exceptions.MissingSchema as err:
+        logger.debug(f'Invalid URL:\n{err}')
 
     else:
         return response

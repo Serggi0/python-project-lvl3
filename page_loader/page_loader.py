@@ -6,7 +6,7 @@ from page_loader.settings_logging import logger_config
 from page_loader.web_requests import write_web_content
 from page_loader.normalize_data import (convert_relativ_link,
                                         create_dir_from_web,
-                                        get_domain_name)
+                                        get_domain_name, is_valid)
 
 
 logging.config.dictConfig(logger_config)
@@ -33,7 +33,7 @@ def change_tags(dir_to_download, file_with_content, domain_name):
             continue
         else:
             link_src = convert_relativ_link(src, domain_name)
-            if link_src.startswith(domain_name):
+            if link_src.startswith(domain_name) and is_valid(link_src):
                 tag['src'] = link_src
                 web_link_src, _ = write_web_content(dir_to_download,
                                                     link_src, flag='link')
@@ -41,14 +41,14 @@ def change_tags(dir_to_download, file_with_content, domain_name):
                 cnt += 1
                 logger.debug('Download src')
             else:
-                logger.debug(f'{link_src} not in domain_name or repeated')
+                continue
 
         href = tag.attrs.get('href')
         if href == '' or href is None:
             continue
         else:
             link_href = convert_relativ_link(href, domain_name)
-            if link_href.startswith(domain_name):
+            if link_href.startswith(domain_name) and is_valid(link_href):
                 tag['href'] = link_href
                 web_link_href, _ = write_web_content(dir_to_download,
                                                      link_href, flag='link')
@@ -56,7 +56,7 @@ def change_tags(dir_to_download, file_with_content, domain_name):
                 cnt += 1
                 logger.debug('Download href')
             else:
-                logger.debug(f'{link_href} not in domain_name or repeated')
+                continue
 
     # for tag in tags:
     #     if 'src' in tag.attrs:
