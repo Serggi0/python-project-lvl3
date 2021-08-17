@@ -1,4 +1,3 @@
-import sys
 import requests
 import logging.config
 from bs4 import BeautifulSoup
@@ -79,9 +78,11 @@ def download(path, url):
     if is_valid(url) and requests.get(url).ok:
         domain_name = get_domain_name(url)
         dir_to_download = create_dir_from_web(path, url)
-        _, web_page_path = write_web_content(dir_to_download, url, flag='web_page')
+        _, web_page_path = write_web_content(
+                                             dir_to_download,
+                                             url, flag='web_page')
         result = change_tags(dir_to_download, web_page_path, domain_name)
         print('Page was successfully downloaded into -> ',
               result, end='\n\n')
     else:
-        sys.exit('Invalid URL')
+        print('Invalid URL')
