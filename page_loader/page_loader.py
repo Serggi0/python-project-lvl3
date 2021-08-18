@@ -84,6 +84,6 @@ def download(path, url):
         result = change_tags(dir_to_download, web_page_path, domain_name)
         print('Page was successfully downloaded into -> ',
               result, end='\n\n')
+        return result
     else:
         print('Invalid URL')
-    return result
