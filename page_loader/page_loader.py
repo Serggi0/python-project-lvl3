@@ -86,3 +86,4 @@ def download(path, url):
               result, end='\n\n')
     else:
         print('Invalid URL')
+    return result
