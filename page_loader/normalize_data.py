@@ -73,7 +73,7 @@ def get_file_name(path, flag):
 def create_dir_from_web(path, url):
     url = prepare_url_b(url)
     dir_path = os.path.join(path, get_dir_name(url))
-    os.makedirs(dir_path, exist_ok=True)
+    os.makedirs(dir_path)
     logger.debug(
         f'Function create_dir_from_web(path, url) return {dir_path}'
         )

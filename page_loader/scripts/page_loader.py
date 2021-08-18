@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import sys
+import os
 import requests
 import logging.config
 from page_loader.page_loader import download
 from page_loader.cli import create_parser
-from page_loader.normalize_data import is_valid
 from page_loader.settings_logging import logger_config
 
 
@@ -18,7 +18,9 @@ def main():
     args = my_parser.parse_args()
 
     try:
-        is_valid(args.url)
+        os.stat(args.output)
+        # https://github.com/python/cpython/blob/
+        # 286e1c15ceb28a76d8ef4fe7111718317c9ccaf5/Lib/genericpath.py#L14-L22
         requests.get(args.url).ok
         download(args.url, args.output)
 
@@ -27,7 +29,9 @@ def main():
            requests.exceptions.HTTPError,
            requests.exceptions.MissingSchema,
            requests.exceptions.Timeout,
-           ConnectionAbortedError
+           ConnectionAbortedError,
+           OSError,
+           Exception
     ) as error:
         logger.exception(error)
         sys.exit(f'Error occurred:\n{error}')
@@ -37,10 +41,7 @@ def main():
     except PermissionError:
         sys.exit('Permission denied')
     except FileNotFoundError:
-        sys.exit('File not found')
-    except Exception as error:
-        logger.exception(error)
-        sys.exit(error)
+        sys.exit('File or Directory not found')
 
     else:
         logger.debug('Finished')
