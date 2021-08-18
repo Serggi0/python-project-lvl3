@@ -73,16 +73,11 @@ def get_file_name(path, flag):
 def create_dir_from_web(path, url):
     url = prepare_url_b(url)
     dir_path = os.path.join(path, get_dir_name(url))
-    # try:
     os.makedirs(dir_path, exist_ok=True)
     logger.debug(
         f'Function create_dir_from_web(path, url) return {dir_path}'
         )
     return dir_path
-    # except OSError:
-    #     logger_for_console.exception(
-    #         f'Failed to create a directory {dir_path}'
-    #         )
 
 
 def is_valid(url):

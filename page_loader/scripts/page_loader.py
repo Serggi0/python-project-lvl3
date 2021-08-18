@@ -20,7 +20,7 @@ def main():
     try:
         is_valid(args.url)
         requests.get(args.url).ok
-        download(args.output, args.url)
+        download(args.url, args.output)
 
     except(
            requests.exceptions.ConnectionError,
