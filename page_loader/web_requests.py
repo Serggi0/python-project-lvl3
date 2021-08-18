@@ -47,13 +47,18 @@ def get_response_server(url):
         return response
 
 
-def write_web_content(dir_to_download, url, flag):
+def write_web_content(path, dir_to_download, url, flag):
     response = get_response_server(url)
     assert type(response) is not None
     # ! https://www.rupython.com/63038-63038.html
     file_name = get_file_name(url, flag)
-    file_path = os.path.join(dir_to_download, file_name)
     bar = Bar(f'Write {file_name}', suffix='%(percent)d%%', color='blue')
+
+    if flag == 'web_page':
+        file_path = os.path.join(path, file_name)
+    else:
+        file_path = os.path.join(dir_to_download, file_name)
+
     with open(file_path, 'wb') as file:
         if response or response is not None:
             file.write(response.content)

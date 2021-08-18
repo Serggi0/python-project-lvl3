@@ -23,7 +23,7 @@ def get_soup(file_path):
     return soup
 
 
-def change_tags(dir_to_download, file_with_content, domain_name):
+def change_tags(path, dir_to_download, file_with_content, domain_name):
     cnt = 0
     soup = get_soup(file_with_content)
     tags = soup.find_all(['img', 'script', 'link'])
@@ -36,7 +36,7 @@ def change_tags(dir_to_download, file_with_content, domain_name):
             link_src = convert_relativ_link(src, domain_name)
             if link_src.startswith(domain_name) and is_valid(link_src):
                 tag['src'] = link_src
-                web_link_src, _ = write_web_content(dir_to_download,
+                web_link_src, _ = write_web_content(path, dir_to_download,
                                                     link_src, flag='link')
                 tag['src'] = web_link_src
                 cnt += 1
@@ -51,7 +51,7 @@ def change_tags(dir_to_download, file_with_content, domain_name):
             link_href = convert_relativ_link(href, domain_name)
             if link_href.startswith(domain_name) and is_valid(link_href):
                 tag['href'] = link_href
-                web_link_href, _ = write_web_content(dir_to_download,
+                web_link_href, _ = write_web_content(path, dir_to_download,
                                                      link_href, flag='link')
                 tag['href'] = web_link_href
                 cnt += 1
@@ -78,10 +78,11 @@ def download(url, path):
     if is_valid(url) and requests.get(url).ok:
         domain_name = get_domain_name(url)
         dir_to_download = create_dir_from_web(path, url)
-        _, web_page_path = write_web_content(
+        _, web_page_path = write_web_content(path,
                                              dir_to_download,
                                              url, flag='web_page')
-        result = change_tags(dir_to_download, web_page_path, domain_name)
+        result = change_tags(path, dir_to_download,
+                             web_page_path, domain_name)
         print('Page was successfully downloaded into -> ',
               result, end='\n\n')
         return result
