@@ -72,12 +72,14 @@ def get_file_name(path, flag):
 
 def create_dir_from_web(path, url):
     url = prepare_url_b(url)
-    dir_path = os.path.join(path, get_dir_name(url))
-    os.makedirs(dir_path)
-    logger.debug(
-        f'Function create_dir_from_web(path, url) return {dir_path}'
-        )
-    return dir_path
+    if os.path.exists(path):
+        dir_path = os.path.join(path, get_dir_name(url))
+        os.makedirs(dir_path)
+        logger.debug(f'Function create_dir_from_web(path, url)'
+                     f'return {dir_path}')
+        return dir_path
+    else:
+        raise Exception('Directory not found')
 
 
 def is_valid(url):
