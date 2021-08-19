@@ -107,10 +107,10 @@ def check_url(url):
         requests.get(url).raise_for_status()
         return url
     except(
-           requests.exceptions.ConnectionError,
-           requests.exceptions.HTTPError,
-           requests.exceptions.MissingSchema,
-           requests.exceptions.InvalidSchema
+        requests.exceptions.ConnectionError,
+        requests.exceptions.HTTPError,
+        requests.exceptions.MissingSchema,
+        requests.exceptions.InvalidSchema
     ) as error:
         logger.exception(error)
         print(f'! Error occurred:\n{error}')

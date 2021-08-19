@@ -25,14 +25,14 @@ def main():
         download(args.url, args.output)
 
     except(
-           requests.exceptions.ConnectionError,
-           requests.exceptions.HTTPError,
-           requests.exceptions.MissingSchema,
-           requests.exceptions.InvalidSchema,
-           requests.exceptions.Timeout,
-           ConnectionAbortedError,
-           OSError,
-           Exception
+        requests.exceptions.ConnectionError,
+        requests.exceptions.HTTPError,
+        requests.exceptions.MissingSchema,
+        requests.exceptions.InvalidSchema,
+        requests.exceptions.Timeout,
+        ConnectionAbortedError,
+        OSError,
+        Exception
     ) as error:
         logger.exception(error)
         sys.exit(f'Error occurred:\n{error}')
