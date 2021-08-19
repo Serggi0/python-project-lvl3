@@ -28,9 +28,9 @@ def get_response_server(url):
         response = requests.get(url, stream=True, timeout=30, headers=HEADERS)
         response.raise_for_status()
         logger.debug((response.status_code, url))
-        if response.ok and response is not None:
+        if response.ok:
             print(f'{url}:  OK')
-        else:
+        if response is None:
             raise TypeError
     except(
            requests.exceptions.ConnectionError,
@@ -39,7 +39,7 @@ def get_response_server(url):
            ConnectionAbortedError
     ) as error:
         logger.exception(error)
-        sys.exit(f'! Error occurred:\n{error}')
+        sys.exit(f'! Error occurred: {error}')
     except requests.exceptions.MissingSchema as err:
         logger.debug(f'Invalid URL:\n{err}')
 

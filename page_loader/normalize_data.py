@@ -29,7 +29,7 @@ def convert_relativ_link(link, domain_name):
     link = prepare_url_b(link)
 
     if link == '' or link is None:
-        raise TypeError
+        raise TypeError from None
 
     elif link.startswith('//', 0, 2):
         if urlparse(link).netloc == urlparse(domain_name).netloc:
