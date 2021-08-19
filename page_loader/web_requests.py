@@ -34,10 +34,12 @@ def get_response_server(url):
            requests.exceptions.Timeout,
            ConnectionAbortedError,
            requests.exceptions.MissingSchema,
-           requests.exceptions.InvalidSchema
+           requests.exceptions.InvalidSchema,
+           Exception
     ) as error:
         logger.exception(error)
         print(f'Error occurred:\n{error}')
+        raise
 
     else:
         return response
