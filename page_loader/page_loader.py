@@ -4,7 +4,7 @@ from tqdm import tqdm
 from time import sleep
 from page_loader.settings_logging import logger_config
 from page_loader.web_requests import write_web_content
-from page_loader.normalize_data import (convert_relativ_link,
+from page_loader.normalize_data import (check_url, convert_relativ_link,
                                         create_dir_for_links,
                                         get_path_for_tags,
                                         get_domain_name, is_valid)
@@ -77,7 +77,7 @@ def change_tags(path, dir_to_download, file_with_content, domain_name):
 
 
 def download(url, path):
-    if is_valid(url):
+    if check_url(url):
         domain_name = get_domain_name(url)
         dir_path = create_dir_for_links(path, url)
         web_page_path = write_web_content(path,

@@ -1,6 +1,7 @@
 import os
 import os.path
 import re
+import requests
 import logging.config
 from pathlib import Path, PurePosixPath
 from urllib.parse import urljoin, urlparse
@@ -78,7 +79,7 @@ def get_file_name(path, flag):
 
 
 def create_dir_for_links(path, url):
-    url = prepare_url_b(url)
+    url = check_url(url)
     if os.path.exists(path):
         dir_name = get_dir_name(url)
         dir_path = os.path.join(path, dir_name)
@@ -98,6 +99,22 @@ def get_path_for_tags(path):
 def is_valid(url):
     parsed = urlparse(url)
     return bool(parsed.scheme) and bool(parsed.netloc)
+
+
+def check_url(url):
+    try:
+        url = prepare_url_b(url)
+        requests.get(url).raise_for_status()
+        return url
+    except(
+           requests.exceptions.ConnectionError,
+           requests.exceptions.HTTPError,
+           requests.exceptions.MissingSchema,
+           requests.exceptions.InvalidSchema
+    ) as error:
+        logger.exception(error)
+        print(f'! Error occurred:\n{error}')
+        raise
 
 
 def get_domain_name(url):

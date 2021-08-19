@@ -5,7 +5,7 @@ import logging.config
 from progress.bar import Bar
 from time import sleep
 from page_loader.settings_logging import logger_config
-from page_loader.normalize_data import get_file_name
+from page_loader.normalize_data import check_url, get_file_name
 
 
 logging.config.dictConfig(logger_config)
@@ -22,26 +22,27 @@ CHUNK_SIZE = 1024
 
 
 def get_response_server(url):
-    try:
-        logger.debug(f'Request to {url}')
-        response = requests.get(url)
-        response.raise_for_status()
-        logger.debug((response.status_code, url))
+    # try:
+    check_url(url)
+    logger.debug(f'Request to {url}')
+    response = requests.get(url)
+    # response.raise_for_status()
+    logger.debug((response.status_code, url))
+    return response
 
-    except(
-           requests.exceptions.ConnectionError,
-           requests.exceptions.HTTPError,
-           requests.exceptions.MissingSchema,
-           requests.exceptions.InvalidSchema,
-           requests.exceptions.Timeout,
-           ConnectionAbortedError
-    ) as error:
-        logger.exception(error)
-        print(f'! Error occurred:\n{error}')
-        raise
+    # except(
+    #        requests.exceptions.ConnectionError,
+    #        requests.exceptions.HTTPError,
+    #        requests.exceptions.MissingSchema,
+    #        requests.exceptions.InvalidSchema,
+    #        requests.exceptions.Timeout,
+    #        ConnectionAbortedError
+    # ) as error:
+    #     logger.exception(error)
+    #     print(f'! Error occurred:\n{error}')
+    #     raise
 
-    else:
-        return response
+    # else:
 
 
 def write_web_content(path, dir_to_download, url, flag):
