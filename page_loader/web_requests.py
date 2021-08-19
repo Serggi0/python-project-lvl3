@@ -1,4 +1,3 @@
-import sys
 import os
 import os.path
 import requests
@@ -25,7 +24,7 @@ CHUNK_SIZE = 1024
 def get_response_server(url):
     try:
         logger.debug(f'Request to {url}')
-        response = requests.get(url, stream=True)
+        response = requests.get(url)
         response.raise_for_status()
         logger.debug((response.status_code, url))
         # if response.ok:
@@ -34,10 +33,10 @@ def get_response_server(url):
         #     raise TypeError
     except(
            requests.exceptions.ConnectionError,
-           requests.exceptions.HTTPError,
+           requests.exceptions.HTTPError
     ) as error:
         logger.exception(error)
-        sys.exit(error)
+        print(f'Error occurred:\n{error}')
     except requests.exceptions.MissingSchema as err:
         logger.debug(f'Invalid URL:\n{err}')
 
