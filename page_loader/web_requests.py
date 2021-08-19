@@ -13,19 +13,19 @@ logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
 logger_for_console = logging.getLogger('logger_for_console')
 
-HEADERS = {
-    'user-agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-        'AppleWebKit/537.36 (KHTML, like Gecko)'
-        'Chrome/91.0.4472.101 Safari/537.36'
-}
+# HEADERS = {
+#     'user-agent':
+#         'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+#         'AppleWebKit/537.36 (KHTML, like Gecko)'
+#         'Chrome/91.0.4472.101 Safari/537.36'
+# }
 CHUNK_SIZE = 1024
 
 
 def get_response_server(url):
     try:
         logger.debug(f'Request to {url}')
-        response = requests.get(url, stream=True, timeout=30, headers=HEADERS)
+        response = requests.get(url, stream=True)
         response.raise_for_status()
         logger.debug((response.status_code, url))
         # if response.ok:
@@ -35,11 +35,9 @@ def get_response_server(url):
     except(
            requests.exceptions.ConnectionError,
            requests.exceptions.HTTPError,
-           requests.exceptions.Timeout,
-           ConnectionAbortedError
     ) as error:
         logger.exception(error)
-        sys.exit(f'! Error occurred:\n{error}')
+        sys.exit(error)
     except requests.exceptions.MissingSchema as err:
         logger.debug(f'Invalid URL:\n{err}')
 
