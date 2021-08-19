@@ -77,7 +77,7 @@ def test_get_web_content(requests_mock,
     with open(file_with_content) as f1:
         data1 = f1.read()
     requests_mock.get('http://test.com', text=data1)
-    _, testing_file = write_web_content(tmp_path, dir_temp, url, flag)
+    testing_file = write_web_content(tmp_path, dir_temp, url, flag)
     with open(testing_file) as f2:
         data2 = f2.read()
     assert data2 == requests.get('http://test.com').text
@@ -93,7 +93,7 @@ def test_download_web_link(requests_mock, tmp_path, url, flag):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
     requests_mock.get('http://test.com/page', text='<!DOCTYPE html>')
-    _, testing_file = write_web_content(tmp_path, dir_temp, url, flag)
+    testing_file = write_web_content(tmp_path, dir_temp, url, flag)
     with open(testing_file) as f:
         data = f.read()
     assert data == requests.get('http://test.com/page').text

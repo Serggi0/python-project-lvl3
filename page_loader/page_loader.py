@@ -6,7 +6,8 @@ from time import sleep
 from page_loader.settings_logging import logger_config
 from page_loader.web_requests import write_web_content
 from page_loader.normalize_data import (convert_relativ_link,
-                                        create_dir_from_web,
+                                        create_dir_for_links,
+                                        get_path_for_tags,
                                         get_domain_name, is_valid)
 
 
@@ -29,35 +30,37 @@ def change_tags(path, dir_to_download, file_with_content, domain_name):
     tags = soup.find_all(['img', 'script', 'link'])
 
     for tag in tags:
-        src = tag.attrs.get('src')
-        if src == '' or src is None:
-            continue
-        else:
-            link_src = convert_relativ_link(src, domain_name)
-            if link_src.startswith(domain_name) and is_valid(link_src):
-                tag['src'] = link_src
-                web_link_src, _ = write_web_content(path, dir_to_download,
-                                                    link_src, flag='link')
-                tag['src'] = web_link_src
-                cnt += 1
-                logger.debug('Download src')
-            else:
-                continue
-
         href = tag.attrs.get('href')
-        if href == '' or href is None:
-            continue
-        else:
-            link_href = convert_relativ_link(href, domain_name)
-            if link_href.startswith(domain_name) and is_valid(link_href):
-                tag['href'] = link_href
-                web_link_href, _ = write_web_content(path, dir_to_download,
-                                                     link_href, flag='link')
-                tag['href'] = web_link_href
-                cnt += 1
-                logger.debug('Download href')
-            else:
+        src = tag.attrs.get('src')
+
+        if href:
+            if href == '' or href is None:
                 continue
+            else:
+                link_href = convert_relativ_link(href, domain_name)
+                if link_href.startswith(domain_name) and is_valid(link_href):
+                    tag['href'] = link_href
+                    path_for_link = write_web_content(path, dir_to_download,
+                                                      link_href, flag='link')
+                    tag['href'] = get_path_for_tags(path_for_link)
+                    cnt += 1
+                    logger.debug('Download href')
+                else:
+                    continue
+        elif src:
+            if src == '' or src is None:
+                continue
+            else:
+                link_src = convert_relativ_link(src, domain_name)
+                if link_src.startswith(domain_name) and is_valid(link_src):
+                    tag['src'] = link_src
+                    path_for_link = write_web_content(path, dir_to_download,
+                                                      link_src, flag='link')
+                    tag['src'] = get_path_for_tags(path_for_link)
+                    cnt += 1
+                    logger.debug('Download src')
+                else:
+                    continue
 
     logger.debug(f'Total tags changed: {cnt}')
 
@@ -77,11 +80,11 @@ def change_tags(path, dir_to_download, file_with_content, domain_name):
 def download(url, path):
     if is_valid(url) and requests.get(url).ok:
         domain_name = get_domain_name(url)
-        dir_to_download = create_dir_from_web(path, url)
-        _, web_page_path = write_web_content(path,
-                                             dir_to_download,
-                                             url, flag='web_page')
-        result = change_tags(path, dir_to_download,
+        dir_path = create_dir_for_links(path, url)
+        web_page_path = write_web_content(path,
+                                          dir_path,
+                                          url, flag='web_page')
+        result = change_tags(path, dir_path,
                              web_page_path, domain_name)
         print('Page was successfully downloaded into -> ',
               result, end='\n\n')

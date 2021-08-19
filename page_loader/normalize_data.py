@@ -2,7 +2,7 @@ import os
 import os.path
 import re
 import logging.config
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from urllib.parse import urljoin, urlparse
 from page_loader.settings_logging import logger_config
 
@@ -58,6 +58,11 @@ def get_file_name(path, flag):
     if is_extension(path):
         if flag == 'link':
             part, suff = os.path.splitext(path)
+            try:
+                position = suff.index('?')
+                suff = suff[:position]
+            except ValueError:
+                pass
             name = convert_path_name(part) + suff
             logger.debug('Extension is available')
         else:
@@ -70,16 +75,22 @@ def get_file_name(path, flag):
     return name
 
 
-def create_dir_from_web(path, url):
+def create_dir_for_links(path, url):
     url = prepare_url_b(url)
     if os.path.exists(path):
-        dir_path = os.path.join(path, get_dir_name(url))
+        dir_name = get_dir_name(url)
+        dir_path = os.path.join(path, dir_name)
         os.makedirs(dir_path)
-        logger.debug(f'Function create_dir_from_web(path, url)'
+        logger.debug(f'Function create_dir_for_links '
                      f'return {dir_path}')
         return dir_path
     else:
         raise Exception('Directory not found')
+
+
+def get_path_for_tags(path):
+    parts = Path(path).parts
+    return Path(parts[-2]) / parts[-1]
 
 
 def is_valid(url):

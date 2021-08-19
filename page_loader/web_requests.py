@@ -71,4 +71,4 @@ def write_web_content(path, dir_to_download, url, flag):
                          f' {file_name} and {file_path}')
         else:
             logger.debug('No response or is None')
-    return file_name, file_path
+    return file_path
