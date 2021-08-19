@@ -78,7 +78,7 @@ def change_tags(path, dir_to_download, file_with_content, domain_name):
 
 
 def download(url, path):
-    if is_valid(url) and requests.get(url).ok:
+    if is_valid(url):
         domain_name = get_domain_name(url)
         dir_path = create_dir_for_links(path, url)
         web_page_path = write_web_content(path,

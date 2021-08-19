@@ -21,7 +21,7 @@ def main():
         os.stat(args.output)
         # https://github.com/python/cpython/blob/
         # 286e1c15ceb28a76d8ef4fe7111718317c9ccaf5/Lib/genericpath.py#L14-L22
-        requests.get(args.url).ok
+        requests.get(args.url).raise_for_status()
         download(args.url, args.output)
 
     except(

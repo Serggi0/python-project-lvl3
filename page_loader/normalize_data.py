@@ -46,6 +46,8 @@ def convert_relativ_link(link, domain_name):
 def convert_path_name(path):
     if path.startswith('http'):
         _, path = re.split('://', path)
+    if path.endswith('/'):
+        path = path[:-1]
     return re.sub(r'[\W_]', '-', path)
 
 
