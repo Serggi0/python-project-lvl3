@@ -28,6 +28,7 @@ def main():
            requests.exceptions.ConnectionError,
            requests.exceptions.HTTPError,
            requests.exceptions.MissingSchema,
+           requests.exceptions.InvalidSchema,
            requests.exceptions.Timeout,
            ConnectionAbortedError,
            OSError,

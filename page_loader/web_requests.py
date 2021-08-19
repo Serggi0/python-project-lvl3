@@ -31,14 +31,13 @@ def get_response_server(url):
     except(
            requests.exceptions.ConnectionError,
            requests.exceptions.HTTPError,
-           requests.exceptions.Timeout,
-           ConnectionAbortedError,
            requests.exceptions.MissingSchema,
            requests.exceptions.InvalidSchema,
-           Exception
+           requests.exceptions.Timeout,
+           ConnectionAbortedError
     ) as error:
         logger.exception(error)
-        print(f'Error occurred:\n{error}')
+        print(f'! Error occurred:\n{error}')
         raise
 
     else:
