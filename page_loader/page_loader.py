@@ -1,4 +1,3 @@
-import requests
 import logging.config
 from bs4 import BeautifulSoup
 from tqdm import tqdm
