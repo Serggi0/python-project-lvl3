@@ -27,18 +27,17 @@ def get_response_server(url):
         response = requests.get(url)
         response.raise_for_status()
         logger.debug((response.status_code, url))
-        # if response.ok:
-        #     print(f'{url}:  OK')
-        # if response is None or '':
-        #     raise TypeError
+
     except(
            requests.exceptions.ConnectionError,
-           requests.exceptions.HTTPError
+           requests.exceptions.HTTPError,
+           requests.exceptions.Timeout,
+           ConnectionAbortedError,
+           requests.exceptions.MissingSchema,
+           requests.exceptions.InvalidSchema
     ) as error:
         logger.exception(error)
         print(f'Error occurred:\n{error}')
-    except requests.exceptions.MissingSchema as err:
-        logger.debug(f'Invalid URL:\n{err}')
 
     else:
         return response
