@@ -39,7 +39,7 @@ def get_response_server(url):
            ConnectionAbortedError
     ) as error:
         logger.exception(error)
-        sys.exit(f'Error occurred:\n{error}')
+        sys.exit(f'! Error occurred:\n{error}')
     except requests.exceptions.MissingSchema as err:
         logger.debug(f'Invalid URL:\n{err}')
 
