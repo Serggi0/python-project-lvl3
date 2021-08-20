@@ -126,15 +126,3 @@ def diff(file_result, file_with_content):
     with open(file_with_content) as f2:
         data2 = f2.read()
     assert data1 == data2
-
-
-# @pytest.mark.parametrize(
-#     'url, text',
-#     [
-#         ('https://httpbin.org/status/200',
-#          'https://httpbin.org/status/200:  OK'),
-#         ('https://httpbin.org/status/504', 'HTTP error occurred: ')
-#     ]
-# )
-# def test_get_response_server(url, text):
-#     assert get_response_server(url) == text

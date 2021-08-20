@@ -12,7 +12,6 @@ from page_loader.normalize_data import (check_url, convert_relativ_link,
 
 logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
-logger_for_console = logging.getLogger('logger_for_console')
 
 
 def get_soup(file_path):
