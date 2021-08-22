@@ -2,7 +2,8 @@ import pytest
 import requests
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
-from page_loader.page_loader import (write_web_content)
+from requests.exceptions import HTTPError
+from page_loader.page_loader import (change_tags, write_web_content)
 from page_loader.normalize_data import (convert_path_name,
                                         convert_relativ_link,
                                         get_dir_name)
@@ -126,3 +127,27 @@ def diff(file_result, file_with_content):
     with open(file_with_content) as f2:
         data2 = f2.read()
     assert data1 == data2
+
+
+@pytest.mark.parametrize(
+    'page_before, page_after, domain_name',
+    [
+        ('tests/fixtures/web_page_link.html',
+         'tests/fixtures/web_page_result.html',
+         'https://ru.hexlet.io')
+    ]
+)
+def test_change_tags(tmp_path, page_before, page_after, domain_name):
+    dir_temp = tmp_path / 'sub'
+    dir_temp.mkdir()
+
+    try:
+        res = change_tags(tmp_path, dir_temp, page_before, domain_name)
+    except HTTPError:
+        pass
+    else:
+        with open(res) as f:
+            page_result = f.read()
+        with open(page_after) as fa:
+            page_tampl = fa.read()
+        assert page_result == page_tampl
