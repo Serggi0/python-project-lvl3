@@ -1,9 +1,11 @@
+from os import error
 import pytest
 import requests
 import requests_mock
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
 from requests.exceptions import HTTPError
+from page_loader.scripts import *
 from page_loader.page_loader import (change_tags, write_web_content, download)
 from page_loader.normalize_data import (convert_path_name,
                                         convert_relativ_link,
@@ -181,3 +183,14 @@ def test_download(page_from_internet, page_after, tmp_path):
             print('page_tampl', page_tampl)
 
         assert page_result == page_tampl
+
+
+@pytest.mark.parametrize('url',
+    [('http://test.com')])
+def test_http_error(url, tmp_path):
+    with requests_mock.Mocker() as mock:
+        mock.get(url, status_code=404)
+
+        with pytest.raises(HTTPError) as error_info:
+            download(url, tmp_path)
+        assert '404 Client Error' in str(error_info.value)

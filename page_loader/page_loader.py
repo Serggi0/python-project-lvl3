@@ -79,7 +79,6 @@ def change_tags(path, dir_to_download, file_with_content, url):
 
 
 def download(url, path):
-    # if check_url(url):
     dir_path = create_dir_for_links(path, url)
     web_page_path = write_web_content(path,
                                       dir_path,
@@ -89,5 +88,3 @@ def download(url, path):
     print('Page was successfully downloaded into -> ',
           result, end='\n\n')
     return result
-    # else:
-    #     print('Invalid URL')
