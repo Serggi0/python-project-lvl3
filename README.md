@@ -13,24 +13,65 @@ This is third training project on [Hexlet.io](https://ru.hexlet.io) course.
 
 Page-loader is a command-line utility that downloads pages from the Internet and saves them on your computer. Together with the page, it downloads all the resources (images, styles, and js), allowing you to open the page without the Internet.
 
+#### Usage
+
+```Python
+usage: page-loader [-h] [-o OUTPUT] url
+
+download the page from the web
+
+positional arguments:
+  url                   Add a download page
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        Specify the directory to save the page
+                        in(by default, in the program launch
+                        directory)
+```
+
+#### Examples of working the programm
+```Python
+page-loader --output path/to/dir URL
+```
+
 <details>
-<summary>Examples of working the programm:</summary>
+<summary> Stages of project preparation</summary>
 
 #### Asciinema step1:
+```Python
+poetry run page-loader
+```
 [![asciicast](https://asciinema.org/a/7hYK6eUqGKHmGHrlfnqbkn1Yx.svg)](https://asciinema.org/a/7hYK6eUqGKHmGHrlfnqbkn1Yx)
 
 #### Asciinema step2:
+```Python
+poetry run page-loader -h
+```
 [![asciicast](https://asciinema.org/a/hyWuuPyuYEXmKA5WBaRkU84gC.svg)](https://asciinema.org/a/hyWuuPyuYEXmKA5WBaRkU84gC)
 
 #### Asciinema step3:
+```Python
+tree
+```
 [![asciicast](https://asciinema.org/a/426188.svg)](https://asciinema.org/a/426188)
 
 #### Asciinema step4:
+```Python
+cat myapp.log
+```
 [![asciicast](https://asciinema.org/a/mGcD16tlA3LBYh8D82OlO8B14.svg)](https://asciinema.org/a/mGcD16tlA3LBYh8D82OlO8B14)
 
 #### Asciinema step5:
+```Python
+make page-loader
+```
 [![asciicast](https://asciinema.org/a/bV12dNP1YviNbKM0AAYmXf3i4.svg)](https://asciinema.org/a/bV12dNP1YviNbKM0AAYmXf3i4)
 
 #### Asciinema step6:
+```Python
+make page-loader 
+```
 [![asciicast](https://asciinema.org/a/gajXHWvoFj7Z6uwUSH9T5T8RL.svg)](https://asciinema.org/a/gajXHWvoFj7Z6uwUSH9T5T8RL)
 </details>

@@ -22,13 +22,16 @@ def get_soup(file_path):
     return soup
 
 
-def change_tags(path, dir_to_download, file_with_content, domain_name):
+def change_tags(path, dir_to_download, file_with_content, url):
     cnt = 0
+    domain_name = get_domain_name(url)
     soup = get_soup(file_with_content)
     tags = soup.find_all(['img', 'script', 'link'])
 
     for tag in tags:
         href = tag.attrs.get('href')
+        # if hasattr(tag, 'href'):
+        #     href = getattr(tag, 'href')
         src = tag.attrs.get('src')
 
         if href:
@@ -77,13 +80,12 @@ def change_tags(path, dir_to_download, file_with_content, domain_name):
 
 def download(url, path):
     if check_url(url):
-        domain_name = get_domain_name(url)
         dir_path = create_dir_for_links(path, url)
         web_page_path = write_web_content(path,
                                           dir_path,
                                           url, flag='web_page')
         result = change_tags(path, dir_path,
-                             web_page_path, domain_name)
+                             web_page_path, url)
         print('Page was successfully downloaded into -> ',
               result, end='\n\n')
         return result

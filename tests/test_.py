@@ -151,3 +151,17 @@ def test_change_tags(tmp_path, page_before, page_after, domain_name):
         with open(page_after) as fa:
             page_tampl = fa.read()
         assert page_result == page_tampl
+
+
+@pytest.mark.parametrize(
+    'page_before, page_after, domain_name',
+    [
+        ('tests/fixtures/web_page_link.html',
+         'tests/fixtures/web_page_result.html',
+         'https://ru.hexlet.io')
+    ]
+)
+def test_download(url, tmp_path):
+    dir_temp = tmp_path / 'sub'
+    dir_temp.mkdir()
+

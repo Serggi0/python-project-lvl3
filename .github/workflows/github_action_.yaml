@@ -33,7 +33,7 @@ jobs:
         uses: paambaati/codeclimate-action@v2.7.5
         # Взято из GitHub paambati Code Climate Coverage Action
         env:
-          CC_TEST_REPORTER_ID: 6f75372822a31f3fb8928dd66487e23f6b2f09e633bab4be324f446ec51330c5
+          CC_TEST_REPORTER_ID: ${{ secrets.ID_TEST_COVERAGE }}
           #Reportep ID взят в CodeClimate Test Coverage
         with:
           coverageCommand: make test
