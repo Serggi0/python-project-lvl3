@@ -1,9 +1,10 @@
 import pytest
 import requests
+import requests_mock
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
 from requests.exceptions import HTTPError
-from page_loader.page_loader import (change_tags, write_web_content)
+from page_loader.page_loader import (change_tags, write_web_content, download)
 from page_loader.normalize_data import (convert_path_name,
                                         convert_relativ_link,
                                         get_dir_name)
@@ -70,14 +71,14 @@ def test_convert_relativ_link(link, domain_name, correct_value):
          'tests/fixtures/web_page.html')
     ]
 )
-def test_get_web_content(requests_mock,
-                         file_with_content,
+def test_get_web_content(file_with_content,
                          url, flag, tmp_path):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
     with open(file_with_content) as f1:
         data1 = f1.read()
-    requests_mock.get('http://test.com', text=data1)
+    with requests_mock.Mocker() as mock:
+        mock.get('http://test.com', text=data1)
     testing_file = write_web_content(tmp_path, dir_temp, url, flag)
     with open(testing_file) as f2:
         data2 = f2.read()
@@ -90,10 +91,11 @@ def test_get_web_content(requests_mock,
         ('http://test.com/page', 'link')
     ]
 )
-def test_download_web_link(requests_mock, tmp_path, url, flag):
+def test_download_web_link(tmp_path, url, flag):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
-    requests_mock.get('http://test.com/page', text='<!DOCTYPE html>')
+    with requests_mock.Mocker() as mock:
+        mock.get('http://test.com/page', text='<!DOCTYPE html>')
     testing_file = write_web_content(tmp_path, dir_temp, url, flag)
     with open(testing_file) as f:
         data = f.read()
@@ -130,19 +132,19 @@ def diff(file_result, file_with_content):
 
 
 @pytest.mark.parametrize(
-    'page_before, page_after, domain_name',
+    'page_before, page_after, url',
     [
         ('tests/fixtures/web_page_link.html',
          'tests/fixtures/web_page_result.html',
          'https://ru.hexlet.io')
     ]
 )
-def test_change_tags(tmp_path, page_before, page_after, domain_name):
+def test_change_tags(tmp_path, page_before, page_after, url):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
 
     try:
-        res = change_tags(tmp_path, dir_temp, page_before, domain_name)
+        res = change_tags(tmp_path, dir_temp, page_before, url)
     except HTTPError:
         pass
     else:
@@ -150,4 +152,32 @@ def test_change_tags(tmp_path, page_before, page_after, domain_name):
             page_result = f.read()
         with open(page_after) as fa:
             page_tampl = fa.read()
+        assert page_result == page_tampl
+
+
+@pytest.mark.parametrize(
+    'page_from_internet, page_after',
+    [
+        ('tests/fixtures/web_page_link.html',
+         'tests/fixtures/web_page_result.html')
+    ]
+)
+def test_download(page_from_internet, page_after, tmp_path):
+    with requests_mock.Mocker() as mock:
+        with open(page_from_internet) as f:
+            txt = f.read()
+        mock.get('http://test.com', text=txt)
+        mock.get('http://test.com/assets/application.css')
+        mock.get('http://test.com/courses')
+        mock.get('http://test.com/assets/professions/nodejs.png')
+        mock.get('http://test.com/packs/js/runtime.js')
+        result = download('http://test.com', tmp_path)
+        with open(result) as file:
+            page_result = file.read()
+        with open(page_after) as file_:
+            page_tampl = file_.read()
+            print('page_result', page_result)
+            print()
+            print('page_tampl', page_tampl)
+
         assert page_result == page_tampl

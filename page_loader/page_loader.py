@@ -4,7 +4,7 @@ from tqdm import tqdm
 from time import sleep
 from page_loader.settings_logging import logger_config
 from page_loader.web_requests import write_web_content
-from page_loader.normalize_data import (check_url, convert_relativ_link,
+from page_loader.normalize_data import (convert_relativ_link,
                                         create_dir_for_links,
                                         get_path_for_tags,
                                         get_domain_name, is_valid)
@@ -79,15 +79,15 @@ def change_tags(path, dir_to_download, file_with_content, url):
 
 
 def download(url, path):
-    if check_url(url):
-        dir_path = create_dir_for_links(path, url)
-        web_page_path = write_web_content(path,
-                                          dir_path,
-                                          url, flag='web_page')
-        result = change_tags(path, dir_path,
-                             web_page_path, url)
-        print('Page was successfully downloaded into -> ',
-              result, end='\n\n')
-        return result
-    else:
-        print('Invalid URL')
+    # if check_url(url):
+    dir_path = create_dir_for_links(path, url)
+    web_page_path = write_web_content(path,
+                                      dir_path,
+                                      url, flag='web_page')
+    result = change_tags(path, dir_path,
+                         web_page_path, url)
+    print('Page was successfully downloaded into -> ',
+          result, end='\n\n')
+    return result
+    # else:
+    #     print('Invalid URL')
