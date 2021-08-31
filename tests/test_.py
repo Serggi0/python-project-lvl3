@@ -4,11 +4,13 @@ import requests_mock
 import filecmp
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
-from requests.exceptions import HTTPError
-from page_loader.page_loader import (change_tags, write_web_content, download)
+from page_loader.page_loader import download
 from page_loader.normalize_data import (convert_path_name,
                                         convert_relativ_link,
                                         get_dir_name)
+from page_loader.web_data_processing import (get_page_with_local_links,
+                                             get_link, load_web_page)
+from page_loader.custom_exseptions import BadRequest
 
 
 @pytest.mark.parametrize(
@@ -66,38 +68,38 @@ def test_convert_relativ_link(link, domain_name, correct_value):
 
 
 @pytest.mark.parametrize(
-    'url, flag, file_with_content',
+    'url, file_with_content',
     [
-        ('http://test.com', 'web_page',
+        ('http://test.com',
          'tests/fixtures/web_page.html')
     ]
 )
 def test_get_web_content(file_with_content,
-                         url, flag, tmp_path):
+                         url, tmp_path):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
     with open(file_with_content) as f1:
         data1 = f1.read()
     with requests_mock.Mocker() as mock:
         mock.get('http://test.com', text=data1)
-    testing_file = write_web_content(tmp_path, dir_temp, url, flag)
+    testing_file = load_web_page(dir_temp, url)
     with open(testing_file) as f2:
         data2 = f2.read()
     assert data2 == requests.get('http://test.com').text
 
 
 @pytest.mark.parametrize(
-    'url, flag',
+    'url',
     [
-        ('http://test.com/page', 'link')
+        ('http://test.com/page')
     ]
 )
-def test_download_web_link(tmp_path, url, flag):
+def test_download_web_link(tmp_path, url):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
     with requests_mock.Mocker() as mock:
         mock.get('http://test.com/page', text='<!DOCTYPE html>')
-    testing_file = write_web_content(tmp_path, dir_temp, url, flag)
+    testing_file = get_link(dir_temp, url)
     with open(testing_file) as f:
         data = f.read()
     assert data == requests.get('http://test.com/page').text
@@ -141,8 +143,8 @@ def test_change_tags(tmp_path, page_before, page_after, url):
     dir_temp.mkdir()
 
     try:
-        res = change_tags(tmp_path, dir_temp, page_before, url)
-    except HTTPError:
+        res = get_page_with_local_links(dir_temp, page_before, url)
+    except BadRequest:
         pass
     else:
         with open(res) as f:
@@ -185,6 +187,6 @@ def test_http_error(url, tmp_path):
     with requests_mock.Mocker() as mock:
         mock.get(url, status_code=404)
 
-        with pytest.raises(HTTPError) as error_info:
+        with pytest.raises(BadRequest) as error_info:
             download(url, tmp_path)
         assert '404 Client Error' in str(error_info.value)

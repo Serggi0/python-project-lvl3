@@ -1,11 +1,12 @@
 import os
 import os.path
+from page_loader.custom_exseptions import BadFile, BadPath
 import re
-import requests
 import logging.config
 from pathlib import Path, PurePosixPath
 from urllib.parse import urljoin, urlparse
 from page_loader.settings_logging import logger_config
+from page_loader.colors import RED, WHITE
 
 
 logging.config.dictConfig(logger_config)
@@ -18,17 +19,7 @@ def is_extension(file):
     return bool(suff)
 
 
-# def prepare_url_b(url):
-#     if isinstance(url, bytes):
-#         url = url.decode('utf8')
-#     else:
-#         url = str(url)
-#     return url
-
-
 def convert_relativ_link(link, domain_name):
-    # link = prepare_url_b(link)
-
     if link == '' or link is None:
         raise TypeError from None
 
@@ -57,7 +48,7 @@ def get_dir_name(path):
     return res
 
 
-def get_file_name(path, flag):
+def get_file_name(path, flag=None):
     if is_extension(path):
         if flag == 'link':
             part, suff = os.path.splitext(path)
@@ -79,16 +70,21 @@ def get_file_name(path, flag):
 
 
 def create_dir_for_links(path, url):
-    url = check_url(url)
-    if os.path.exists(path):
+    try:
         dir_name = get_dir_name(url)
         dir_path = os.path.join(path, dir_name)
         os.makedirs(dir_path)
         logger.debug(f'Function create_dir_for_links '
                      f'return {dir_path}')
         return dir_path
-    else:
-        raise Exception('Directory not found')
+    except OSError as err:
+        raise BadPath(f'{RED}Directory exists:\n{WHITE}{err}') from err
+    except FileNotFoundError as error:
+        raise BadPath(f'{RED}Directory or file not found:'
+                      '\n{WHITE}{error}') from error
+    except FileExistsError as er:
+        raise BadFile(f'{RED}File exists:'
+                      '\n{WHITE}{er}') from er
 
 
 def get_path_for_tags(path):
@@ -99,33 +95,3 @@ def get_path_for_tags(path):
 def is_valid(url):
     parsed = urlparse(url)
     return bool(parsed.scheme) and bool(parsed.netloc)
-
-
-def check_url(url):
-    try:
-        # url = prepare_url_b(url)
-        requests.get(url).raise_for_status()
-        return url
-    except(
-        requests.exceptions.ConnectionError,
-        requests.exceptions.HTTPError,
-        requests.exceptions.MissingSchema,
-        requests.exceptions.InvalidSchema
-    ) as error:
-        logger.exception(error)
-        print(f'! Error occurred:\n{error}')
-        raise
-
-
-def get_domain_name(url):
-    # url = prepare_url_b(url)
-    parsed = urlparse(url)
-    if parsed.scheme:
-        domain_name = parsed.scheme + '://' + parsed.netloc
-        return domain_name
-    else:
-        if parsed.netloc:
-            domain_name = 'http://' + parsed.netloc
-            return domain_name
-        else:
-            return None

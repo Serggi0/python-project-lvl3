@@ -3,6 +3,7 @@ install:
 
 page-loader:
 	poetry run page-loader --output page_loader/data https://httpbin.org
+
 build:
 	poetry build
 
