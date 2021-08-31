@@ -1,6 +1,7 @@
 import pytest
 import requests
 import requests_mock
+import filecmp
 from bs4 import BeautifulSoup # noqa
 from PIL import Image, ImageChops
 from requests.exceptions import HTTPError
@@ -117,18 +118,14 @@ def test_diff_img(img_from_web, img_local):
 
 
 @pytest.mark.parametrize(
-    'file_result, file_with_content',
+    'img_from_web, img_local',
     [
-        ('tests/fixtures/web_page_after.html',
-         'tests/fixtures/web_page.html')
+        ('tests/fixtures/img_web.jpg',
+         'tests/fixtures/img_from_page_loader.jpg')
     ]
 )
-def diff(file_result, file_with_content):
-    with open(file_result) as f1:
-        data1 = f1.read()
-    with open(file_with_content) as f2:
-        data2 = f2.read()
-    assert data1 == data2
+def diff(img_from_web, img_local):
+    assert filecmp(img_from_web, img_local) is True
 
 
 @pytest.mark.parametrize(

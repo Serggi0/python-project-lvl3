@@ -18,16 +18,16 @@ def is_extension(file):
     return bool(suff)
 
 
-def prepare_url_b(url):
-    if isinstance(url, bytes):
-        url = url.decode('utf8')
-    else:
-        url = str(url)
-    return url
+# def prepare_url_b(url):
+#     if isinstance(url, bytes):
+#         url = url.decode('utf8')
+#     else:
+#         url = str(url)
+#     return url
 
 
 def convert_relativ_link(link, domain_name):
-    link = prepare_url_b(link)
+    # link = prepare_url_b(link)
 
     if link == '' or link is None:
         raise TypeError from None
@@ -103,7 +103,7 @@ def is_valid(url):
 
 def check_url(url):
     try:
-        url = prepare_url_b(url)
+        # url = prepare_url_b(url)
         requests.get(url).raise_for_status()
         return url
     except(
@@ -118,7 +118,7 @@ def check_url(url):
 
 
 def get_domain_name(url):
-    url = prepare_url_b(url)
+    # url = prepare_url_b(url)
     parsed = urlparse(url)
     if parsed.scheme:
         domain_name = parsed.scheme + '://' + parsed.netloc
