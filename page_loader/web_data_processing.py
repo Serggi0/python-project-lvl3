@@ -32,7 +32,6 @@ def check_url(url):
         requests.exceptions.InvalidSchema
     ) as error:
         logger.exception(error)
-        # print(f'! Error occurred:\n{error}')
         raise BadRequest(f'{RED}Error occurred:\n{WHITE}{error}') from error
 
 

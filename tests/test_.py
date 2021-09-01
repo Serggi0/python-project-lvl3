@@ -10,7 +10,7 @@ from page_loader.normalize_data import (convert_path_name,
                                         get_dir_name)
 from page_loader.web_data_processing import (get_page_with_local_links,
                                              get_link, load_web_page)
-from page_loader.custom_exseptions import BadRequest
+from page_loader.custom_exseptions import BadPath, BadRequest
 
 
 @pytest.mark.parametrize(
@@ -190,3 +190,21 @@ def test_http_error(url, tmp_path):
         with pytest.raises(BadRequest) as error_info:
             download(url, tmp_path)
         assert '404 Client Error' in str(error_info.value)
+
+
+@pytest.mark.parametrize('url', [('http://test.com')])
+def test_dir_exist(url, tmp_path):
+    dir_temp = tmp_path / 'sub'
+    with requests_mock.Mocker() as mock:
+        mock.get(url)
+
+        with pytest.raises(BadPath) as error_info:
+            download(url, dir_temp)
+        assert 'Directory not exists' in str(error_info.value)
+
+
+@pytest.mark.parametrize('url', [('ht://test.com')])
+def test_bad_url(url, tmp_path):
+    with pytest.raises(BadRequest) as error_info:
+        download(url, tmp_path)
+    assert 'Error occurred:' in str(error_info.value)
