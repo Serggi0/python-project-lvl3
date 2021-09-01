@@ -5,7 +5,6 @@ import logging.config
 from urllib.parse import urlparse
 from progress.bar import Bar
 from bs4 import BeautifulSoup
-from tqdm import tqdm
 from time import sleep
 from page_loader.custom_exseptions import BadRequest
 from page_loader.settings_logging import logger_config
@@ -146,8 +145,6 @@ def get_page_with_local_links(dir_to_download, web_page, url):
     new_html = soup.prettify(formatter='html5')
     with open(web_page, 'w') as file:
         file.write(new_html)
-        for i in tqdm(new_html, 'File write... '):
-            sleep(0.00001)
     logger.debug('New tags are written to the file, change_tags finished')
     print()
     return web_page

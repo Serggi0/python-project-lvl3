@@ -3,7 +3,6 @@ import requests
 import requests_mock
 import filecmp
 from bs4 import BeautifulSoup # noqa
-from PIL import Image, ImageChops
 from page_loader.page_loader import download
 from page_loader.normalize_data import (convert_path_name,
                                         convert_relativ_link,
@@ -103,20 +102,6 @@ def test_download_web_link(tmp_path, url):
     with open(testing_file) as f:
         data = f.read()
     assert data == requests.get('http://test.com/page').text
-
-
-@pytest.mark.parametrize(
-    'img_from_web, img_local',
-    [
-        ('tests/fixtures/img_web.jpg',
-         'tests/fixtures/img_from_page_loader.jpg')
-    ]
-)
-def test_diff_img(img_from_web, img_local):
-    img1 = Image.open(img_from_web)
-    img2 = Image.open(img_local)
-    differences = ImageChops.difference(img1, img2)
-    assert differences.getbbox() is None
 
 
 @pytest.mark.parametrize(
