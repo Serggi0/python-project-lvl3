@@ -5,8 +5,7 @@ name: 'lint & test GitHub action'
 on: # пусть гоняется на любой пуш
   push:
     branches:
-      # - main
-      - refactoring
+      - main
 
 # список того, что нужно делать. каждый job будет выводиться отдельным элементом слева UI
 jobs:
