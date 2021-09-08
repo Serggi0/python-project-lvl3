@@ -1,7 +1,6 @@
-import os
 import logging.config
 from page_loader.settings_logging import logger_config
-from page_loader.custom_exseptions import BadPath
+from page_loader.custom_exseptions import Error
 from page_loader.web_data_processing import (check_url, get_link,
                                              load_web_page,
                                              get_page_with_local_links)
@@ -14,7 +13,7 @@ logger = logging.getLogger('app_logger')
 
 def download(url, path):
     try:
-        os.stat(path)  # checking if folder exist
+        # os.stat(path)  # checking if folder exist
         # https://github.com/python/cpython/blob/main/Lib/genericpath.py
         check_url(url)
         web_page = load_web_page(path, url)
@@ -23,4 +22,5 @@ def download(url, path):
         result = get_page_with_local_links(dir_for_links, web_page, url)
         return result
     except OSError as err:
-        raise BadPath(f'{RED}Directory not exists:\n{WHITE}{err}') from err
+        raise Error(f'{RED}Directory not exists:\n{WHITE}'
+                    '{err.__class__.__name__}: {err}') from err

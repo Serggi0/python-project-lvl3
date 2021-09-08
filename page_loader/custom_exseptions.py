@@ -2,13 +2,13 @@ class AppInternalError(Exception):
     pass
 
 
-class BadRequest(AppInternalError):
+class Error(AppInternalError):
     pass
 
 
-class BadPath(AppInternalError):
-    pass
+# class BadPath(AppInternalError):
+#     pass
 
 
-class BadFile(AppInternalError):
-    pass
+# class BadFile(AppInternalError):
+#     pass

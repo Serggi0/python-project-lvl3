@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from progress.bar import Bar
 from bs4 import BeautifulSoup
 from time import sleep
-from page_loader.custom_exseptions import BadRequest
+from page_loader.custom_exseptions import Error
 from page_loader.settings_logging import logger_config
 from page_loader.normalize_data import (get_file_name, convert_relativ_link,
                                         get_path_for_tags, is_valid)
@@ -31,7 +31,8 @@ def check_url(url):
         requests.exceptions.InvalidSchema
     ) as error:
         logger.exception(error)
-        raise BadRequest(f'{RED}Error occurred:\n{WHITE}{error}') from error
+        raise Error(f'{RED}Error occurred:\n{WHITE}'
+                    '{error.__class__.__name__}: {error}') from error
 
 
 def get_response_server(url):

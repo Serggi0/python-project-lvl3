@@ -1,6 +1,6 @@
 import os
 import os.path
-from page_loader.custom_exseptions import BadFile, BadPath
+from page_loader.custom_exseptions import Error
 import re
 import logging.config
 from pathlib import Path, PurePosixPath
@@ -78,13 +78,13 @@ def create_dir_for_links(path, url):
                      f'return {dir_path}')
         return dir_path
     except OSError as err:
-        raise BadPath(f'{RED}Directory exists:\n{WHITE}{err}') from err
+        raise Error(f'{RED}Directory exists:\n{WHITE}{err}') from err
     except FileNotFoundError as error:
-        raise BadPath(f'{RED}Directory or file not found:'
-                      '\n{WHITE}{error}') from error
+        raise Error(f'{RED}Directory or file not found:'
+                    '\n{WHITE}{error}') from error
     except FileExistsError as er:
-        raise BadFile(f'{RED}File exists:'
-                      '\n{WHITE}{er}') from er
+        raise Error(f'{RED}File exists:'
+                    '\n{WHITE}{er}') from er
 
 
 def get_path_for_tags(path):
