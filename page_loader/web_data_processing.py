@@ -19,10 +19,10 @@ logger_for_console = logging.getLogger('logger_for_console')
 CHUNK_SIZE = 1024
 
 
-def check_url(url):
+def get_response_server(url):
     try:
         requests.get(url).raise_for_status()
-        return url
+        return requests.get(url)
     except(
         requests.exceptions.ConnectionError,
         requests.exceptions.HTTPError,
@@ -32,14 +32,6 @@ def check_url(url):
         logger.exception(error)
         raise Error(f'{RED}Error occurred:\n{WHITE}'
                     f'{error.__class__.__name__}: {error}') from error
-
-
-def get_response_server(url):
-    check_url(url)
-    logger.debug(f'Request to {url}')
-    response = requests.get(url)
-    logger.debug((response.status_code, url))
-    return response
 
 
 def load_web_page(path, url):
