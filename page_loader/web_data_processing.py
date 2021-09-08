@@ -5,7 +5,6 @@ import logging.config
 from urllib.parse import urlparse
 from progress.bar import Bar
 from bs4 import BeautifulSoup
-from time import sleep
 from page_loader.custom_exseptions import Error
 from page_loader.settings_logging import logger_config
 from page_loader.normalize_data import (get_file_name, convert_relativ_link,
@@ -32,7 +31,7 @@ def check_url(url):
     ) as error:
         logger.exception(error)
         raise Error(f'{RED}Error occurred:\n{WHITE}'
-                    '{error.__class__.__name__}: {error}') from error
+                    f'{error.__class__.__name__}: {error}') from error
 
 
 def get_response_server(url):
@@ -44,22 +43,27 @@ def get_response_server(url):
 
 
 def load_web_page(path, url):
-    response = get_response_server(url)
-    assert type(response) is not None
-    # ! https://www.rupython.com/63038-63038.html
-    file_name = get_file_name(url)
-    file_path = os.path.join(path, file_name)
-    bar = Bar(f'Download {file_name}', suffix='%(percent)d%%', color='blue')
+    try:
+        response = get_response_server(url)
+        assert type(response) is not None
+        # ! https://www.rupython.com/63038-63038.html
+        file_name = get_file_name(url)
+        file_path = os.path.join(path, file_name)
+        bar = Bar(f'Download {file_name}',
+                  suffix='%(percent)d%%', color='blue')
 
-    with open(file_path, 'wb') as file:
-        file.write(response.content)
-        for data in bar.iter(response.iter_content(chunk_size=CHUNK_SIZE)):
-            bar.next
-            sleep(0.0001)
-        bar.finish()
-        logger.debug(f'Function download web-page and return'
-                     f' {file_name} and {file_path}')
-    return file_path
+        with open(file_path, 'wb') as file:
+            file.write(response.content)
+            for data in bar.iter(response.iter_content(chunk_size=CHUNK_SIZE)):
+                bar.next
+            bar.finish()
+            logger.debug(f'Function download web-page and return'
+                         f'{file_name} and {file_path}')
+        return file_path
+    except FileNotFoundError as error:
+        logger.exception(error)
+        raise Error(f'{RED}Directory {path} not exists:\n{WHITE}'
+                    f'{error.__class__.__name__}: {error}') from error
 
 
 def get_link(dir_to_download, url):

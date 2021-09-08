@@ -77,14 +77,15 @@ def create_dir_for_links(path, url):
         logger.debug(f'Function create_dir_for_links '
                      f'return {dir_path}')
         return dir_path
-    except OSError as err:
-        raise Error(f'{RED}Directory exists:\n{WHITE}{err}') from err
+    except FileExistsError as err:
+        raise Error(f'{RED}Directory exists:\n{WHITE}'
+                    f'{err.__class__.__name__}: {err}') from err
     except FileNotFoundError as error:
-        raise Error(f'{RED}Directory or file not found:'
-                    '\n{WHITE}{error}') from error
+        raise Error(f'{RED}Directory or file not found:\n{WHITE}'
+                    f'{error.__class__.__name__}: {error}') from error
     except FileExistsError as er:
-        raise Error(f'{RED}File exists:'
-                    '\n{WHITE}{er}') from er
+        raise Error(f'{RED}File exists:\n{WHITE}'
+                    f'{er.__class__.__name__}: {er}') from er
 
 
 def get_path_for_tags(path):
