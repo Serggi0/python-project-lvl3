@@ -11,7 +11,6 @@ from page_loader.colors import RED, WHITE
 
 logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
-logger_for_console = logging.getLogger('logger_for_console')
 
 
 def is_extension(file):
@@ -36,16 +35,12 @@ def convert_relativ_link(link, domain_name):
 
 
 def convert_path_name(path):
+    path = str(path)
     if path.startswith('http'):
         _, path = re.split('://', path)
     if path.endswith('/'):
         path = path[:-1]
     return re.sub(r'[\W_]', '-', path)
-
-
-def get_dir_name(path):
-    res = convert_path_name(path) + '_files'
-    return res
 
 
 def get_file_name(path, flag=None):
@@ -65,17 +60,16 @@ def get_file_name(path, flag=None):
     else:
         name = convert_path_name(path) + '.html'
         logger.debug('Added extension HTML')
-    logger.debug(f'Function return {name}')
+    logger.debug(f'Function return name: {name}')
     return name
 
 
 def create_dir_for_links(path, url):
     try:
-        dir_name = get_dir_name(url)
-        dir_path = os.path.join(path, dir_name)
-        os.makedirs(dir_path)
-        logger.debug(f'Function create_dir_for_links '
-                     f'return {dir_path}')
+        dir_name = convert_path_name(url) + '_files'
+        dir_path = Path(path) / dir_name
+        Path(dir_path).mkdir()
+        logger.debug(f'Function return {dir_path}')
         return dir_path
     except FileExistsError as err:
         raise Error(f'{RED}Directory exists:\n{WHITE}'
@@ -90,7 +84,9 @@ def create_dir_for_links(path, url):
 
 def get_path_for_tags(path):
     parts = Path(path).parts
-    return Path(parts[-2]) / parts[-1]
+    path = Path(parts[-2]) / parts[-1]
+    logger.debug(f'parts: {parts}, return path: {str(path)} ')
+    return path
 
 
 def is_valid(url):

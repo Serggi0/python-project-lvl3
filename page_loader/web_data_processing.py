@@ -1,5 +1,4 @@
-import os
-import os.path
+from pathlib import Path
 import requests
 import logging.config
 from urllib.parse import urlparse
@@ -14,15 +13,16 @@ from page_loader.colors import RED, WHITE
 
 logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
-logger_for_console = logging.getLogger('logger_for_console')
 
 CHUNK_SIZE = 1024
 
 
 def get_response_server(url):
     try:
-        requests.get(url).raise_for_status()
-        return requests.get(url)
+        response = requests.get(url)
+        assert type(response) is not None
+        # ! https://www.rupython.com/63038-63038.html
+        return response
     except(
         requests.exceptions.ConnectionError,
         requests.exceptions.HTTPError,
@@ -34,45 +34,32 @@ def get_response_server(url):
                     f'{error.__class__.__name__}: {error}') from error
 
 
-def load_web_page(path, url):
+def load_link(dir_to_download, url, flag=None):
     try:
+        file_name = get_file_name(url, flag)
+        file_path = Path(dir_to_download) / file_name
         response = get_response_server(url)
-        assert type(response) is not None
-        # ! https://www.rupython.com/63038-63038.html
-        file_name = get_file_name(url)
-        file_path = os.path.join(path, file_name)
         bar = Bar(f'Download {file_name}',
                   suffix='%(percent)d%%', color='blue')
 
-        with open(file_path, 'wb') as file:
-            file.write(response.content)
-            for data in bar.iter(response.iter_content(chunk_size=CHUNK_SIZE)):
-                bar.next
-            bar.finish()
-            logger.debug(f'Function download web-page and return'
-                         f'{file_name} and {file_path}')
-        return file_path
-    except FileNotFoundError as error:
-        logger.exception(error)
-        raise Error(f'{RED}Directory {path} not exists:\n{WHITE}'
-                    f'{error.__class__.__name__}: {error}') from error
-
-
-def get_link(dir_to_download, url):
-    response = get_response_server(url)
-    assert type(response) is not None
-    # ! https://www.rupython.com/63038-63038.html
-    file_name = get_file_name(url, flag='link')
-    file_path = os.path.join(dir_to_download, file_name)
-
-    with open(file_path, 'wb') as file:
         if response or response is not None:
-            file.write(response.content)
-            logger.debug(f'Function added content and return'
-                         f' {file_name} and {file_path}')
+            with open(file_path, 'wb') as file:
+                file.write(response.content)
+                for data in bar.iter(
+                    response.iter_content(chunk_size=CHUNK_SIZE)
+                ):
+                    bar.next
+                bar.finish()
+                logger.debug(f'Function download link {url}, create file: '
+                             f'{file_name} and return path: {file_path}')
+                return file_path
         else:
             logger.debug('No response or is None')
-    return file_path
+
+    except FileNotFoundError as error:
+        logger.exception(error)
+        raise Error(f'{RED}Directory {dir_to_download} not exists:\n{WHITE}'
+                    f'{error.__class__.__name__}: {error}') from error
 
 
 def get_domain_name(url):
@@ -88,60 +75,40 @@ def get_domain_name(url):
             return None
 
 
-def get_soup(file_path):
-    with open(file_path) as f:
-        data = f.read()
-        soup = BeautifulSoup(data, "html.parser")
-    logger.debug(f'From {file_path} create object BeautifulSoup')
-    return soup
-
-
-def get_page_with_local_links(dir_to_download, web_page, url):
-    cnt = 0
+def edit_tags_with_relativ_link(dir_to_download, web_page,
+                                tags_name: list, attr_tags: list, url):
     domain_name = get_domain_name(url)
-    soup = get_soup(web_page)
-    tags = soup.find_all(['img', 'script', 'link'])
+    page = open(web_page, 'r', encoding='utf-8')
+    data = page.read()
+    soup = BeautifulSoup(data, "html.parser")
+    page.close()
+    tags = soup.find_all(tags_name)
 
+    # for tag_name in tags_name:
     for tag in tags:
-        href = tag.attrs.get('href')
-        # if hasattr(tag, 'href'):
-        #     href = getattr(tag, 'href')
-        src = tag.attrs.get('src')
+        for attribute in attr_tags:
+            adrs_tag = tag.attrs.get(attribute)
 
-        if href:
-            if href == '' or href is None:
-                continue
-            else:
-                link_href = convert_relativ_link(href, domain_name)
-                if link_href.startswith(domain_name) and is_valid(link_href):
-                    tag['href'] = link_href
-                    path_for_link = get_link(dir_to_download, link_href)
-                    tag['href'] = get_path_for_tags(path_for_link)
-                    cnt += 1
-                    logger.debug('Download href')
-                else:
+            if adrs_tag:
+                if adrs_tag == '' or adrs_tag is None:
                     continue
-        elif src:
-            if src == '' or src is None:
-                continue
-            else:
-                link_src = convert_relativ_link(src, domain_name)
-                if link_src.startswith(domain_name) and is_valid(link_src):
-                    tag['src'] = link_src
-                    path_for_link = get_link(dir_to_download, link_src)
-                    tag['src'] = get_path_for_tags(path_for_link)
-                    cnt += 1
-                    logger.debug('Download src')
                 else:
-                    continue
+                    adrs_tag = convert_relativ_link(adrs_tag, domain_name)
 
-    logger.debug(f'Total tags changed: {cnt}')
-    if cnt == 0:
-        logger.debug(f'Tags not found in {web_page}')
+                    if adrs_tag.startswith(domain_name) and is_valid(adrs_tag):
+                        saved_link = load_link(dir_to_download,
+                                               adrs_tag, flag='link')
+                        tag[attribute] = get_path_for_tags(saved_link)
+                        logger.debug(f'Change attribute tag {attribute} '
+                                     f'to {adrs_tag}')
+                    else:
+                        continue
+        else:
+            logger.debug(f'{attribute} not found in {web_page}')
 
-    new_html = soup.prettify(formatter='html5')
-    with open(web_page, 'w') as file:
-        file.write(new_html)
-    logger.debug('New tags are written to the file, change_tags finished')
-    print()
+        new_html = soup.prettify(formatter='html5')
+        with open(web_page, 'w') as file:
+            file.write(new_html)
+            logger.debug(f'New tags are written to the file {web_page}')
+
     return web_page

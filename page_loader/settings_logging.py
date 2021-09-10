@@ -8,8 +8,8 @@ logger_config = {
     'formatters': {
         'std_format': {
             'format':
-                '{asctime} - {levelname} - {name}'
-                ' - {module}:{funcName}:{lineno}  - {message}',
+                '{asctime} - {levelname}'
+                ' - {module}: {funcName}: {lineno} - {message}',
                 'style': '{'
             # {module}:{funcName}:{lineno} ->
             # <имя модуля>:<имя функции>:<номер строки>
@@ -35,7 +35,7 @@ logger_config = {
             'class': 'logging.FileHandler',
             'level': 'DEBUG',
             'formatter': 'std_format',
-            'filename': 'myapp.log',
+            'filename': 'myapp1.log',
             'mode': 'w'
         }
     },
@@ -46,10 +46,10 @@ logger_config = {
             'handlers': ['to_file']
             # 'propagate': False по умолчанию True
         },
-        'logger_for_console': {
-            'level': 'DEBUG',
-            'handlers': ['console']
-        }
+        # 'logger_for_console': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['console']
+        # }
     },
 
     # 'filters': {},

@@ -3,6 +3,8 @@ install:
 
 page-loader:
 	poetry run page-loader --output page_loader/data https://httpbin.org
+	
+# https://bahna.land/ru/bolota/ekosistemnye-funktsii-bolot-i-ikh-degradatsiya-vsledstvie-melioratsii-i-torfodobychi
 
 build:
 	poetry build
