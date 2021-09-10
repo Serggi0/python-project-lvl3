@@ -36,9 +36,9 @@ def get_response_server(url):
 
 def load_link(dir_to_download, url, flag=None):
     try:
+        response = get_response_server(url)
         file_name = get_file_name(url, flag)
         file_path = Path(dir_to_download) / file_name
-        response = get_response_server(url)
         bar = Bar(f'Download {file_name}',
                   suffix='%(percent)d%%', color='blue')
 
