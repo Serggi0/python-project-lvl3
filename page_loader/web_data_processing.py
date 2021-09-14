@@ -19,6 +19,7 @@ CHUNK_SIZE = 1024
 
 def get_response_server(url):
     try:
+        requests.get(url).raise_for_status()
         response = requests.get(url)
         assert type(response) is not None
         # ! https://www.rupython.com/63038-63038.html

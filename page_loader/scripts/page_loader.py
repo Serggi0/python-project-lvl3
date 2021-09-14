@@ -19,14 +19,13 @@ def main():
 
     try:
         result = download(args.url, args.output)
-    except AppInternalError as error:
-        logger.exception(error)
-        sys.exit(f'{error}')
-    else:
         print(f'{GREEN}Page was successfully downloaded into -> ',
               result, end='\n\n')
         logger.debug('Finished')
         sys.exit(0)
+    except AppInternalError as error:
+        logger.exception(error)
+        sys.exit(f'{error}')
 
 
 if __name__ == '__main__':
