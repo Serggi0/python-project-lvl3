@@ -53,7 +53,7 @@ def load_link(dir_to_download, url, flag=None):
                 bar.finish()
                 logger.debug(f'Function download link {url}, create file: '
                              f'{file_name} and return path: {file_path}')
-                return file_path
+                return str(file_path)
         else:
             logger.debug('No response or is None')
 
