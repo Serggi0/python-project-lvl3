@@ -82,10 +82,8 @@ def edit_tags_with_relativ_link(dir_to_download, web_page,
     page = open(web_page, 'r', encoding='utf-8')
     data = page.read()
     soup = BeautifulSoup(data, "html.parser")
-    page.close()
     tags = soup.find_all(tags_name)
 
-    # for tag_name in tags_name:
     for tag in tags:
         for attribute in attr_tags:
             adrs_tag = tag.attrs.get(attribute)
@@ -106,10 +104,11 @@ def edit_tags_with_relativ_link(dir_to_download, web_page,
                         continue
         else:
             logger.debug(f'{attribute} not found in {web_page}')
+    page.close()
 
-        new_html = soup.prettify(formatter='html5')
-        with open(web_page, 'w') as file:
-            file.write(new_html)
-            logger.debug(f'New tags are written to the file {web_page}')
+    new_html = soup.prettify(formatter='html5')
+    with open(web_page, 'w') as file:
+        file.write(str(new_html))
+        logger.debug(f'New tags are written to the file {web_page}')
 
     return web_page
