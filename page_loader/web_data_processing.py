@@ -72,38 +72,32 @@ def get_domain_name(url):
 def edit_tags_with_relativ_link(dir_to_download, web_page,
                                 tags_name: list, attr_tags: list, url):
     domain_name = get_domain_name(url)
-    page = open(web_page, 'r', encoding='utf-8')
-    data = page.read()
-    soup = BeautifulSoup(data, "html.parser")
-    tags = soup.find_all(tags_name)
+    with open(web_page) as fp:
+        soup = BeautifulSoup(fp, "html.parser")
 
-    for tag in tags:
+    for link in soup.find_all(tags_name):
         for attribute in attr_tags:
-            adrs_tag = tag.attrs.get(attribute)
+            url_tag = link.attrs.get(attribute)
 
-            if adrs_tag:
-                if adrs_tag == '' or adrs_tag is None:
+            if url_tag:
+                if url_tag == '' or url_tag is None:
                     continue
                 else:
-                    adrs_tag = convert_relativ_link(adrs_tag, domain_name)
+                    url_tag = convert_relativ_link(url_tag, domain_name)
 
-                    if adrs_tag.startswith(domain_name) and is_valid(adrs_tag):
+                    if url_tag.startswith(domain_name) and is_valid(url_tag):
                         saved_link = load_link(dir_to_download,
-                                               adrs_tag, flag='link')
-                        tag[attribute] = get_path_for_tags(saved_link)
+                                               url_tag, flag='link')
+                        link[attribute] = get_path_for_tags(saved_link)
                         logger.debug(f'Change attribute tag {attribute} '
-                                     f'to {adrs_tag}')
+                                     f'to {url_tag}')
                     else:
                         continue
         else:
             logger.debug(f'{attribute} not found in {web_page}')
-    page.close()
-    visualize_loading(len(tags))
-
-    new_html = soup.prettify(formatter='minimal')
-    Path(web_page).write_text(str(new_html))
-    # with open(web_page, 'w') as file:
-    #     file.write(str(new_html))
+    visualize_loading(len(attr_tags))
+    new_html = soup.prettify()
+    Path(web_page).write_text(new_html)
     logger.debug(f'New tags are written to the file {web_page}')
 
     return web_page
