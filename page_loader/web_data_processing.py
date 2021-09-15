@@ -2,12 +2,12 @@ from pathlib import Path
 import requests
 import logging.config
 from urllib.parse import urlparse
-from progress.bar import Bar
 from bs4 import BeautifulSoup
 from page_loader.custom_exseptions import Error
 from page_loader.settings_logging import logger_config
 from page_loader.normalize_data import (get_file_name, convert_relativ_link,
-                                        get_path_for_tags, is_valid)
+                                        get_path_for_tags, is_valid,
+                                        visualize_loading)
 from page_loader.colors import RED, WHITE
 
 
@@ -40,17 +40,10 @@ def load_link(dir_to_download, url, flag=None):
         response = get_response_server(url)
         file_name = get_file_name(url, flag)
         file_path = Path(dir_to_download) / file_name
-        bar = Bar(f'Download {file_name}',
-                  suffix='%(percent)d%%', color='blue')
 
         if response or response is not None:
             with open(file_path, 'wb') as file:
                 file.write(response.content)
-                for data in bar.iter(
-                    response.iter_content(chunk_size=CHUNK_SIZE)
-                ):
-                    bar.next
-                bar.finish()
                 logger.debug(f'Function download link {url}, create file: '
                              f'{file_name} and return path: {file_path}')
                 return str(file_path)
@@ -105,10 +98,12 @@ def edit_tags_with_relativ_link(dir_to_download, web_page,
         else:
             logger.debug(f'{attribute} not found in {web_page}')
     page.close()
+    visualize_loading(len(tags))
 
-    new_html = soup.prettify(formatter='html5')
-    with open(web_page, 'w') as file:
-        file.write(str(new_html))
-        logger.debug(f'New tags are written to the file {web_page}')
+    new_html = soup.prettify(formatter='minimal')
+    Path(web_page).write_text(str(new_html))
+    # with open(web_page, 'w') as file:
+    #     file.write(str(new_html))
+    logger.debug(f'New tags are written to the file {web_page}')
 
     return web_page

@@ -3,6 +3,7 @@ import os.path
 from page_loader.custom_exseptions import Error
 import re
 import logging.config
+from progress.bar import Bar
 from pathlib import Path, PurePosixPath
 from urllib.parse import urljoin, urlparse
 from page_loader.settings_logging import logger_config
@@ -92,3 +93,11 @@ def get_path_for_tags(path):
 def is_valid(url):
     parsed = urlparse(url)
     return bool(parsed.scheme) and bool(parsed.netloc)
+
+
+def visualize_loading(number):
+    bar = Bar('Download ...',
+              max=number, suffix='%(percent)d%%', color='blue')
+    for i in range(number):
+        bar.next()
+    bar.finish()
