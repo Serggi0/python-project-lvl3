@@ -15,45 +15,41 @@ logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
 
 CHUNK_SIZE = 1024
+TAGS_NAME = ['img', 'script', 'link']
+ATTR_TAGS = ['href', 'src']
 
 
 def get_response_server(url):
     try:
-        requests.get(url).raise_for_status()
         response = requests.get(url)
-        assert type(response) is not None
-        # ! https://www.rupython.com/63038-63038.html
+        response.raise_for_status()
+        # assert type(response) is not None
+        # # ! https://www.rupython.com/63038-63038.html
         return response
-    except(
-        requests.exceptions.ConnectionError,
-        requests.exceptions.HTTPError,
-        requests.exceptions.MissingSchema,
-        requests.exceptions.InvalidSchema
-    ) as error:
+    except requests.RequestException as error:
         logger.exception(error)
         raise Error(f'{RED}Error occurred:\n{WHITE}'
                     f'{error.__class__.__name__}: {error}') from error
 
 
 def load_link(dir_to_download, url, flag=None):
-    try:
-        response = get_response_server(url)
-        file_name = get_file_name(url, flag)
-        file_path = Path(dir_to_download) / file_name
+    response = get_response_server(url)
+    file_name = get_file_name(url, flag)
+    file_path = Path(dir_to_download) / file_name
 
-        if response or response is not None:
+    if response or response is not None:
+        try:
             with open(file_path, 'wb') as file:
                 file.write(response.content)
                 logger.debug(f'Function download link {url}, create file: '
                              f'{file_name} and return path: {file_path}')
                 return str(file_path)
-        else:
-            logger.debug('No response or is None')
-
-    except FileNotFoundError as error:
-        logger.exception(error)
-        raise Error(f'{RED}Directory {dir_to_download} not exists:\n{WHITE}'
-                    f'{error.__class__.__name__}: {error}') from error
+        except OSError as error:
+            logger.exception(error)
+            raise Error(f'{RED}Error occurred:\n{WHITE}'
+                        f'{error.__class__.__name__}: {error}') from error
+    else:
+        logger.debug('No response or is None')
 
 
 def get_domain_name(url):
@@ -69,14 +65,13 @@ def get_domain_name(url):
             return None
 
 
-def edit_tags_with_relativ_link(dir_to_download, web_page,
-                                tags_name: list, attr_tags: list, url):
+def edit_tags_with_relativ_link(dir_to_download, web_page, url):
     domain_name = get_domain_name(url)
     with open(web_page) as fp:
         soup = BeautifulSoup(fp, "html.parser")
 
-    for link in soup.find_all(tags_name):
-        for attribute in attr_tags:
+    for link in soup.find_all(TAGS_NAME):
+        for attribute in ATTR_TAGS:
             url_tag = link.attrs.get(attribute)
 
             if url_tag:
@@ -95,7 +90,7 @@ def edit_tags_with_relativ_link(dir_to_download, web_page,
                         continue
         else:
             logger.debug(f'{attribute} not found in {web_page}')
-    visualize_loading(len(attr_tags))
+    visualize_loading(len(ATTR_TAGS))
     new_html = soup.prettify()
     Path(web_page).write_text(new_html)
     logger.debug(f'New tags are written to the file {web_page}')

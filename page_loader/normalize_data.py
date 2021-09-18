@@ -66,9 +66,9 @@ def get_file_name(path, flag=None):
 
 
 def create_dir_for_links(path, url):
+    dir_name = convert_path_name(url) + '_files'
+    dir_path = Path(path) / dir_name
     try:
-        dir_name = convert_path_name(url) + '_files'
-        dir_path = Path(path) / dir_name
         Path(dir_path).mkdir()
         logger.debug(f'Function return {dir_path}')
         return dir_path
@@ -78,9 +78,6 @@ def create_dir_for_links(path, url):
     except FileNotFoundError as error:
         raise Error(f'{RED}Directory or file not found:\n{WHITE}'
                     f'{error.__class__.__name__}: {error}') from error
-    except FileExistsError as er:
-        raise Error(f'{RED}File exists:\n{WHITE}'
-                    f'{er.__class__.__name__}: {er}') from er
 
 
 def get_path_for_tags(path):
