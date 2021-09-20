@@ -37,20 +37,21 @@ def test_convert_path_name(url, correct_value):
          'https://ru.hexlet.io/courses'),
         ('/courses',
          'ru.hexlet.io',
-         'http://ru.hexlet.io/courses'),
+         'https://ru.hexlet.io/courses'),
         # ('./courses',
         #  'ru.hexlet.io',
         #  'http://ru.hexlet.io/courses'),
         ('//ru.hexlet.io/courses',
          'ru.hexlet.io',
-         'http://ru.hexlet.io/courses'),
+         'https://ru.hexlet.io/courses'),
         ('//test.com/courses',
          'ru.hexlet.io',
          '//test.com/courses')
     ]
 )
 def test_convert_relativ_link(link, domain_name, correct_value):
-    assert convert_relativ_link(link, domain_name) == correct_value
+    url = 'https://ru.hexlet.io/courses'
+    assert convert_relativ_link(link, domain_name, url) == correct_value
 
 
 @pytest.mark.parametrize(

@@ -4,7 +4,7 @@ from page_loader.custom_exseptions import Error
 import re
 import logging.config
 from pathlib import Path, PurePosixPath
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 from page_loader.settings_logging import logger_config
 
 
@@ -22,16 +22,17 @@ def is_valid(url):
     return bool(parsed.scheme) and bool(parsed.netloc)
 
 
-def convert_relativ_link(link, domain_name):
+def convert_relativ_link(link, domain_name, url):
+    parsed = urlparse(url)
     if urlparse(link).netloc == domain_name:
         if link.startswith('//', 0, 2):
-            link = urljoin('http:', link)
+            link = '{}{}{}'.format(parsed.scheme, ':', link)
         else:
             link = link
 
     else:
         if re.match(r'/\w', link):
-            link = '{}{}{}'.format('http://', domain_name, link)
+            link = '{}{}{}{}'.format(parsed.scheme, '://', domain_name, link)
 
         elif link == '' or link is None:
             raise TypeError from None

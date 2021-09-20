@@ -97,7 +97,7 @@ def edit_tags_with_relativ_link(dir_to_download, path, url):
                 if url_tag == '' or url_tag is None:
                     continue
                 else:
-                    url_tag = convert_relativ_link(url_tag, domain_name)
+                    url_tag = convert_relativ_link(url_tag, domain_name, url)
 
                     if check_domain_name(url_tag, domain_name):
                         saved_link = load_link(dir_to_download, url_tag)
