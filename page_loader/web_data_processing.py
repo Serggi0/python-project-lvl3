@@ -74,16 +74,20 @@ def check_domain_name(url, domain_name):
         return False
 
 
-def edit_tags_with_relativ_link(dir_to_download, path, url):
+def get_soup(url):
     bar = Bar('Download ...',
               max=20, suffix='%(percent)d%%', color='blue')
     for i in range(20):
         html_doc = get_response_server(url).text
         bar.next()
     bar.finish()
-
-    domain_name = get_domain_name(url)
     soup = BeautifulSoup(html_doc, "html.parser")
+    return soup
+
+
+def edit_tags_with_relativ_link(dir_to_download, path, url):
+    domain_name = get_domain_name(url)
+    soup = get_soup(url)
 
     for k, v in TAGS.items():
         for link in soup.find_all({k: v}):

@@ -66,9 +66,9 @@ def get_name_link(name):
 
 
 def create_dir_for_links(path, url):
-    dir_name = convert_path_name(url) + '_files'
-    dir_path = Path(path) / dir_name
     try:
+        dir_name = convert_path_name(url) + '_files'
+        dir_path = Path(path) / dir_name
         Path(dir_path).mkdir()
         logger.debug(f'Function return {dir_path}')
         return dir_path
