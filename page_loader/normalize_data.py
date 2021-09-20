@@ -85,4 +85,4 @@ def get_path_for_tags(path):
     parts = Path(path).parts
     path = Path(parts[-2]) / parts[-1]
     logger.debug(f'parts: {parts}, return path: {str(path)} ')
-    return path
+    return str(path)

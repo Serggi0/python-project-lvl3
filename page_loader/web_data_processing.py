@@ -113,4 +113,4 @@ def edit_tags_with_relativ_link(dir_to_download, path, url):
     Path(web_page).write_text(new_html)
     logger.debug(f'New tags are written to the file {web_page}')
 
-    return web_page
+    return str(web_page)
