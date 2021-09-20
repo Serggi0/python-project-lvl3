@@ -2,7 +2,6 @@ import os
 import pytest
 import requests
 import requests_mock
-import filecmp
 from bs4 import BeautifulSoup # noqa
 from page_loader.page_loader import download
 from page_loader.normalize_data import (convert_path_name,
@@ -34,19 +33,19 @@ def test_convert_path_name(url, correct_value):
     'link, domain_name, correct_value',
     [
         ('https://ru.hexlet.io/courses',
-         'https://ru.hexlet.io',
+         'ru.hexlet.io',
          'https://ru.hexlet.io/courses'),
         ('/courses',
-         'https://ru.hexlet.io',
-         'https://ru.hexlet.io/courses'),
-        ('./courses',
-         'https://ru.hexlet.io',
-         'https://ru.hexlet.io/courses'),
+         'ru.hexlet.io',
+         'http://ru.hexlet.io/courses'),
+        # ('./courses',
+        #  'ru.hexlet.io',
+        #  'http://ru.hexlet.io/courses'),
         ('//ru.hexlet.io/courses',
-         'https://ru.hexlet.io',
-         'https://ru.hexlet.io/courses'),
+         'ru.hexlet.io',
+         'http://ru.hexlet.io/courses'),
         ('//test.com/courses',
-         'https://ru.hexlet.io',
+         'ru.hexlet.io',
          '//test.com/courses')
     ]
 )
@@ -55,14 +54,25 @@ def test_convert_relativ_link(link, domain_name, correct_value):
 
 
 @pytest.mark.parametrize(
-    'img_from_web, img_local',
+    'data, url',
     [
         ('tests/fixtures/img_web.jpg',
-         'tests/fixtures/img_from_page_loader.jpg')
+         'http://test.com/img.jpg'),
     ]
 )
-def diff(img_from_web, img_local):  # image comparison
-    assert filecmp(img_from_web, img_local) is True
+@requests_mock.Mocker(kw='mock')
+def test_diff_img(data, url, tmp_path, **kwargs):
+    dir_temp = tmp_path / 'sub'
+    dir_temp.mkdir()
+    with open(data, 'rb') as fo:
+        content = fo.read()
+
+    kwargs['mock'].get(url, content=content)
+    testing_file = load_link(dir_temp, url)
+    with open(testing_file, 'rb') as f:
+        img = f.read()
+
+    assert img == requests.get(url).content
 
 
 def test_http_error(requests_mock, tmp_path):
@@ -141,8 +151,6 @@ def test_number_links(get_load_page):  # checking by the number of links
     [
         ('tests/fixtures/web_page.html',
          'http://test.com'),
-        ('<!DOCTYPE html>',
-         'http://test.com/page'),
         ('tests/fixtures/file_js.js',
          'http://test.com/page.js')
     ]
@@ -152,7 +160,10 @@ def test_get_web_content(data, url, tmp_path, **kwargs):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
 
-    kwargs['mock'].get(url, text=data)
+    with open(data) as f:
+        text = f.read()
+
+    kwargs['mock'].get(url, text=text)
     testing_file = load_link(dir_temp, url)
     with open(testing_file) as f:
         data = f.read()

@@ -6,7 +6,6 @@ from page_loader.page_loader import download
 from page_loader.cli import create_parser
 from page_loader.settings_logging import logger_config
 from page_loader.custom_exseptions import AppInternalError
-from page_loader.colors import GREEN
 
 
 logging.config.dictConfig(logger_config)
@@ -19,7 +18,7 @@ def main():
 
     try:
         result = download(args.url, args.output)
-        print(f'{GREEN}Page was successfully downloaded into -> ',
+        print('Page was successfully downloaded into -> ',
               result, end='\n\n')
         logger.debug('Finished')
         sys.exit(0)
