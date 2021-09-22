@@ -54,15 +54,15 @@ def get_name_page(name):
 
 def get_name_link(name):
     part, suff = os.path.splitext(name)
-    if is_extension(name):
-        # removes the characters after ? (for example, "/image.png?c=3.2.5")
-        try:
-            position = suff.index('?')
-            suff = suff[:position]
-        except ValueError:
-            pass
-    else:
+    if not is_extension(name):
         suff = '.html'
+    # removes the characters after ? (for example, "/image.png?c=3.2.5")
+    try:
+        position = suff.index('?')
+        suff = suff[:position]
+    except ValueError:
+        pass
+
     return convert_path_name(part) + suff
 
 

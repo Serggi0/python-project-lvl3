@@ -1,7 +1,6 @@
 import os
 import pytest
 import requests
-import requests_mock
 from bs4 import BeautifulSoup # noqa
 from page_loader.page_loader import download
 from page_loader.normalize_data import (convert_path_name,
@@ -61,14 +60,14 @@ def test_convert_relativ_link(link, domain_name, correct_value):
          'http://test.com/img.jpg'),
     ]
 )
-@requests_mock.Mocker(kw='mock')
-def test_diff_img(data, url, tmp_path, **kwargs):
+@pytest.fixture
+def test_diff_img(requests_mock, data, url, tmp_path):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
     with open(data, 'rb') as fo:
         content = fo.read()
 
-    kwargs['mock'].get(url, content=content)
+    requests_mock.get(url, content=content)
     testing_file = load_link(dir_temp, url)
     with open(testing_file, 'rb') as f:
         img = f.read()
@@ -121,15 +120,12 @@ def get_check_file():
 
 
 @pytest.fixture
-@requests_mock.Mocker(kw='mock')
-def get_load_page(get_internet_file, tmp_path, **kwargs):
-    # dir_temp = tmp_path / 'sub'
-    # dir_temp.mkdir()
-    kwargs['mock'].get('http://test.com', text=get_internet_file)
-    kwargs['mock'].get('http://test.com/assets/application.css')
-    kwargs['mock'].get('http://test.com/courses')
-    kwargs['mock'].get('http://test.com/assets/professions/nodejs.png')
-    kwargs['mock'].get('http://test.com/packs/js/runtime.js')
+def get_load_page(requests_mock, get_internet_file, tmp_path):
+    requests_mock.get('http://test.com', text=get_internet_file)
+    requests_mock.get('http://test.com/assets/application.css')
+    requests_mock.get('http://test.com/courses')
+    requests_mock.get('http://test.com/assets/professions/nodejs.png')
+    requests_mock.get('http://test.com/packs/js/runtime.js')
     result = download('http://test.com', tmp_path)
     link_count = sum(len(files) for _, _, files in os.walk(tmp_path))
     with open(result, 'r', encoding='utf-8') as file:
@@ -156,15 +152,15 @@ def test_number_links(get_load_page):  # checking by the number of links
          'http://test.com/page.js')
     ]
 )
-@requests_mock.Mocker(kw='mock')
-def test_get_web_content(data, url, tmp_path, **kwargs):
+@pytest.fixture
+def test_get_web_content(requests_mock, data, url, tmp_path):
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
 
     with open(data) as f:
         text = f.read()
 
-    kwargs['mock'].get(url, text=text)
+    requests_mock.get(url, text=text)
     testing_file = load_link(dir_temp, url)
     with open(testing_file) as f:
         data = f.read()
