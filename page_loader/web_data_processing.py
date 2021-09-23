@@ -55,8 +55,9 @@ def edit_tags_with_relativ_link(dir_to_download, url, soup):
                     url_tag = convert_relativ_link(url_tag, url)
 
                     if check_domain_name(url_tag, domain_name):
-                        link_path = str(Path(
-                                dir_to_download) / get_name_link(url_tag))
+                        link_path = str(
+                            Path(dir_to_download) / get_name_link(url_tag)
+                        )
                         link[attribute] = link_path
                         links_to_load[url_tag] = link[attribute]
                         # long path to save to the dictionary links_to_load
