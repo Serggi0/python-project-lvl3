@@ -1,12 +1,13 @@
 import os
 import pytest
 import requests
+import requests.exceptions
 from bs4 import BeautifulSoup # noqa
 from page_loader.page_loader import download
 from page_loader.normalize_data import (convert_path_name,
                                         convert_relativ_link)
-from page_loader.web_data_processing import load_link
-from page_loader.custom_exseptions import Error
+from page_loader.web_data_processing import load_link_in_local_dir
+from page_loader.custom_exseptions import BadConnect, ErrorSistem
 
 
 @pytest.mark.parametrize(
@@ -29,76 +30,44 @@ def test_convert_path_name(url, correct_value):
 
 
 @pytest.mark.parametrize(
-    'link, domain_name, correct_value',
+    'link, correct_value',
     [
         ('https://ru.hexlet.io/courses',
-         'ru.hexlet.io',
          'https://ru.hexlet.io/courses'),
         ('/courses',
-         'ru.hexlet.io',
          'https://ru.hexlet.io/courses'),
-        # ('./courses',
-        #  'ru.hexlet.io',
-        #  'http://ru.hexlet.io/courses'),
         ('//ru.hexlet.io/courses',
-         'ru.hexlet.io',
          'https://ru.hexlet.io/courses'),
         ('//test.com/courses',
-         'ru.hexlet.io',
          '//test.com/courses')
     ]
 )
-def test_convert_relativ_link(link, domain_name, correct_value):
+def test_convert_relativ_link(link, correct_value):
     url = 'https://ru.hexlet.io/courses'
-    assert convert_relativ_link(link, domain_name, url) == correct_value
-
-
-@pytest.mark.parametrize(
-    'data, url',
-    [
-        ('tests/fixtures/img_web.jpg',
-         'http://test.com/img.jpg'),
-    ]
-)
-@pytest.fixture
-def test_diff_img(requests_mock, data, url, tmp_path):
-    dir_temp = tmp_path / 'sub'
-    dir_temp.mkdir()
-    with open(data, 'rb') as fo:
-        content = fo.read()
-
-    requests_mock.get(url, content=content)
-    testing_file = load_link(dir_temp, url)
-    with open(testing_file, 'rb') as f:
-        img = f.read()
-
-    assert img == requests.get(url).content
+    assert convert_relativ_link(link, url) == correct_value
 
 
 def test_http_error(requests_mock, tmp_path):
     url = 'http://test404.com'
     dir_temp = tmp_path / 'sub'
     requests_mock.get(url, status_code=404)
-    with pytest.raises(Error) as error_info:
+    with pytest.raises(BadConnect):
         download(url, dir_temp)
-        assert 'HTTPError' in str(error_info.value)
 
 
 def test_dir_exist(requests_mock, tmp_path):
     url = 'http://test.com'
     dir_temp = tmp_path / 'sub'
     requests_mock.get('http://test.com')
-    with pytest.raises(Error) as error_info:
+    with pytest.raises(ErrorSistem):
         download(url, dir_temp)
-        assert 'FileNotFoundError' in str(error_info.value)
 
 
 def test_bad_url(tmp_path):
     url = 'hps://test.com'
     dir_temp = tmp_path / 'sub'
-    with pytest.raises(Error) as error_info:
+    with pytest.raises(BadConnect):
         download(url, dir_temp)
-        assert 'InvalidSchema' in str(error_info.value)
 
 
 @pytest.fixture
@@ -143,13 +112,28 @@ def test_number_links(get_load_page):  # checking by the number of links
     assert numb == 5
 
 
+@pytest.fixture
+def test_img_diff(requests_mock, dictionary, tmp_path):  # todo !!!
+    dctionary = {'http://test.com/img.jpg': 'tests/fixtures/img_web.jpg'}
+    dir_temp = tmp_path / 'sub'
+    dir_temp.mkdir()
+    for link, path_for_link in dctionary:
+        with open(path_for_link, 'rb') as fo:
+            content = fo.read()
+
+        requests_mock.get(link, content=content)
+        testing_file = load_link_in_local_dir(dictionary)
+        with open(testing_file, 'rb') as f:
+            img = f.read()
+
+    assert img == requests.get(link).content
+
+
 @pytest.mark.parametrize(
     'data, url',
     [
         ('tests/fixtures/web_page.html',
-         'http://test.com'),
-        ('tests/fixtures/file_js.js',
-         'http://test.com/page.js')
+         'http://test.com')
     ]
 )
 @pytest.fixture
@@ -161,7 +145,7 @@ def test_get_web_content(requests_mock, data, url, tmp_path):
         text = f.read()
 
     requests_mock.get(url, text=text)
-    testing_file = load_link(dir_temp, url)
+    testing_file = load_link_in_local_dir({url: dir_temp})
     with open(testing_file) as f:
         data = f.read()
 

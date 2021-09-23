@@ -18,6 +18,7 @@ def main():
 
     try:
         result = download(args.url, args.output)
+        print()
         print('Page was successfully downloaded into -> ',
               result, end='\n\n')
         logger.debug('Finished')

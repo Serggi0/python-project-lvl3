@@ -2,5 +2,9 @@ class AppInternalError(Exception):
     pass
 
 
-class Error(AppInternalError):
+class BadConnect(AppInternalError):
+    pass
+
+
+class ErrorSistem(AppInternalError):
     pass

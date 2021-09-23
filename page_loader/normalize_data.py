@@ -1,10 +1,10 @@
 import os
 import os.path
-from page_loader.custom_exseptions import Error
+from page_loader.custom_exseptions import ErrorSistem
 import re
 import logging.config
 from pathlib import Path, PurePosixPath
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from page_loader.settings_logging import logger_config
 
 
@@ -22,20 +22,32 @@ def is_valid(url):
     return bool(parsed.scheme) and bool(parsed.netloc)
 
 
-def convert_relativ_link(link, domain_name, url):
+def get_parts_url(url):
     parsed = urlparse(url)
-    if urlparse(link).netloc == domain_name:
-        if link.startswith('//', 0, 2):
-            link = '{}{}{}'.format(parsed.scheme, ':', link)
-        else:
-            link = link
+    domain_name = parsed.netloc
+    return domain_name
 
+
+def check_domain_name(url, domain_name):
+    url_netlock = get_parts_url(url)
+    if url_netlock == domain_name:
+        return True
     else:
-        if re.match(r'/\w', link):
-            link = '{}{}{}{}'.format(parsed.scheme, '://', domain_name, link)
+        return False
 
-        elif link == '' or link is None:
-            raise TypeError from None
+
+def convert_relativ_link(link, url):
+    domain_name = get_parts_url(url)
+    if link.startswith('http'):
+        pass
+    elif urlparse(link).netloc == domain_name:
+        link = urljoin(url, link)
+    elif re.match(r'/\w', link):
+        link = urljoin(url, link)
+    elif link is None:
+        raise TypeError from None
+    else:
+        pass
     return link
 
 
@@ -73,12 +85,9 @@ def create_dir_for_links(path, url):
         Path(dir_path).mkdir()
         logger.debug(f'Function return {dir_path}')
         return dir_path
-    except FileExistsError as err:
-        raise Error(f'Directory exists:\n'
-                    f'{err.__class__.__name__}: {err}') from err
-    except FileNotFoundError as error:
-        raise Error(f'Directory or file not found:\n'
-                    f'{error.__class__.__name__}: {error}') from error
+    except OSError as err:
+        raise ErrorSistem(f'Error occurred:\n'
+                          f'{err.__class__.__name__}: {err}') from err
 
 
 def get_path_for_tags(path):
