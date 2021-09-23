@@ -30,8 +30,7 @@ def get_response_server(url):
         return response
     except requests.RequestException as error:
         logger.exception(error)
-        raise BadConnect(f'Error occurred:\n'
-                         f'{error.__class__.__name__}: {error}') from error
+        raise BadConnect('Connection Error occurred!') from error
 
 
 def get_soup(url):
@@ -49,24 +48,24 @@ def edit_tags_with_relativ_link(dir_to_download, url, soup):
             for attribute in ATTR_TAGS:
                 url_tag = link.attrs.get(attribute)
 
-                if url_tag == '' or url_tag is None:
+                if not url_tag:
                     continue
-                else:
-                    url_tag = convert_relativ_link(url_tag, url)
 
-                    if check_domain_name(url_tag, domain_name):
-                        link_path = str(
-                            Path(dir_to_download) / get_name_link(url_tag)
-                        )
-                        link[attribute] = link_path
-                        links_to_load[url_tag] = link[attribute]
-                        # long path to save to the dictionary links_to_load
-                        link[attribute] = get_path_for_tags(link_path)
-                        # short path to save to the soup
-                        logger.debug(f'Change attribute tag {attribute} '
-                                     f'to {url_tag}')
-                    else:
-                        continue
+                url_tag = convert_relativ_link(url_tag, url)
+
+                if check_domain_name(url_tag, domain_name):
+                    link_path = str(
+                        Path(dir_to_download) / get_name_link(url_tag)
+                    )
+                    link[attribute] = link_path
+                    links_to_load[url_tag] = link[attribute]
+                    # long path to save to the dictionary links_to_load
+                    link[attribute] = get_path_for_tags(link_path)
+                    # short path to save to the soup
+                    logger.debug(f'Change attribute tag {attribute} '
+                                 f'to {url_tag}')
+                else:
+                    continue
             else:
                 logger.debug(f'{attribute} not found in {url}')
     return soup, links_to_load
@@ -76,7 +75,7 @@ def load_link_in_local_dir(links_to_load):
     for link, path_for_link in links_to_load.items():
         bar = Bar(f'Download {link}...', suffix='%(percent)d%%', color='blue')
         response = get_response_server(link)
-        if response or response is not None:
+        if response:
             try:
                 with open(path_for_link, 'wb') as file:
                     for chunk in response.iter_content(chunk_size=10000):
@@ -87,9 +86,7 @@ def load_link_in_local_dir(links_to_load):
                 logger.debug(f'Download link {link}')
             except OSError as error:
                 logger.exception(error)
-                raise ErrorSistem(f'Error occurred:\n'
-                                  f'{error.__class__.__name__}:'
-                                  f'{error}') from error
+                raise ErrorSistem('Error occurred!') from error
         else:
             logger.debug('No response or is None')
     logger.debug('Links saved in local directory')
@@ -105,8 +102,7 @@ def save_content(dir_for_links, url, soup):
         Path(web_page).write_text(new_html)
     except OSError as error:
         logger.exception(error)
-        raise ErrorSistem(f'Error occurred:\n'
-                          f'{error.__class__.__name__}: {error}') from error
+        raise ErrorSistem('Error occurred!') from error
 
     load_link_in_local_dir(links_to_load)
 
