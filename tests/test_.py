@@ -2,10 +2,11 @@ import os
 import pytest
 import requests
 import requests.exceptions
+from pathlib import Path
 from bs4 import BeautifulSoup # noqa
 from page_loader.page_loader import download
 from page_loader.normalize_data import (convert_path_name,
-                                        convert_relativ_link)
+                                        convert_relativ_link, get_name_link)
 from page_loader.web_data_processing import load_link_in_local_dir
 from page_loader.custom_exseptions import BadConnect, ErrorSistem
 
@@ -70,6 +71,26 @@ def test_bad_url(tmp_path):
         download(url, dir_temp)
 
 
+def test_img_diff(requests_mock, tmp_path):
+    data = {'http://test.com/img.jpg': 'tests/fixtures/img_web.jpg'}
+    for link, path_for_link in data.items():
+        with open(path_for_link, 'rb') as fo:
+            content = fo.read()
+        requests_mock.get(link, content=content)
+
+    dir_temp = tmp_path / 'sub'
+    dir_temp.mkdir()
+    img_path = str(Path(dir_temp) / get_name_link('http://test.com/img.jpg'))
+    new_data = {'http://test.com/img.jpg': img_path}
+
+    load_link_in_local_dir(new_data)
+    for testing_file in data.values():
+        with open(testing_file, 'rb') as f:
+            img = f.read()
+
+    assert img == requests.get(link).content
+
+
 @pytest.fixture
 def get_internet_file():
     page_from_internet = open('tests/fixtures/web_page_link.html',
@@ -110,43 +131,3 @@ def test_download(get_load_page, get_check_file):
 def test_number_links(get_load_page):  # checking by the number of links
     _, numb = get_load_page
     assert numb == 5
-
-
-@pytest.fixture
-def test_img_diff(requests_mock, dictionary, tmp_path):  # todo !!!
-    dctionary = {'http://test.com/img.jpg': 'tests/fixtures/img_web.jpg'}
-    dir_temp = tmp_path / 'sub'
-    dir_temp.mkdir()
-    for link, path_for_link in dctionary:
-        with open(path_for_link, 'rb') as fo:
-            content = fo.read()
-
-        requests_mock.get(link, content=content)
-        testing_file = load_link_in_local_dir(dictionary)
-        with open(testing_file, 'rb') as f:
-            img = f.read()
-
-    assert img == requests.get(link).content
-
-
-@pytest.mark.parametrize(
-    'data, url',
-    [
-        ('tests/fixtures/web_page.html',
-         'http://test.com')
-    ]
-)
-@pytest.fixture
-def test_get_web_content(requests_mock, data, url, tmp_path):
-    dir_temp = tmp_path / 'sub'
-    dir_temp.mkdir()
-
-    with open(data) as f:
-        text = f.read()
-
-    requests_mock.get(url, text=text)
-    testing_file = load_link_in_local_dir({url: dir_temp})
-    with open(testing_file) as f:
-        data = f.read()
-
-    assert data == requests.get(url).text
