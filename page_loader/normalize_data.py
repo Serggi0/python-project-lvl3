@@ -17,11 +17,6 @@ def is_extension(file):
     return bool(suff)
 
 
-def is_valid(url):
-    parsed = urlparse(url)
-    return bool(parsed.scheme) and bool(parsed.netloc)
-
-
 def get_parts_url(url):
     parsed = urlparse(url)
     domain_name = parsed.netloc
@@ -30,10 +25,7 @@ def get_parts_url(url):
 
 def check_domain_name(url, domain_name):
     url_netlock = get_parts_url(url)
-    if url_netlock == domain_name:
-        return True
-    else:
-        return False
+    return url_netlock == domain_name
 
 
 def convert_relativ_link(link, url):
@@ -86,8 +78,7 @@ def create_dir_for_links(path, url):
         logger.debug(f'Function return {dir_path}')
         return dir_path
     except OSError as err:
-        raise ErrorSistem(f'Error occurred:\n'
-                          f'{err.__class__.__name__}: {err}') from err
+        raise ErrorSistem('Error occurred!') from err
 
 
 def get_path_for_tags(path):
