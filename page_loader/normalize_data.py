@@ -12,19 +12,12 @@ logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
 
 
-def get_parts_url(url):
-    parsed = urlparse(url)
-    domain_name = parsed.netloc
-    return domain_name
-
-
-def is_local_link(url, domain_name):
-    url_netlock = get_parts_url(url)
-    return url_netlock == domain_name
+def is_local_link(url_link, url_page):
+    return urlparse(url_link).netloc == urlparse(url_page).netloc
 
 
 def convert_relative_link(link, url):
-    domain_name = get_parts_url(url)
+    domain_name = urlparse(url).netloc
     if link.startswith('http'):
         pass
     elif urlparse(link).netloc == domain_name:

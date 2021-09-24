@@ -6,7 +6,7 @@ from page_loader.custom_exseptions import BadConnect, ErrorSystem
 from progress.bar import Bar
 from page_loader.settings_logging import logger_config
 from page_loader.normalize_data import (
-    get_parts_url, convert_relative_link, get_path_for_tags,
+    convert_relative_link, get_path_for_tags,
     add_suff_for_name_link, convert_path_name, is_local_link
 )
 
@@ -41,7 +41,6 @@ def get_soup(url):
 
 
 def edit_tags_with_relative_link(dir_to_download, url, soup):
-    domain_name = get_parts_url(url)
     links_to_load = {}
 
     for k, v in TAGS.items():
@@ -54,7 +53,7 @@ def edit_tags_with_relative_link(dir_to_download, url, soup):
 
                 url_tag = convert_relative_link(url_tag, url)
 
-                if is_local_link(url_tag, domain_name):
+                if is_local_link(url_tag, url):
                     link_path = str(
                         Path(dir_to_download) / add_suff_for_name_link(url_tag)
                     )
