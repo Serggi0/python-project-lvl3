@@ -6,5 +6,5 @@ class BadConnect(AppInternalError):
     pass
 
 
-class ErrorSistem(AppInternalError):
+class ErrorSystem(AppInternalError):
     pass

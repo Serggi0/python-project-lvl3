@@ -2,12 +2,13 @@ from pathlib import Path
 import requests
 import logging.config
 from bs4 import BeautifulSoup
-from page_loader.custom_exseptions import BadConnect, ErrorSistem
+from page_loader.custom_exseptions import BadConnect, ErrorSystem
 from progress.bar import Bar
 from page_loader.settings_logging import logger_config
-from page_loader.normalize_data import (get_parts_url, convert_relativ_link,
-                                        get_path_for_tags, get_name_link,
-                                        get_name_page, check_domain_name)
+from page_loader.normalize_data import (
+    get_parts_url, convert_relative_link, get_path_for_tags,
+    add_suff_for_name_link, convert_path_name, is_local_link
+    )
 
 
 logging.config.dictConfig(logger_config)
@@ -39,7 +40,7 @@ def get_soup(url):
     return soup
 
 
-def edit_tags_with_relativ_link(dir_to_download, url, soup):
+def edit_tags_with_relative_link(dir_to_download, url, soup):
     domain_name = get_parts_url(url)
     links_to_load = {}
 
@@ -51,11 +52,11 @@ def edit_tags_with_relativ_link(dir_to_download, url, soup):
                 if not url_tag:
                     continue
 
-                url_tag = convert_relativ_link(url_tag, url)
+                url_tag = convert_relative_link(url_tag, url)
 
-                if check_domain_name(url_tag, domain_name):
+                if is_local_link(url_tag, domain_name):
                     link_path = str(
-                        Path(dir_to_download) / get_name_link(url_tag)
+                        Path(dir_to_download) / add_suff_for_name_link(url_tag)
                     )
                     link[attribute] = link_path
                     links_to_load[url_tag] = link[attribute]
@@ -75,34 +76,35 @@ def load_link_in_local_dir(links_to_load):
     for link, path_for_link in links_to_load.items():
         bar = Bar(f'Download {link}...', suffix='%(percent)d%%', color='blue')
         response = get_response_server(link)
-        if response:
-            try:
-                with open(path_for_link, 'wb') as file:
-                    for chunk in response.iter_content(chunk_size=10000):
-                        file.write(chunk)
-                        file.flush()  # Cброс данных из буфера в файл
-                        bar.next()
-                bar.finish()
-                logger.debug(f'Download link {link}')
-            except OSError as error:
-                logger.exception(error)
-                raise ErrorSistem('Error occurred!') from error
-        else:
-            logger.debug('No response or is None')
+
+        try:
+            with open(path_for_link, 'wb') as file:
+                for chunk in response.iter_content(chunk_size=10000):
+                    file.write(chunk)
+                    file.flush()  # Cброс данных из буфера в файл
+                    bar.next()
+            bar.finish()
+            logger.debug(f'Download link {link}')
+        except OSError as error:
+            logger.exception(error)
+            raise ErrorSystem('Error occurred!') from error
+
     logger.debug('Links saved in local directory')
 
 
 def save_content(dir_for_links, url, soup):
-    soup, links_to_load = edit_tags_with_relativ_link(dir_for_links, url, soup)
+    soup, links_to_load = edit_tags_with_relative_link(
+        dir_for_links, url, soup
+    )
 
     new_html = soup.prettify()
-    web_page = Path(dir_for_links.parent) / get_name_page(url)
+    web_page = Path(dir_for_links.parent) / (convert_path_name(url) + '.html')
 
     try:
         Path(web_page).write_text(new_html)
     except OSError as error:
         logger.exception(error)
-        raise ErrorSistem('Error occurred!') from error
+        raise ErrorSystem('Error occurred!') from error
 
     load_link_in_local_dir(links_to_load)
 

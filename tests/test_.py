@@ -4,11 +4,12 @@ import requests
 import requests.exceptions
 from pathlib import Path
 from bs4 import BeautifulSoup # noqa
+from page_loader.custom_exseptions import BadConnect, ErrorSystem
 from page_loader.page_loader import download
-from page_loader.normalize_data import (convert_path_name,
-                                        convert_relativ_link, get_name_link)
 from page_loader.web_data_processing import load_link_in_local_dir
-from page_loader.custom_exseptions import BadConnect, ErrorSistem
+from page_loader.normalize_data import (
+    convert_path_name, convert_relative_link, add_suff_for_name_link
+)
 
 
 @pytest.mark.parametrize(
@@ -45,7 +46,7 @@ def test_convert_path_name(url, correct_value):
 )
 def test_convert_relativ_link(link, correct_value):
     url = 'https://ru.hexlet.io/courses'
-    assert convert_relativ_link(link, url) == correct_value
+    assert convert_relative_link(link, url) == correct_value
 
 
 def test_http_error(requests_mock, tmp_path):
@@ -60,7 +61,7 @@ def test_dir_exist(requests_mock, tmp_path):
     url = 'http://test.com'
     dir_temp = tmp_path / 'sub'
     requests_mock.get('http://test.com')
-    with pytest.raises(ErrorSistem):
+    with pytest.raises(ErrorSystem):
         download(url, dir_temp)
 
 
@@ -80,7 +81,9 @@ def test_img_diff(requests_mock, tmp_path):
 
     dir_temp = tmp_path / 'sub'
     dir_temp.mkdir()
-    img_path = str(Path(dir_temp) / get_name_link('http://test.com/img.jpg'))
+    img_path = str(
+        Path(dir_temp) / add_suff_for_name_link('http://test.com/img.jpg')
+    )
     new_data = {'http://test.com/img.jpg': img_path}
 
     load_link_in_local_dir(new_data)

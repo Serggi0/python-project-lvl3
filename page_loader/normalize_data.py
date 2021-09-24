@@ -1,9 +1,9 @@
 import os
 import os.path
-from page_loader.custom_exseptions import ErrorSistem
+from page_loader.custom_exseptions import ErrorSystem
 import re
 import logging.config
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from urllib.parse import urlparse, urljoin
 from page_loader.settings_logging import logger_config
 
@@ -12,23 +12,18 @@ logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
 
 
-def is_extension(file):
-    suff = PurePosixPath(file).suffix
-    return bool(suff)
-
-
 def get_parts_url(url):
     parsed = urlparse(url)
     domain_name = parsed.netloc
     return domain_name
 
 
-def check_domain_name(url, domain_name):
+def is_local_link(url, domain_name):
     url_netlock = get_parts_url(url)
     return url_netlock == domain_name
 
 
-def convert_relativ_link(link, url):
+def convert_relative_link(link, url):
     domain_name = get_parts_url(url)
     if link.startswith('http'):
         pass
@@ -36,8 +31,6 @@ def convert_relativ_link(link, url):
         link = urljoin(url, link)
     elif re.match(r'/\w', link):
         link = urljoin(url, link)
-    elif link is None:
-        raise TypeError from None
     else:
         pass
     return link
@@ -46,19 +39,16 @@ def convert_relativ_link(link, url):
 def convert_path_name(path):
     path = str(path)
     if path.startswith('http'):
+
         _, path = re.split('://', path)
     if path.endswith('/'):
         path = path[:-1]
     return re.sub(r'[\W_]', '-', path)
 
 
-def get_name_page(name):
-    return convert_path_name(name) + '.html'
-
-
-def get_name_link(name):
+def add_suff_for_name_link(name):
     part, suff = os.path.splitext(name)
-    if not is_extension(name):
+    if not suff:
         suff = '.html'
     # removes the characters after ? (for example, "/image.png?c=3.2.5")
     try:
@@ -78,7 +68,7 @@ def create_dir_for_links(path, url):
         logger.debug(f'Function return {dir_path}')
         return dir_path
     except OSError as err:
-        raise ErrorSistem('Error occurred!') from err
+        raise ErrorSystem('Error occurred!') from err
 
 
 def get_path_for_tags(path):
