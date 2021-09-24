@@ -8,7 +8,7 @@ from page_loader.settings_logging import logger_config
 from page_loader.normalize_data import (
     get_parts_url, convert_relative_link, get_path_for_tags,
     add_suff_for_name_link, convert_path_name, is_local_link
-    )
+)
 
 
 logging.config.dictConfig(logger_config)
